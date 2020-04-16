@@ -1,2 +1,6 @@
+# .gitignore
+
+# directories
 __pycache__
-#hello
+TempFiles
+.vscode
