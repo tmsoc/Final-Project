@@ -1,4 +1,72 @@
 import sqlite3
+from pathlib import Path
+import csv
+
+"""
+Here is the initial Model build. The data is stored in the external file
+"rest_hub_data.db". 
+
+Currently rest_hub_data.db holds data for a table of restaurants and a 
+table of reviews. The restaurant table does have initial test data in it, but
+the reviews table is still empty.
+
+In the restaurant db, each restaurant has the following fields:
+    id - <int> Unique to the restaurant. Populated by the db.
+    name - <string>
+    address <string>
+    city <string>
+    state <string>
+    zip_code <string>
+    vegetarian <bool>
+    vegan <bool>
+    gluten <bool>
+    menu <bool>
+    hours <string>
+    description <string>
+
+
+Here is a list of class methods we will be using:
+    insert_restaurant(param: dict)
+        Inserts a new restaurant into the db. The argument is a
+        dictionary of all the attributes of the restaurant.        
+        example:    myDict = {"name": "Claim Jumper", "description": "Traditional"}
+                    insert_restaurant(myDict)
+        The only attribute that has to be in myDict is the 'name' attribute
+        DO NOT INCLUDE AN ID.
+
+    select_rest_by_id(id: int)
+        Returns a dictionary item for the restaurant with the given id.
+    
+    select_rest_by_attribute(param: dict, sort_by=None, assending=True)
+        Returns a list of restaurant in dictionary form. 
+        The param argument will have a list of attributes to select by.
+        example:    attDict = {"city": "Costa Mesa", "vegetarian": True}
+                    Will return all restaurant that are in Costa Mesa that
+                    are vegetarian. 
+        If you enter an attribute into the sort_by argument, the returned list will
+        be sorted by that filed. Enter assending=False if you want it in desending
+        order.
+
+    select_all_rest_data()
+        This will return a list of restaurant data in the restaurants table.
+
+    select_rest_names(assending=True)
+        Returns a list of all restaurants with their id number.
+
+    update_restaurant(id: int, param: dict)
+        Updates any of the attributes for the restaurant with the given
+        id number.
+        example:    attDict = {"vegetarian": True, "gluten": False}
+                    update_restaurant(10, attDict)
+                    This will set the vegetarian to True and gluten to False
+                    for restaurant with id number 10.
+
+    delete_restaurant(id: int)
+        Deletes the restaurant with the given id.
+
+At the bottom of the file, there is a commented export script that
+will export all of the db to a csv file in the current directory.
+"""
 
 
 class Model:
@@ -12,27 +80,10 @@ class Model:
 
     def __init__(self):
         self.connection = sqlite3.connect(
-            ":memory:", detect_types=sqlite3.PARSE_DECLTYPES
+            self.REST_HUB_DB, detect_types=sqlite3.PARSE_DECLTYPES
         )
         self.connection.row_factory = sqlite3.Row
         self.cur = self.connection.cursor()
-
-        # self.cur.execute(
-        #     """CREATE TABLE restaurant (
-        #         id INTEGER NOT NULL PRIMARY KEY,
-        #         name TEXT NOT NULL,
-        #         address TEXT,
-        #         city TEXT,
-        #         state TEXT,
-        #         zip_code TEXT,
-        #         veg BOOLEAN,
-        #         vegan BOOLEAN,
-        #         gluten BOOLEAN,
-        #         menu BOOLEAN,
-        #         hours TEXT,
-        #         description TEXT
-        #     )"""
-        # )
 
     @staticmethod
     def _build_insert_string(table: str, param: dict) -> str:
@@ -141,83 +192,33 @@ class Model:
         else:
             return False
 
+    def select_all_tables(self) -> list:
+        with self.connection:
+            self.cur.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        return self._sql_to_dict(self.cur.fetchall())
+
 
 if __name__ == "__main__":
+    pass
 
-    model = Model()
+    # model = Model()
+    # all_rest = model.select_all_rest_data()
 
-    data = {
-        "name": "Panera Bread",
-        "description": "Sandwiches, Salad, Soup",
-        "veg": True,
-        "vegan": True,
-        "gluten": True,
-    }
-    model.insert_restaurant(data)
-    data = {
-        "name": "Peet's coffee",
-        "description": "Coffee & Tea",
-        "veg": True,
-        "vegan": True,
-        "gluten": False,
-    }
-    model.insert_restaurant(data)
-    data = {
-        "name": "Millions of Chicken",
-        "description": "Halal, Chicken Shop, Mediterranean",
-        "veg": True,
-        "vegan": False,
-        "gluten": True,
-    }
-    model.insert_restaurant(data)
-    data = {
-        "name": "The Crack Shack",
-        "description": "Chicken Shop",
-        "veg": True,
-        "vegan": False,
-        "gluten": False,
-    }
-    model.insert_restaurant(data)
-    data = {
-        "name": "The Halal Guys",
-        "description": "Halal, Middle Eastern Mediterranean",
-        "veg": False,
-        "vegan": False,
-        "gluten": False,
-    }
-    model.insert_restaurant(data)
-    data = {
-        "name": "Seabirds Kitchen",
-        "description": "Vegan, Vegetarian, Gluten-Free",
-        "veg": True,
-        "vegan": True,
-        "gluten": True,
-    }
-    model.insert_restaurant(data)
+    # def export_csv(export_data: list, file_path: Path) -> None:
+    #     """
+    #     Exports a given list of dictionary items
+    #     to the provided file path. The file header
+    #     is generated from the first element in
+    #     the list of dictionary items.
+    #     """
+    #     keys = export_data[0].keys()
+    #     with open(file_path, "w", newline="") as out_file:
+    #         writer = csv.DictWriter(out_file, fieldnames=keys)
+    #         writer.writeheader()
+    #         for item in export_data:
+    #             writer.writerow(item)
 
-    print("upload complete")
-
-    def print_q(results):
-        for item in results:
-            print(item)
-        print()
-
-    all_rest = model.select_all_rest_data()
-    print_q(all_rest)
-
-    filter_s = {"veg": True, "vegan": True, "gluten": True}
-    filtered_data = model.select_rest_by_attribute(filter_s)
-    print_q(filtered_data)
-
-    names_only = model.select_rest_names()
-    print_q(names_only)
-
-    print(model.select_rest_by_id(3))
-    new_items = {"city": "Costa Mesa", "state": "CA"}
-    model.update_restaurant(3, new_items)
-    print(model.select_rest_by_id(3), end="\n\n")
-
-    model.delete_restaurant(1)
-    model.delete_restaurant(3)
-    model.delete_restaurant(5)
-    print_q(model.select_rest_names())
+    # export_csv(all_rest, "export_data.csv")
+    # print("export complete")
