@@ -87,11 +87,19 @@ class Model:
 
     @staticmethod
     def _build_insert_string(table: str, param: dict) -> str:
+        '''
+        Returns an sql INSERT string with the 
+        VALUES from the given dictionary to the 
+        specified given table.
+        '''
         column_list = list()
         val_list = list()
         for key in param:
+            # stores a list of keys
             column_list.append(key)
+            # stores a list of keys following colons
             val_list.append(f":{key}")
+            # builds and returns the string
         return "INSERT INTO {} ({}) VALUES ({})".format(
             table, ", ".join(column_list), ", ".join(val_list)
         )
@@ -99,68 +107,135 @@ class Model:
     @staticmethod
     def _build_select_string(table: str, param: dict) -> str:
         """
-        Builds an sql SELECT STRING from the
-        given dictionary.
+        Returns an sql SELECT string with the WHERE
+        values provided by the given dictionary to
+        the given table.
         """
         where_param = list()
         for key in param:
+            # stores a list of keys formatted for the WHERE argument
             where_param.append(f"{key}=:{key}")
+            # builds and returns the SELECT string
         return f"SELECT * FROM {table}" + " WHERE {}".format(
             " AND ".join(where_param)
         )
 
     @staticmethod
     def _build_update_string(id: int, table: str, param: dict) -> str:
+        '''
+        Returns a sql UPDATE string with the SET
+        values provided by the given dictionary to
+        the specified entry id in the specified table.
+        '''
         set_param = list()
         for key in param:
+            # stores a list of key formatted for the SET argument
             set_param.append(f"{key}=:{key}")
+            # builds and returns the UPDATE string
         return "UPDATE {} SET {} WHERE id={}".format(
             table, ", ".join(set_param), id
         )
 
     @staticmethod
     def _sql_to_dict(data) -> list:
-        return [dict(item) for item in data]
+        '''
+        Returns a sql formatted dictionary item to
+        a python standard lib dictionary item
+        '''
+        if len(data) != 0:
+            return [dict(item) for item in data]
+        else:
+            return None
 
     def _verify_id(self, id: int) -> bool:
+        '''
+        Verifies that the given id is a valid
+        id in the sql database.
+        '''
+        # selects a list of all ids from the restaurant table
         with self.connection:
             self.cur.execute(f"SELECT id FROM {self.REST_TABLE}")
         query = self._sql_to_dict(self.cur.fetchall())
+        # returns True if id is found in the selected list
         if any(item["id"] == id for item in query):
             return True
+        # else returns false
         else:
             return False
 
     def insert_restaurant(self, param: dict) -> None:
+        """
+        Inserts a new restaurant into the database.
+        The param argument is a list of all attributes
+        to store with the entry.
+        """
+        # builds an sql INSERT string
         sql_str = self._build_insert_string(self.REST_TABLE, param)
+        # inserts the entry into the restaurant database
         with self.connection:
             self.cur.execute(sql_str, param)
 
-    def select_rest_by_id(self, id: int):
+    def select_rest_by_id(self, id: int) -> dict:
+        '''
+        Returns a restaurant record with the given
+        restaurant id. If the given id is not a valid
+        id, returns None.
+        '''
+        # queries the record from id
         with self.connection:
             self.cur.execute(
                 f"SELECT * FROM {self.REST_TABLE} WHERE id=:id", {"id": id}
             )
-            return dict(self.cur.fetchone())
+        record = self.cur.fetchone()
+        # return the record if found
+        if record != None:
+            return dict(record)
+        # else return None
+        else:
+            return record
 
     def select_rest_by_attribute(
         self, param: dict, sort_by=None, assending=True
     ) -> list:
+        '''
+        Returns a list of all records with the given
+        attributes in the param dictionary. If no record
+        are found, returns None. 
+
+        records are returned sorted if the sort_by argument
+        is supplied with a specified field.
+        '''
+        # builds the sql SELECT string
         sql_str = self._build_select_string(self.REST_TABLE, param)
+        # adds the ORDER BY command if sort_by is specified
         if sort_by != None and assending:
             sql_str += f" ORDER BY {sort_by} ASC"
         elif sort_by != None and not assending:
             sql_str += f" ORDER BY {sort_by} DESC"
+        # queries the table
         with self.connection:
             self.cur.execute(sql_str, param)
+        # returns the record
         return self._sql_to_dict(self.cur.fetchall())
 
-    def select_all_rest_data(self) -> None:
+    def select_all_rest_data(self) -> list:
+        '''
+        Returns a list of all restaurant records. 
+        Returns None if no records are found.
+        '''
+        # queries the restaurant database
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.REST_TABLE}")
+        # returns all records
         return self._sql_to_dict(self.cur.fetchall())
 
     def select_rest_names(self, assending=True) -> list:
+        '''
+        Returns a list of all restaurant records with
+        id number sorted by restaurant name.
+        Returns None if fo records are found.
+        '''
+        # builds the sql SELECT string
         if assending:
             sql_str = (
                 f"SELECT id, name FROM {self.REST_TABLE} ORDER BY name ASC"
@@ -169,13 +244,25 @@ class Model:
             sql_str = (
                 f"SELECT id, name FROM {self.REST_TABLE} ORDER BY name DESC"
             )
+        # queries the database
         with self.connection:
             self.cur.execute(sql_str)
+        # returns all found records
         return self._sql_to_dict(self.cur.fetchall())
 
     def update_restaurant(self, id: int, param: dict) -> bool:
+        '''
+        Updates the the restaurant record with the
+        given id number the attributes provided by
+        the param dictionary. 
+        Returns True if update was successful, else
+        returns False.
+        '''
+        # Verifies the the id number given is valid
         if self._verify_id(id):
+            # builds the sql UPDATE string
             sql_str = self._build_update_string(id, self.REST_TABLE, param)
+            # updates the record
             with self.connection:
                 self.cur.execute(sql_str, param)
             return True
@@ -183,7 +270,15 @@ class Model:
             return False
 
     def delete_restaurant(self, id: int) -> bool:
+        '''
+        Deletes the restaurant record with the
+        given id number.
+        Returns True if successful, else returns
+        False.
+        '''
+        # verifies that the id is valid
         if self._verify_id(id):
+            # deletes the record
             with self.connection:
                 self.cur.execute(
                     f"DELETE FROM {self.REST_TABLE} WHERE id=:id", {"id": id}
@@ -193,6 +288,9 @@ class Model:
             return False
 
     def select_all_tables(self) -> list:
+        '''
+        Returns the name of all tables in rest_hub_data.db
+        '''
         with self.connection:
             self.cur.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'"
@@ -225,3 +323,4 @@ if __name__ == "__main__":
 
     # export_csv(all_rest, "export_data.csv")
     # print("export complete")
+
