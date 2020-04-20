@@ -199,6 +199,9 @@ class Model:
             )
         return self._sql_to_dict(self.cur.fetchall())
 
+    def close_connection(self) -> None:
+        self.connection.close()
+
 
 if __name__ == "__main__":
     pass
