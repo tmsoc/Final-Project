@@ -1,5 +1,5 @@
-import sqlite3
 from pathlib import Path
+import sqlite3
 import csv
 
 """
@@ -70,6 +70,35 @@ will export all of the db to a csv file in the current directory.
 
 
 class Model:
+    """
+    A class used for storing and accessing restaurant 
+    information user and various user information 
+    to access the information.
+
+    ...
+
+    Methods
+    -------
+    insert_restaurant(param: dict)
+        Inserts a new restaurant into the restaurant table
+    
+    select_rest_by_id(id: int)
+        Returns a dictionary item for the restaurant with the given id
+    
+    select_rest_by_attribute(param: dict, sort_by=None, assending=True)
+        Returns a list of restaurants based on the given attributes 
+        in dictionary form 
+    
+    select_all_rest_data()
+        Return all stored restaurant data from the restaurants table.
+    
+    select_rest_names(assending=True)
+        Returns a list of all restaurants names with their given id number.
+
+    update_restaurant(id: int, param: dict)
+        Updates all the given attributes from the param argument to
+        the restaurant with the given id number 
+    """
 
     REST_TABLE = "restaurant"
     REVIEW_TABLE = "reviews"
@@ -87,11 +116,11 @@ class Model:
 
     @staticmethod
     def _build_insert_string(table: str, param: dict) -> str:
-        '''
+        """
         Returns an sql INSERT string with the 
         VALUES from the given dictionary to the 
         specified given table.
-        '''
+        """
         column_list = list()
         val_list = list()
         for key in param:
@@ -116,17 +145,17 @@ class Model:
             # stores a list of keys formatted for the WHERE argument
             where_param.append(f"{key}=:{key}")
             # builds and returns the SELECT string
-        return f"SELECT * FROM {table}" + " WHERE {}".format(
-            " AND ".join(where_param)
+        return "SELECT * FROM {} WHERE {}".format(
+            table, " AND ".join(where_param)
         )
 
     @staticmethod
     def _build_update_string(id: int, table: str, param: dict) -> str:
-        '''
+        """
         Returns a sql UPDATE string with the SET
         values provided by the given dictionary to
         the specified entry id in the specified table.
-        '''
+        """
         set_param = list()
         for key in param:
             # stores a list of key formatted for the SET argument
@@ -138,20 +167,20 @@ class Model:
 
     @staticmethod
     def _sql_to_dict(data) -> list:
-        '''
+        """
         Returns a sql formatted dictionary item to
         a python standard lib dictionary item
-        '''
+        """
         if len(data) != 0:
             return [dict(item) for item in data]
         else:
             return None
 
     def _verify_id(self, id: int) -> bool:
-        '''
+        """
         Verifies that the given id is a valid
         id in the sql database.
-        '''
+        """
         # selects a list of all ids from the restaurant table
         with self.connection:
             self.cur.execute(f"SELECT id FROM {self.REST_TABLE}")
@@ -162,6 +191,16 @@ class Model:
         # else returns false
         else:
             return False
+
+    def _select_all_tables(self) -> list:
+        """
+        Returns the name of all tables in rest_hub_data.db
+        """
+        with self.connection:
+            self.cur.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        return self._sql_to_dict(self.cur.fetchall())
 
     def insert_restaurant(self, param: dict) -> None:
         """
@@ -176,11 +215,11 @@ class Model:
             self.cur.execute(sql_str, param)
 
     def select_rest_by_id(self, id: int) -> dict:
-        '''
+        """
         Returns a restaurant record with the given
         restaurant id. If the given id is not a valid
         id, returns None.
-        '''
+        """
         # queries the record from id
         with self.connection:
             self.cur.execute(
@@ -197,14 +236,14 @@ class Model:
     def select_rest_by_attribute(
         self, param: dict, sort_by=None, assending=True
     ) -> list:
-        '''
+        """
         Returns a list of all records with the given
         attributes in the param dictionary. If no record
         are found, returns None. 
 
         records are returned sorted if the sort_by argument
         is supplied with a specified field.
-        '''
+        """
         # builds the sql SELECT string
         sql_str = self._build_select_string(self.REST_TABLE, param)
         # adds the ORDER BY command if sort_by is specified
@@ -219,10 +258,10 @@ class Model:
         return self._sql_to_dict(self.cur.fetchall())
 
     def select_all_rest_data(self) -> list:
-        '''
+        """
         Returns a list of all restaurant records. 
         Returns None if no records are found.
-        '''
+        """
         # queries the restaurant database
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.REST_TABLE}")
@@ -230,11 +269,11 @@ class Model:
         return self._sql_to_dict(self.cur.fetchall())
 
     def select_rest_names(self, assending=True) -> list:
-        '''
+        """
         Returns a list of all restaurant records with
         id number sorted by restaurant name.
         Returns None if fo records are found.
-        '''
+        """
         # builds the sql SELECT string
         if assending:
             sql_str = (
@@ -251,13 +290,13 @@ class Model:
         return self._sql_to_dict(self.cur.fetchall())
 
     def update_restaurant(self, id: int, param: dict) -> bool:
-        '''
+        """
         Updates the the restaurant record with the
         given id number the attributes provided by
         the param dictionary. 
         Returns True if update was successful, else
         returns False.
-        '''
+        """
         # Verifies the the id number given is valid
         if self._verify_id(id):
             # builds the sql UPDATE string
@@ -270,12 +309,12 @@ class Model:
             return False
 
     def delete_restaurant(self, id: int) -> bool:
-        '''
+        """
         Deletes the restaurant record with the
         given id number.
         Returns True if successful, else returns
         False.
-        '''
+        """
         # verifies that the id is valid
         if self._verify_id(id):
             # deletes the record
@@ -287,40 +326,27 @@ class Model:
         else:
             return False
 
-    def select_all_tables(self) -> list:
-        '''
-        Returns the name of all tables in rest_hub_data.db
-        '''
-        with self.connection:
-            self.cur.execute(
-                "SELECT name FROM sqlite_master WHERE type='table'"
-            )
-        return self._sql_to_dict(self.cur.fetchall())
-
     def close_connection(self) -> None:
         self.connection.close()
 
 
-if __name__ == "__main__":
-    pass
+# if __name__ == "__main__":
 
-    # model = Model()
-    # all_rest = model.select_all_rest_data()
+#     def export_csv(export_data: list, file_path: Path) -> None:
+#         """
+#         Exports a given list of dictionary items
+#         to the provided file path. The file header
+#         is generated from the first element in
+#         the list of dictionary items.
+#         """
+#         keys = export_data[0].keys()
+#         with open(file_path, "w", newline="") as out_file:
+#             writer = csv.DictWriter(out_file, fieldnames=keys)
+#             writer.writeheader()
+#             for item in export_data:
+#                 writer.writerow(item)
 
-    # def export_csv(export_data: list, file_path: Path) -> None:
-    #     """
-    #     Exports a given list of dictionary items
-    #     to the provided file path. The file header
-    #     is generated from the first element in
-    #     the list of dictionary items.
-    #     """
-    #     keys = export_data[0].keys()
-    #     with open(file_path, "w", newline="") as out_file:
-    #         writer = csv.DictWriter(out_file, fieldnames=keys)
-    #         writer.writeheader()
-    #         for item in export_data:
-    #             writer.writerow(item)
-
-    # export_csv(all_rest, "export_data.csv")
-    # print("export complete")
-
+#     model = Model()
+#     all_rest = model.select_all_rest_data()
+#     export_csv(all_rest, "export_data.csv")
+#     print("export complete")
