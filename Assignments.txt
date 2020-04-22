@@ -1,10 +1,12 @@
 - TODO -
 
 * SOMONA
+1) Start base for controller
 
 
 
 * LINH
+1) start 3 views
 
 
 
