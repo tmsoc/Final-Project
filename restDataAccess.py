@@ -3,14 +3,7 @@ import sqlite3
 import csv
 
 """
-Here is the initial Model build. The data is stored in the external file
-"rest_hub_data.db". 
-
-Currently rest_hub_data.db holds data for a table of restaurants and a 
-table of reviews. The restaurant table does have initial test data in it, but
-the reviews table is still empty.
-
-In the restaurant db, each restaurant has the following fields:
+* restaurant table - each restaurant has the following fields:
     id - <int> Unique to the restaurant. Populated by the db.
     name - <string>
     address <string>
@@ -24,48 +17,13 @@ In the restaurant db, each restaurant has the following fields:
     hours <string>
     description <string>
 
+* reviews table - each restaurant has the following fields:
+    id - <int>
+    user <string>
+    review <string>
+    rating <int>
+    date_time <string>
 
-Here is a list of class methods we will be using:
-    insert_restaurant(param: dict)
-        Inserts a new restaurant into the db. The argument is a
-        dictionary of all the attributes of the restaurant.        
-        example:    myDict = {"name": "Claim Jumper", "description": "Traditional"}
-                    insert_restaurant(myDict)
-        The only attribute that has to be in myDict is the 'name' attribute
-        DO NOT INCLUDE AN ID.
-
-    select_rest_by_id(id: int)
-        Returns a dictionary item for the restaurant with the given id.
-    
-    select_rest_by_attribute(param: dict, sort_by=None, assending=True)
-        Returns a list of restaurant in dictionary form. 
-        The param argument will have a list of attributes to select by.
-        example:    attDict = {"city": "Costa Mesa", "vegetarian": True}
-                    Will return all restaurant that are in Costa Mesa that
-                    are vegetarian. 
-        If you enter an attribute into the sort_by argument, the returned list will
-        be sorted by that filed. Enter assending=False if you want it in desending
-        order.
-
-    select_all_rest_data()
-        This will return a list of restaurant data in the restaurants table.
-
-    select_rest_names(assending=True)
-        Returns a list of all restaurants with their id number.
-
-    update_restaurant(id: int, param: dict)
-        Updates any of the attributes for the restaurant with the given
-        id number.
-        example:    attDict = {"vegetarian": True, "gluten": False}
-                    update_restaurant(10, attDict)
-                    This will set the vegetarian to True and gluten to False
-                    for restaurant with id number 10.
-
-    delete_restaurant(id: int)
-        Deletes the restaurant with the given id.
-
-At the bottom of the file, there is a commented export script that
-will export all of the db to a csv file in the current directory.
 """
 
 
@@ -93,11 +51,17 @@ class Model:
         Return all stored restaurant data from the restaurants table.
     
     select_rest_names(assending=True)
-        Returns a list of all restaurants names with their given id number.
+        Returns a list of all restaurants names with their given id number
 
     update_restaurant(id: int, param: dict)
         Updates all the given attributes from the param argument to
         the restaurant with the given id number 
+    
+    def insert_review(param: dict)
+        Inserts a new review into the reviews table
+
+    def select_review_by_id(id: int)
+        Returns a list of all reviews with the given restaurant id
     """
 
     REST_TABLE = "restaurant"
@@ -214,6 +178,14 @@ class Model:
         with self.connection:
             self.cur.execute(sql_str, param)
 
+    def insert_review(self, param: dict) -> None:
+        """
+        Inserts a new review into the reviews table.        
+        """
+        sql_str = self._build_insert_string(self.REVIEW_TABLE, param)
+        with self.connection:
+            self.cur.execute(sql_str, param)
+
     def select_rest_by_id(self, id: int) -> dict:
         """
         Returns a restaurant record with the given
@@ -232,6 +204,19 @@ class Model:
         # else return None
         else:
             return record
+
+    def select_review_by_id(self, id: int) -> list:
+        """
+        Returns a list of all reviews with the
+        given restaurant id. If no reviews are found,
+        returns None.
+        """
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {self.REVIEW_TABLE} WHERE id=:id", {"id": id}
+            )
+        reviews = self.cur.fetchall()
+        return self._sql_to_dict(reviews)
 
     def select_rest_by_attribute(
         self, param: dict, sort_by=None, assending=True
@@ -328,6 +313,9 @@ class Model:
 
     def close_connection(self) -> None:
         self.connection.close()
+
+    def _d_review_table(self):
+        self.cur.execute(f"DROP TABLE {self.REVIEW_TABLE}")
 
 
 # if __name__ == "__main__":
