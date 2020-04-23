@@ -269,8 +269,9 @@ class Model:
 
     def _delete_by_key(self, table: str, key: int) -> bool:
         """
-        Deletes the record with the given key a
-        in the 
+        Deletes the record with the given key
+        in the specified table. Return True if
+        delete was successful, False if failed.
         """
         if self._verify_key(table, key):
             with self.connection:
