@@ -1,4 +1,3 @@
-from pathlib import Path
 import sqlite3
 import csv
 
@@ -67,6 +66,10 @@ class Model:
         Inserts a new review into the reviews table
     
     insert_menu(id: int, path: str)
+    
+    insert_user(name: str, password: str, birth_date, zip_code=None)
+
+    insert_owner(self, name: str, password: str, restaurants: str)
 
     select_rest_by_id(id: int)
         Returns a dictionary item for the restaurant with the given id
@@ -76,6 +79,8 @@ class Model:
     
     select_menu(id: int)
         Returns a menu record for the given restaurant id
+
+    select_user_by_name(name: str)
     
     select_rest_by_attribute(param: dict, sort_by=None, assending=True)
         Returns a list of restaurants based on the given attributes 
@@ -89,6 +94,9 @@ class Model:
 
     select_all_menus()
         Returns a list of all menu records
+    
+    select_all_users()
+        Returns a list of all user records
     
     select_rest_names(assending=True)
         Returns a list of all restaurants names with their given id number
@@ -105,6 +113,9 @@ class Model:
 
     delete_menu(key: int)
         Deletes the menu record with the given identification key
+    
+    delete_user(self, key: int)
+        Deletes the user record with the given identification key
 
     close_connection()
         Closes the database connection
@@ -115,7 +126,8 @@ class Model:
     REVIEW_TABLE = "reviews"
     MENUS_TABLE = "menus"
     USER_TABLE = "user"
-
+    OWNER_TABLE = "owner"
+    ADMIN_TABLE = "admin"
     REST_HUB_DB = "rest_hub_data.db"
 
     sqlite3.register_adapter(bool, int)
@@ -222,6 +234,14 @@ class Model:
         else:
             return False
 
+    def _select_all_table_records(self, table: str) -> list:
+        """
+        Returns a list of all items in a table.
+        """
+        with self.connection:
+            self.cur.execute(f"select * FROM {table}")
+        return self._sql_to_dict(self.cur.fetchall())
+
     def _select_all_tables(self) -> list:
         """
         Returns the name of all tables in rest_hub_data.db
@@ -231,6 +251,34 @@ class Model:
                 "SELECT name FROM sqlite_master WHERE type='table'"
             )
         return self._sql_to_dict(self.cur.fetchall())
+
+    def _select_by_name(self, table: str, name: str):
+        """
+        Selects a record by name field
+        """
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {table} WHERE name=:name", {"name": name},
+            )
+        record = self.cur.fetchone()
+        if record != None:
+            return dict(record)
+        else:
+            return record
+
+    def _delete_by_key(self, table: str, key: int) -> bool:
+        """
+        Deletes the record with the given key a
+        in the 
+        """
+        if self._verify_key(table, key):
+            with self.connection:
+                self.cur.execute(
+                    f"DELETE FROM {table} WHERE key=:key", {"key": key},
+                )
+            return True
+        else:
+            return False
 
     def insert_restaurant(self, param: dict) -> None:
         """
@@ -263,7 +311,7 @@ class Model:
             )
 
     def insert_user(
-        self, name: str, password: str, birth_date, zip_code=None
+        self, name: str, password: str, birth_date: str, zip_code=None
     ) -> None:
         """Stores a user information"""
         with self.connection:
@@ -273,6 +321,24 @@ class Model:
                 VALUES (?, ?, ?, ?)""",
                 (name, password, birth_date, zip_code),
             )
+
+    def insert_owner(self, name: str, password: str, restaurants: str) -> None:
+        """Stores a owner information"""
+        with self.connection:
+            self.cur.execute(
+                f"""INSERT INTO {self.OWNER_TABLE} 
+                (name, password, restaurants) VALUES (?, ?, ?)""",
+                (name, password, restaurants),
+            )
+
+    # def insert_admin(self, name: str, password: str) -> None:
+    #     """Stores a owner information"""
+    #     with self.connection:
+    #         self.cur.execute(
+    #             f"""INSERT INTO admin
+    #             (name, password) VALUES (?, ?)""",
+    #             (name, password),
+    #         )
 
     def select_rest_by_id(self, id: int) -> dict:
         """
@@ -324,17 +390,15 @@ class Model:
 
     def select_user_by_name(self, name: str):
         """
+        Returns a user record with the given name.
         """
-        with self.connection:
-            self.cur.execute(
-                f"SELECT * FROM {self.USER_TABLE} WHERE name=:name",
-                {"name": name},
-            )
-        user = self.cur.fetchone()
-        if user != None:
-            return dict(user)
-        else:
-            return user
+        return self._select_by_name(self.USER_TABLE, name)
+
+    def select_owner_by_name(self, name: str):
+        """
+        Returns an owner record with the given name.
+        """
+        return self._select_by_name(self.OWNER_TABLE, name)
 
     def select_rest_by_attribute(
         self, param: dict, sort_by=None, assending=True
@@ -360,43 +424,40 @@ class Model:
         # returns the record
         return self._sql_to_dict(self.cur.fetchall())
 
-    def select_all_rest_data(self) -> list:
+    def select_all_restaurants(self) -> list:
         """
         Returns a list of all restaurant records. 
         Returns None if no records are found.
         """
-        # queries the restaurant database
-        with self.connection:
-            self.cur.execute(f"SELECT * FROM {self.REST_TABLE}")
-        # returns all records
-        return self._sql_to_dict(self.cur.fetchall())
+        return self._select_all_table_records(self.REST_TABLE)
 
     def select_all_reviews(self) -> list:
         """
         Returns a list of all review records.
         Returns None if no records are found.
         """
-        with self.connection:
-            self.cur.execute(f"SELECT * FROM {self.REVIEW_TABLE}")
-        return self._sql_to_dict(self.cur.fetchall())
+        return self._select_all_table_records(self.REVIEW_TABLE)
 
     def select_all_menus(self) -> list:
         """
         Returns a list of all menu records.
         Returns None if no records are found.
         """
-        with self.connection:
-            self.cur.execute(f"SELECT * FROM {self.MENUS_TABLE}")
-        return self._sql_to_dict(self.cur.fetchall())
+        return self._select_all_table_records(self.MENUS_TABLE)
 
     def select_all_users(self) -> list:
         """
         Returns a list of all user records.
         Returns None if no records are found.
         """
-        with self.connection:
-            self.cur.execute(f"select * FROM {self.USER_TABLE}")
-        return self._sql_to_dict(self.cur.fetchall())
+        return self._select_all_table_records(self.USER_TABLE)
+
+    def select_all_owners(self) -> list:
+        """
+        Returns a list of all owner records.
+        Returns None if no records are found.
+        """
+        return self._select_all_table_records(self.OWNER_TABLE)
 
     def select_rest_names(self, assending=True) -> list:
         """
@@ -462,47 +523,28 @@ class Model:
         key. Returns True if deletion was 
         successful, else returns False
         """
-        # verifies that the key is in the given table
-        if self._verify_key(self.REVIEW_TABLE, key):
-            # deletes the record
-            with self.connection:
-                self.cur.execute(
-                    f"DELETE FROM {self.REVIEW_TABLE} WHERE key=:key",
-                    {"key": key},
-                )
-            return True
-        else:
-            return False
+        return self._delete_by_key(self.REVIEW_TABLE, key)
 
     def delete_menu(self, key: int) -> bool:
         """
         Deletes the menu record with the
         given key.
         """
-        if self._verify_key(self.MENUS_TABLE, key):
-            with self.connection:
-                self.cur.execute(
-                    f"DELETE FROM {self.MENUS_TABLE} WHERE key=:key",
-                    {"key": key},
-                )
-            return True
-        else:
-            return False
+        return self._delete_by_key(self.MENUS_TABLE, key)
 
     def delete_user(self, key: int) -> bool:
         """
         Deletes the user record with the
         given key.
         """
-        if self._verify_key(self.USER_TABLE, key):
-            with self.connection:
-                self.cur.execute(
-                    f"DELETE FROM {self.USER_TABLE} WHERE key=:key",
-                    {"key": key},
-                )
-            return True
-        else:
-            return False
+        self._delete_by_key(self.USER_TABLE, key)
+
+    def delete_owner(self, key: int) -> bool:
+        """
+        Deletes the owner record with the
+        given key.
+        """
+        return self._delete_by_key(self.OWNER_TABLE, key)
 
     def close_connection(self) -> None:
         self.connection.close()
@@ -534,9 +576,13 @@ if __name__ == "__main__":
 
     model = Model()
 
-    all_users = model.select_all_users()
-    if all_users != None:
-        for item in all_users:
+    # admin = "admin"
+    # password = "pep8"
+    # model.insert_admin(admin, password)
+
+    owner = model.select_all_owners()
+    if owner != None:
+        for item in owner:
             print(item)
 
     all_tables = model._select_all_tables()
