@@ -3,26 +3,49 @@ import sqlite3
 import csv
 
 """
-* restaurant table - each restaurant has the following fields:
+* restaurant table - 
     id - <int> Unique to the restaurant. Populated by the db.
     name - <string>
-    address <string>
-    city <string>
-    state <string>
-    zip_code <string>
-    vegetarian <bool>
-    vegan <bool>
-    gluten <bool>
-    menu <bool>
-    hours <string>
-    description <string>
+    address - <string>
+    city - <string>
+    state - <string>
+    zip_code - <string>
+    vegetarian - <bool>
+    vegan - <bool>
+    gluten - <bool>
+    menu - <bool>
+    hours - <string>
+    description - <string>
 
-* reviews table - each restaurant has the following fields:
+* reviews table - 
     id - <int>
-    user <string>
-    review <string>
-    rating <int>
-    date_time <string>
+    user - <string>
+    review - <string>
+    rating - <int>
+    date_time - <string>
+    key - <int> Unique to the review. Populated by the db
+
+* menus table - 
+    id - <int>
+    menu_path - <string>
+    key - <int> Unique to the menu. Populated by the db
+
+* user table -
+    name - <string>
+    password - <string>
+    zip_code - <string>
+    key - <int> Unique to the user. Populated by the db 
+
+* owner table -
+    name - <string>
+    password - <string>
+    restaurants - <string>
+    key - <int> Unique to the owner. Populated by the db
+
+
+* Admin table - 
+    name - <string>
+    password - <string>
 
 """
 
@@ -40,8 +63,19 @@ class Model:
     insert_restaurant(param: dict)
         Inserts a new restaurant into the restaurant table
     
+    insert_review(param: dict)
+        Inserts a new review into the reviews table
+    
+    insert_menu(id: int, path: str)
+
     select_rest_by_id(id: int)
         Returns a dictionary item for the restaurant with the given id
+    
+    select_review_by_id(id: int)
+        Returns a list of all reviews with the given restaurant id
+    
+    select_menu(id: int)
+        Returns a menu record for the given restaurant id
     
     select_rest_by_attribute(param: dict, sort_by=None, assending=True)
         Returns a list of restaurants based on the given attributes 
@@ -51,6 +85,10 @@ class Model:
         Return all stored restaurant data from the restaurants table.
     
     select_all_reviews()
+        Return a list of all review records
+
+    select_all_menus()
+        Returns a list of all menu records
     
     select_rest_names(assending=True)
         Returns a list of all restaurants names with their given id number
@@ -63,14 +101,11 @@ class Model:
         Deletes the restaurant with the given id
 
     delete_review(key: int)
-        Deletes the review with the given identification key
-    
-    insert_review(param: dict)
-        Inserts a new review into the reviews table
+        Deletes the review  record with the given identification key
 
-    select_review_by_id(id: int)
-        Returns a list of all reviews with the given restaurant id
-    
+    delete_menu(key: int)
+        Deletes the menu record with the given identification key
+
     close_connection()
         Closes the database connection
     
@@ -79,6 +114,8 @@ class Model:
     REST_TABLE = "restaurant"
     REVIEW_TABLE = "reviews"
     MENUS_TABLE = "menus"
+    USER_TABLE = "user"
+
     REST_HUB_DB = "rest_hub_data.db"
 
     sqlite3.register_adapter(bool, int)
@@ -215,6 +252,16 @@ class Model:
         with self.connection:
             self.cur.execute(sql_str, param)
 
+    def insert_menu(self, id: int, path: str) -> None:
+        """
+        Stores the given path with the given restaurant id.
+        """
+        with self.connection:
+            self.cur.execute(
+                f"INSERT INTO {self.MENUS_TABLE} (id, menu_path) VALUES (?, ?)",
+                (id, path),
+            )
+
     def select_rest_by_id(self, id: int) -> dict:
         """
         Returns a restaurant record with the given
@@ -246,6 +293,22 @@ class Model:
             )
         reviews = self.cur.fetchall()
         return self._sql_to_dict(reviews)
+
+    def select_menu(self, id: int) -> str:
+        """
+        Returns the menu record for the given
+        restaurant id. Returns None if no records
+        were found.
+        """
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {self.MENUS_TABLE} WHERE id=:id", {"id": id}
+            )
+        menu = self.cur.fetchone()
+        if menu != None:
+            return dict(menu)
+        else:
+            return menu
 
     def select_rest_by_attribute(
         self, param: dict, sort_by=None, assending=True
@@ -289,6 +352,15 @@ class Model:
         """
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.REVIEW_TABLE}")
+        return self._sql_to_dict(self.cur.fetchall())
+
+    def select_all_menus(self) -> list:
+        """
+        Returns a list of all menu records.
+        Returns None if no records are found.
+        """
+        with self.connection:
+            self.cur.execute(f"SELECT * FROM {self.MENUS_TABLE}")
         return self._sql_to_dict(self.cur.fetchall())
 
     def select_rest_names(self, assending=True) -> list:
@@ -367,6 +439,21 @@ class Model:
         else:
             return False
 
+    def delete_menu(self, key: int) -> bool:
+        """
+        Deletes the menu record with the
+        given key.
+        """
+        if self._verify_key(self.MENUS_TABLE, key):
+            with self.connection:
+                self.cur.execute(
+                    f"DELETE FROM {self.MENUS_TABLE} WHERE key=:key",
+                    {"key": key},
+                )
+            return True
+        else:
+            return False
+
     def close_connection(self) -> None:
         self.connection.close()
 
@@ -374,23 +461,39 @@ class Model:
         self.cur.execute(f"DROP TABLE {self.REVIEW_TABLE}")
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     def export_csv(export_data: list, file_path: Path) -> None:
-#         """
-#         Exports a given list of dictionary items
-#         to the provided file path. The file header
-#         is generated from the first element in
-#         the list of dictionary items.
-#         """
-#         keys = export_data[0].keys()
-#         with open(file_path, "w", newline="") as out_file:
-#             writer = csv.DictWriter(out_file, fieldnames=keys)
-#             writer.writeheader()
-#             for item in export_data:
-#                 writer.writerow(item)
+    #     def export_csv(export_data: list, file_path: Path) -> None:
+    #         """
+    #         Exports a given list of dictionary items
+    #         to the provided file path. The file header
+    #         is generated from the first element in
+    #         the list of dictionary items.
+    #         """
+    #         keys = export_data[0].keys()
+    #         with open(file_path, "w", newline="") as out_file:
+    #             writer = csv.DictWriter(out_file, fieldnames=keys)
+    #             writer.writeheader()
+    #             for item in export_data:
+    #                 writer.writerow(item)
 
-#     model = Model()
-#     all_rest = model.select_all_rest_data()
-#     export_csv(all_rest, "export_data.csv")
-#     print("export complete")
+    #     model = Model()
+    #     all_rest = model.select_all_rest_data()
+    #     export_csv(all_rest, "export_data.csv")
+    #     print("export complete")
+
+    model = Model()
+    # id = 2
+    # path = "path 2"
+    # model.insert_menu(id, path)
+
+    # model.delete_menu(6)
+
+    menus = model.select_all_menus()
+    if menus != None:
+        for item in menus:
+            print(item)
+
+    list_tables = model._select_all_tables()
+    for table in list_tables:
+        print(table)
