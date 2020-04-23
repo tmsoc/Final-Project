@@ -1,61 +1,45 @@
 from restDataAccess import Model
-
-NAME = 'name'
-ADDRESS = 'address'
-CITY = 'city'
-STATE = 'state'
-ZIPCODE = 'zip_code'
-VEGETARIAN = 'vegetarian'
-VEGAN = 'vegan'
-GLUTEN = 'gluten'
-MENU = 'menu'
-HOURS = 'hours'
-DESCRIPTION = 'description'
-
-model = Model()
+from view import View
 
 
-def add_new_resturant(
-        name='',
-        address='',
-        city='',
-        state='',
-        zip_code='',
-        vegetarian='',
-        vegan='',
-        gluten='',
-        menu='',
-        hours='',
-        description=''):
-    restaurant_dict = {
-        NAME: name,
-        ADDRESS: address,
-        CITY: city,
-        STATE: state,
-        ZIPCODE: zip_code,
-        VEGETARIAN: vegetarian,
-        VEGAN: vegan,
-        GLUTEN: gluten,
-        MENU: menu,
-        HOURS: hours,
-        DESCRIPTION: description
-    }
+class Controller(self):
 
-    model.insert_restaurant(restaurant_dict)
+    self.model = Model()
 
-def get_restaurant_by_id(id):
-    rest = model.select_rest_by_id(id)
-    if(rest=None):
-        print("Id doesnt exist")
-    return rest
+    def validate_owner_login(self, username: str, password: str): -> bool
+
+      login_info = self.model.owner_select_by_name(username)
+
+       if login_info is None:
+            return false
+
+        if login_info['password'] == password:
+            return True
+        else:
+            return False
 
 
-def get_restaurants_by_att(restaurant_dict, sort_by=None, assending=False):
-    return model.select_rest_by_attribute(restaurant_dict, sort_by, assending)
+    def validate_admin_login(self, username: str, password: str): -> bool
+
+      login_info = self.model.admin_select_by_name(username)
+
+       if login_info is None:
+            return false
+
+        if login_info['password'] == password:
+            return True
+        else:
+            return False
 
 
+    def validate_user_login(self, username: str, password: str): -> bool
 
+      login_info = self.model.user_select_by_name(username)
 
+       if login_info is None:
+            return false
 
-if __name__ == "__main__":
-    get_restaurant(id)
+        if login_info['password'] == password:
+            return True
+        else:
+            return False
