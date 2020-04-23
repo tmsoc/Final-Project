@@ -2,7 +2,7 @@ from restDataAccess import Model
 from view import View
 
 
-class Controller(self):
+class Controller():
 
     self.model = Model()
 
