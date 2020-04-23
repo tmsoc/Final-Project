@@ -1,3 +1,4 @@
+from pathlib import Path
 import sqlite3
 import csv
 
@@ -44,8 +45,8 @@ import csv
 
 * admin table - 
     name - <string>
-    password - <string>
-
+    password - <string>    
+    key - <int> Unique to the admin. Populated by the db
 """
 
 
@@ -331,15 +332,6 @@ class Model:
                 (name, password, restaurants),
             )
 
-    # def insert_admin(self, name: str, password: str) -> None:
-    #     """Stores a owner information"""
-    #     with self.connection:
-    #         self.cur.execute(
-    #             f"""INSERT INTO admin
-    #             (name, password) VALUES (?, ?)""",
-    #             (name, password),
-    #         )
-
     def select_rest_by_id(self, id: int) -> dict:
         """
         Returns a restaurant record with the given
@@ -371,6 +363,11 @@ class Model:
             )
         reviews = self.cur.fetchall()
         return self._sql_to_dict(reviews)
+
+    def select_admin(self) -> dict:
+        with self.connection:
+            self.cur.execute(f"SELECT * FROM {self.ADMIN_TABLE}")
+        return dict(self.cur.fetchone())
 
     def select_menu(self, id: int) -> str:
         """
@@ -549,43 +546,24 @@ class Model:
     def close_connection(self) -> None:
         self.connection.close()
 
-    def _d_review_table(self):
-        self.cur.execute(f"DROP TABLE {self.USER_TABLE}")
 
+# if __name__ == "__main__":
 
-if __name__ == "__main__":
+#     def export_csv(export_data: list, file_path: Path) -> None:
+#         """
+#         Exports a given list of dictionary items
+#         to the provided file path. The file header
+#         is generated from the first element in
+#         the list of dictionary items.
+#         """
+#         keys = export_data[0].keys()
+#         with open(file_path, "w", newline="") as out_file:
+#             writer = csv.DictWriter(out_file, fieldnames=keys)
+#             writer.writeheader()
+#             for item in export_data:
+#                 writer.writerow(item)
 
-    #     def export_csv(export_data: list, file_path: Path) -> None:
-    #         """
-    #         Exports a given list of dictionary items
-    #         to the provided file path. The file header
-    #         is generated from the first element in
-    #         the list of dictionary items.
-    #         """
-    #         keys = export_data[0].keys()
-    #         with open(file_path, "w", newline="") as out_file:
-    #             writer = csv.DictWriter(out_file, fieldnames=keys)
-    #             writer.writeheader()
-    #             for item in export_data:
-    #                 writer.writerow(item)
-
-    #     model = Model()
-    #     all_rest = model.select_all_rest_data()
-    #     export_csv(all_rest, "export_data.csv")
-    #     print("export complete")
-
-    model = Model()
-
-    # admin = "admin"
-    # password = "pep8"
-    # model.insert_admin(admin, password)
-
-    owner = model.select_all_owners()
-    if owner != None:
-        for item in owner:
-            print(item)
-
-    all_tables = model._select_all_tables()
-    if all_tables != None:
-        for table in all_tables:
-            print(table)
+#     model = Model()
+#     all_rest = model.select_all_restaurants()
+#     export_csv(all_rest, "export_data.csv")
+#     print("export complete")
