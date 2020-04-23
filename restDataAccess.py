@@ -50,22 +50,35 @@ class Model:
     select_all_rest_data()
         Return all stored restaurant data from the restaurants table.
     
+    select_all_reviews()
+    
     select_rest_names(assending=True)
         Returns a list of all restaurants names with their given id number
 
     update_restaurant(id: int, param: dict)
         Updates all the given attributes from the param argument to
-        the restaurant with the given id number 
+        the restaurant with the given id number
     
-    def insert_review(param: dict)
+    delete_restaurant(id: int)
+        Deletes the restaurant with the given id
+
+    delete_review(key: int)
+        Deletes the review with the given identification key
+    
+    insert_review(param: dict)
         Inserts a new review into the reviews table
 
-    def select_review_by_id(id: int)
+    select_review_by_id(id: int)
         Returns a list of all reviews with the given restaurant id
+    
+    close_connection()
+        Closes the database connection
+    
     """
 
     REST_TABLE = "restaurant"
     REVIEW_TABLE = "reviews"
+    MENUS_TABLE = "menus"
     REST_HUB_DB = "rest_hub_data.db"
 
     sqlite3.register_adapter(bool, int)
@@ -153,6 +166,22 @@ class Model:
         if any(item["id"] == id for item in query):
             return True
         # else returns false
+        else:
+            return False
+
+    def _verify_key(self, table: str, key: int) -> bool:
+        """
+        Verifies that the given key exists in
+        the given table.
+        """
+        # queries a all keys from the specified table
+        with self.connection:
+            self.cur.execute(f"SELECT key FROM {table}")
+        query = self._sql_to_dict(self.cur.fetchall())
+        # if the key exists in the table returns true
+        # else returns false
+        if any(item["key"] == key for item in query):
+            return True
         else:
             return False
 
@@ -253,6 +282,15 @@ class Model:
         # returns all records
         return self._sql_to_dict(self.cur.fetchall())
 
+    def select_all_reviews(self) -> list:
+        """
+        Returns a list of all review records.
+        Returns None if no records are found.
+        """
+        with self.connection:
+            self.cur.execute(f"SELECT * FROM {self.REVIEW_TABLE}")
+        return self._sql_to_dict(self.cur.fetchall())
+
     def select_rest_names(self, assending=True) -> list:
         """
         Returns a list of all restaurant records with
@@ -306,6 +344,24 @@ class Model:
             with self.connection:
                 self.cur.execute(
                     f"DELETE FROM {self.REST_TABLE} WHERE id=:id", {"id": id}
+                )
+            return True
+        else:
+            return False
+
+    def delete_review(self, key: int) -> bool:
+        """
+        Deletes the the review with the given
+        key. Returns True if deletion was 
+        successful, else returns False
+        """
+        # verifies that the key is in the given table
+        if self._verify_key(self.REVIEW_TABLE, key):
+            # deletes the record
+            with self.connection:
+                self.cur.execute(
+                    f"DELETE FROM {self.REVIEW_TABLE} WHERE key=:key",
+                    {"key": key},
                 )
             return True
         else:

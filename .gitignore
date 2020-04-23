@@ -7,5 +7,5 @@ TempFiles
 ResourceFolder
 
 # Files
-rest_hub_data.db
+*.db
 database_build.py
