@@ -13,3 +13,50 @@
 * TONY
 1) Build model
 
+"""
+* restaurant table - 
+    id - <int> Unique to the restaurant. Populated by the db.
+    name - <string>
+    address - <string>
+    city - <string>
+    state - <string>
+    zip_code - <string>
+    vegetarian - <bool>
+    vegan - <bool>
+    gluten - <bool>
+    menu - <bool>
+    hours - <string>
+    description - <string>
+
+* reviews table - 
+    id - <int>
+    user - <string>
+    review - <string>
+    rating - <int>
+    date_time - <string>
+    key - <int> Unique to the review. Populated by the db
+
+* menus table - 
+    id - <int>
+    menu_path - <string>
+    key - <int> Unique to the menu. Populated by the db
+
+* user table -
+    name - <string>
+    password - <string>
+    zip_code - <string>
+    key - <int> Unique to the user. Populated by the db 
+
+* owner table -
+    name - <string>
+    password - <string>
+    restaurants - <string>
+    key - <int> Unique to the owner. Populated by the db
+
+
+* admin table - 
+    name - <string>
+    password - <string>    
+    key - <int> Unique to the admin. Populated by the db
+"""
+

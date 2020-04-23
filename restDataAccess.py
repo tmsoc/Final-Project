@@ -2,53 +2,6 @@ from pathlib import Path
 import sqlite3
 import csv
 
-"""
-* restaurant table - 
-    id - <int> Unique to the restaurant. Populated by the db.
-    name - <string>
-    address - <string>
-    city - <string>
-    state - <string>
-    zip_code - <string>
-    vegetarian - <bool>
-    vegan - <bool>
-    gluten - <bool>
-    menu - <bool>
-    hours - <string>
-    description - <string>
-
-* reviews table - 
-    id - <int>
-    user - <string>
-    review - <string>
-    rating - <int>
-    date_time - <string>
-    key - <int> Unique to the review. Populated by the db
-
-* menus table - 
-    id - <int>
-    menu_path - <string>
-    key - <int> Unique to the menu. Populated by the db
-
-* user table -
-    name - <string>
-    password - <string>
-    zip_code - <string>
-    key - <int> Unique to the user. Populated by the db 
-
-* owner table -
-    name - <string>
-    password - <string>
-    restaurants - <string>
-    key - <int> Unique to the owner. Populated by the db
-
-
-* admin table - 
-    name - <string>
-    password - <string>    
-    key - <int> Unique to the admin. Populated by the db
-"""
-
 
 class Model:
     """
@@ -282,7 +235,7 @@ class Model:
         else:
             return False
 
-    def insert_restaurant(self, param: dict) -> None:
+    def restaurant_insert(self, param: dict) -> None:
         """
         Inserts a new restaurant into the database.
         The param argument is a list of all attributes
@@ -294,7 +247,7 @@ class Model:
         with self.connection:
             self.cur.execute(sql_str, param)
 
-    def insert_review(self, param: dict) -> None:
+    def review_insert(self, param: dict) -> None:
         """
         Inserts a new review into the reviews table.        
         """
@@ -302,7 +255,7 @@ class Model:
         with self.connection:
             self.cur.execute(sql_str, param)
 
-    def insert_menu(self, id: int, path: str) -> None:
+    def menu_insert(self, id: int, path: str) -> None:
         """
         Stores the given path with the given restaurant id.
         """
@@ -312,7 +265,7 @@ class Model:
                 (id, path),
             )
 
-    def insert_user(
+    def user_insert(
         self, name: str, password: str, birth_date: str, zip_code=None
     ) -> None:
         """Stores a user information"""
@@ -324,7 +277,7 @@ class Model:
                 (name, password, birth_date, zip_code),
             )
 
-    def insert_owner(self, name: str, password: str, restaurants: str) -> None:
+    def owner_insert(self, name: str, password: str, restaurants: str) -> None:
         """Stores a owner information"""
         with self.connection:
             self.cur.execute(
@@ -333,7 +286,7 @@ class Model:
                 (name, password, restaurants),
             )
 
-    def select_rest_by_id(self, id: int) -> dict:
+    def rest_select_by_id(self, id: int) -> dict:
         """
         Returns a restaurant record with the given
         restaurant id. If the given id is not a valid
@@ -352,7 +305,7 @@ class Model:
         else:
             return record
 
-    def select_review_by_id(self, id: int) -> list:
+    def review_select_by_id(self, id: int) -> list:
         """
         Returns a list of all reviews with the
         given restaurant id. If no reviews are found,
@@ -365,12 +318,12 @@ class Model:
         reviews = self.cur.fetchall()
         return self._sql_to_dict(reviews)
 
-    def select_admin(self) -> dict:
+    def admin_select(self) -> dict:
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.ADMIN_TABLE}")
         return dict(self.cur.fetchone())
 
-    def select_menu(self, id: int) -> str:
+    def menu_select(self, id: int) -> str:
         """
         Returns the menu record for the given
         restaurant id. Returns None if no records
@@ -386,19 +339,19 @@ class Model:
         else:
             return menu
 
-    def select_user_by_name(self, name: str):
+    def user_select_by_name(self, name: str):
         """
         Returns a user record with the given name.
         """
         return self._select_by_name(self.USER_TABLE, name)
 
-    def select_owner_by_name(self, name: str):
+    def owner_select_by_name(self, name: str):
         """
         Returns an owner record with the given name.
         """
         return self._select_by_name(self.OWNER_TABLE, name)
 
-    def select_rest_by_attribute(
+    def rest_select_by_attribute(
         self, param: dict, sort_by=None, assending=True
     ) -> list:
         """
@@ -422,42 +375,42 @@ class Model:
         # returns the record
         return self._sql_to_dict(self.cur.fetchall())
 
-    def select_all_restaurants(self) -> list:
+    def restaurants_select_all(self) -> list:
         """
         Returns a list of all restaurant records. 
         Returns None if no records are found.
         """
         return self._select_all_table_records(self.REST_TABLE)
 
-    def select_all_reviews(self) -> list:
+    def reviews_select_all(self) -> list:
         """
         Returns a list of all review records.
         Returns None if no records are found.
         """
         return self._select_all_table_records(self.REVIEW_TABLE)
 
-    def select_all_menus(self) -> list:
+    def menus_select_all(self) -> list:
         """
         Returns a list of all menu records.
         Returns None if no records are found.
         """
         return self._select_all_table_records(self.MENUS_TABLE)
 
-    def select_all_users(self) -> list:
+    def usert_select_all(self) -> list:
         """
         Returns a list of all user records.
         Returns None if no records are found.
         """
         return self._select_all_table_records(self.USER_TABLE)
 
-    def select_all_owners(self) -> list:
+    def owners_select_all(self) -> list:
         """
         Returns a list of all owner records.
         Returns None if no records are found.
         """
         return self._select_all_table_records(self.OWNER_TABLE)
 
-    def select_rest_names(self, assending=True) -> list:
+    def rest_select_names(self, assending=True) -> list:
         """
         Returns a list of all restaurant records with
         id number sorted by restaurant name.
