@@ -44,3 +44,39 @@ class Controller():
             return True
         else:
             return False
+
+    def display_owner_id(): -> list
+
+        restaurant_list = restaurants_select_all()
+        owner_id_list = []
+
+        for restaurant in restaurant_list:
+            owner_id_str = restaurant['id'] + ' - ' + restaurant['name']
+            owner_id_list.append(owner_id_str)
+
+        return owner_id_list
+
+
+    def resturant_info(): -> list
+
+        restaurant_list = restaurants_select_all()
+        restaurant_info_list = []
+
+        for restaurant in restaurant_list:
+            restaurant_info_str = restaurant['id'] + ' - ' + restaurant['name'] +
+            ' : '  + restaurant['address'] + restaurant['city'] + restaurant['zip']
+            restaurant_info_list.append(restaurant_info_str)
+
+        return restaurant_info_list
+
+
+    def menu_info(): -> list
+
+        menu_list = menus_select_all()
+        menu_info_list = []
+
+        for menu in menu_list:
+            menu_info_str = restaurant['menu']
+            menu_info_list.append(menu_info_str)
+
+        return menu_info_list
