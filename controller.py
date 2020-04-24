@@ -22,7 +22,7 @@ class Controller():
     def validate_admin_login(self, entry_user_name: str, entry_password: str): -> bool
       username = entry_user_name.get()
       password = entry_password.get()
-      login_info = self.model.admin_select_by_name(username)
+      login_info = self.model.admin_select(username)
 
        if login_info is None:
             return false
