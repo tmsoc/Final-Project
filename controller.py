@@ -2,9 +2,9 @@ from restDataAccess import Model
 from view import View
 
 
-class Controller():
+class Controller(model):
 
-    self.model = Model()
+    self.model = model
 
     def validate_owner_login(self, username: str, password: str): -> bool
 
