@@ -20,6 +20,7 @@ class Controller(model):
 
 
     def validate_admin_login(self, entry_user_name: str, entry_password: str): -> bool
+    self._select_by_name(self.USER_TABLE, name)
       username = entry_user_name.get()
       password = entry_password.get()
       login_info = self.model.admin_select(username)
@@ -64,7 +65,7 @@ class Controller(model):
 
         for restaurant in restaurant_list:
             restaurant_info_str = restaurant['id'] + ' - ' + restaurant['name'] +
-            ' : '  + restaurant['address'] + restaurant['city'] + restaurant['zip']
+            ' : '  + restaurant['address'] + restaurant['city'] + restaurant['zip_code']
             restaurant_info_list.append(restaurant_info_str)
 
         return restaurant_info_list
@@ -80,3 +81,23 @@ class Controller(model):
             menu_info_list.append(menu_info_str)
 
         return menu_info_list
+
+    def more_info(): -> list
+
+        list_box.get()
+
+        all_info = self.model.restaurants_select_all()
+
+        everything_format_str = 'Restuaruant ID: ' + restaurant['id'] '\n' +
+        'Restuarant name: ' + restaurant['name'] + '\n' +
+        'Address: '  + restaurant['address'] + '\n' +
+        'City: ' + restaurant['city'] + '\n' +
+        'Zip: ' + restaurant['zip_code'] + '\n' +
+        'Vegetarian: ' + restaurant['vegetarian'] + '\n' +
+        'Vegan:' + restaurant['vegan'] + '\n' +
+        'Gluten: ' + restaurant['gluten'] + '\n' +
+        'Menu: ' + restaurant['menu'] + '\n' +
+        'Hours: ' + restaurant['hours'] + '\n' +
+        'Description' + restaurant['description']
+
+        return everything_format_str
