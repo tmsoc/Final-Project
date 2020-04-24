@@ -1,10 +1,10 @@
 from restDataAccess import Model
+from controller import Controller
 
 
 def main():
-    temp_Control = None
     model = Model()
-    controller = temp_Control
+    controller = Controller(model)
 
     model.close_connection()
 
