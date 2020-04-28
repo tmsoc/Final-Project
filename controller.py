@@ -83,19 +83,26 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
-    def _update_restaurant_menu(self, id: int, menu: str) -> None:
+    def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
         """
         Updates a restaurant menu information
         in the model. If the menu argument equals
         None, the menu is deleted from the model.
         """
         if menu != None:
-            self.model.update_restaurant(id, {"menu": True})
-            self.model.menu_insert(id, menu)
+            self.model.update_restaurant(rest_id, {"menu": True})
+            self.model.menu_insert(rest_id, menu)
         else:
-            self.model.update_restaurant(id, {"menu": False})
-            menu = self.model.menu_select(id)
+            self.model.update_restaurant(rest_id, {"menu": False})
+            menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
+
+    def delete_rest_menu(self, rest_id: int) -> None:
+        """
+        Deletes the menu for the restaurant with
+        the given id number
+        """
+        self._update_restaurant_menu(rest_id, None)
 
     # We need to determine out how to get restaurant id from View
     # Can make it a class variable and just access it, or have the
