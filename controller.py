@@ -1,11 +1,38 @@
 from restDataAccess import Model
+from tkinter import filedialog
+from tkinter import messagebox  # Should be in the view
+
+# from tkinter import *
+from pathlib import Path
 
 # from view import View
 
 
 class Controller:
+
+    MENU_DIRECTORY = "Saved Menus"
+
     def __init__(self, model):
         self.model = model
+        self.working_directory = self._get_working_directory()
+
+    @staticmethod
+    def _get_working_directory() -> Path:
+        return Path(__file__).parent.absolute()
+
+    # This method need to be placed in the View
+    # once it is merged into the master branch
+    @staticmethod
+    def display_error_message(message: str) -> None:
+        messagebox.showinfo(
+            message=message, icon="error", title="Error",
+        )
+
+    # This method need to be placed in the View
+    # once it is merged into the master branch
+    @staticmethod
+    def display_message_window(message: str) -> None:
+        messagebox.showinfo(message=message)
 
     def validate_owner_login(self, username: str, password: str) -> bool:
 
@@ -86,3 +113,16 @@ class Controller:
     #         menu_info_list.append(menu_info_str)
 
     #     return menu_info_list
+
+
+if __name__ == "__main__":
+    pass
+    # model = Model()
+    # controller = Controller(model)
+    # print(f"Current directory {controller.working_directory}")
+    # file_path = Path(filedialog.askopenfilename())
+    # if file_path == ".":
+    #     print(True)
+    # else:
+    #     print(False)
+    # print(f"->{file_path}<-")
