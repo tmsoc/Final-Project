@@ -40,7 +40,7 @@ class View:
             height=2,
             width=40,
         )
-        self.var = IntVar()
+        self.user_type_var = IntVar()
         radiobtn_admin = Radiobutton(
             top_frame,
             text="Admin",
@@ -48,7 +48,7 @@ class View:
             bg="#0080c0",
             height=2,
             width=5,
-            variable=self.var,
+            variable=self.user_type_var,
             value=1,
         )
         radiobtn_owner = Radiobutton(
@@ -58,7 +58,7 @@ class View:
             bg="#0080c0",
             height=2,
             width=14,
-            variable=self.var,
+            variable=self.user_type_var,
             value=2,
         )
         radiobtn_guest = Radiobutton(
@@ -68,7 +68,7 @@ class View:
             bg="#0080c0",
             height=2,
             width=8,
-            variable=self.var,
+            variable=self.user_type_var,
             value=3,
         )
         next_btn = Button(
@@ -87,134 +87,32 @@ class View:
         radiobtn_owner.place(x=150, y=210)
         radiobtn_guest.place(x=150, y=240)
         next_btn.place(x=210, y=320)
-
-    def _admin_login_place_widget(self):
+    
+    def _login_place_widget(self):
         lbl_user_name = Label(
             self.window, text="Username:", font="None 11", bg="#0080c0",
         )
-        self.entry_admin_user_name = Entry(
+        self.entry_user_name = Entry(
             self.window,
             font="None 11",
-            width=22,
-        )
-        lbl_password = Label(
-            self.window, text="Password:", font="None 11", bg="#0080c0"
-        )
-        self.entry_password = Entry(
-            self.window,
-            font="None 11",
-            show="*",
-            width=22,
-        )
-        login_button = Button(
-            self.window,
-            text="Log in",
-            font="none 11",
-            command=self.controller.validate_admin_login,
-        )
-        self.lbl_admin_login_fail = Label(
-            self.window,
-            bg="#0080c0",
-            font="None 11",
-            fg="red",
-        )
-
-        Label(self.window, bg="#0080c0").grid(row=0)
-        lbl_user_name.grid(row=1, column=0, sticky="w")
-        self.entry_admin_user_name.grid(row=1, column=1, sticky="we")
-        Label(self.window, bg="#0080c0").grid(row=2)
-        lbl_password.grid(row=3, column=0, sticky="w")
-        self.entry_password.grid(row=3, column=1)
-        Label(self.window, bg="#0080c0").grid(row=4)
-        login_button.grid(row=5, column=1, sticky="NSEW")
-        self.lbl_admin_login_fail.grid(
-            row=6, column=0, columnspan=3, sticky="e"
-        )
-
-    def _owner_login_place_widget(self):
-        lbl_user_name = Label(
-            self.window, text="Username:", font="None 11", bg="#0080c0",
-        )
-        self.entry_owner_user_name = Entry(
-            self.window,
-            font="None 11",
-            width=22,
+            width=15,
         )
         lbl_password = Label(
             self.window, text="Password:",
             font="None 11",
             bg="#0080c0"
         )
-        self.entry_owner_password = Entry(
+        self.entry_password = Entry(
             self.window,
             font="None 11",
             show="*",
-            width=22,
+            width=15,
         )
         login_button = Button(
             self.window,
             text="Log in",
             font="none 11",
-            command=self.controller.validate_owner_login,
-        )
-        lbl_signup_prompt = Label(
-            self.window, text="Haven't got an account? \n \
-Enter your username, password and click Sign up",
-            font="None 11",
-            bg="#0080c0",
-            height = 2
-        )
-        signup_button = Button(
-            self.window,
-            text="Sign up",
-            font="none 11",
-            command=self.controller.save_new_owner,
-        )
-        self.lbl_owner_login_fail = Label(
-            self.window,
-            bg="#0080c0",
-            font="None 11",
-            fg="red",
-        )
-
-        Label(self.window, bg="#0080c0").grid(row=0)
-        lbl_user_name.grid(row=1, column=0, sticky="w")
-        self.entry_owner_user_name.grid(row=1, column=1, sticky="we")
-        Label(self.window, bg="#0080c0", width = 10).grid(row=1, column=2)
-        Label(self.window, bg="#0080c0").grid(row=2)
-        lbl_password.grid(row=3, column=0, sticky="w")
-        self.entry_owner_password.grid(row=3, column=1, sticky="we")
-        Label(self.window, bg="#0080c0").grid(row=4)
-        login_button.grid(row=5, column=1)
-        lbl_signup_prompt.grid(row=6, column=0, columnspan = 3, sticky="w")
-        signup_button.grid(row=7, column=0, columnspan = 3)
-        self.lbl_owner_login_fail.grid(
-            row=8, column=0, columnspan=3
-        )
-
-    def _user_login_place_widget(self):
-        lbl_user_name = Label(
-            self.window, text="Username:", font="None 11", bg="#0080c0",
-        )
-        self.entry_user_user_name = Entry(
-            self.window,
-            font="None 11",
-            width=22,
-        )
-        lbl_password = Label(
-            self.window, text="Password:", font="None 11", bg="#0080c0"
-        )
-        self.entry_user_password = Entry(
-            self.window,
-            font="None 11",
-            show="*",
-            width=22,
-        )
-        login_button = Button(
-            self.window,
-            text="Log in",
-            font="none 11",
-            command=self.controller.validate_user_login,
+            command=self.controller.login_btn,
         )
         lbl_signup_prompt = Label(
             self.window, text="Haven't got an account? \n \
@@ -229,30 +127,69 @@ Enter your username, password and click Sign up",
             font="none 11",
             command=self.controller.save_new_user,
         )
-        self.lbl_user_login_fail = Label(
+        self.lbl_login_fail = Label(
             self.window,
             bg="#0080c0",
             font="None 11",
             fg="red",
         )
 
-        Label(self.window, bg="#0080c0").grid(row=0)
-        lbl_user_name.grid(row=1, column=0, sticky="w")
-        self.entry_user_user_name.grid(row=1, column=1, sticky="we")
-        Label(self.window, bg="#0080c0", width = 10).grid(row=1, column=2)
-        Label(self.window, bg="#0080c0").grid(row=2)
-        lbl_password.grid(row=3, column=0, sticky="w")
-        self.entry_user_password.grid(row=3, column=1, sticky="we")
-        Label(self.window, bg="#0080c0").grid(row=4)
-        login_button.grid(row=5, column=1)
-        lbl_signup_prompt.grid(row=6, column=0, columnspan = 3, sticky="w")
-        signup_button.grid(row=7, column=0, columnspan = 3)
-        self.lbl_user_login_fail.grid(
-            row=8, column=0, columnspan=3
+        lbl_user_name.grid(
+            row=0,
+            column=0,
+            sticky="w",
+            padx = 5,
+            pady = (20, 10)
+        )
+        self.entry_user_name.grid(
+            row=0,
+            column=1,
+            sticky="we",
+            padx = (0, 50)
+        )
+        lbl_password.grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx = 5,
+            pady = (10, 30)
+        )
+        self.entry_password.grid(
+            row=1,
+            column=1,
+            sticky="we",
+            padx = (0, 50),
+            pady = (10, 30)
+        )
+        login_button.grid(
+            row=2,
+            column=0,
+            columnspan = 2
+        )
+        lbl_signup_prompt.grid(
+            row=3,
+            column=0,
+            columnspan = 2,
+            pady = 10,
+            sticky="w"
+        )
+        signup_button.grid(
+            row=4,
+            column=0,
+            columnspan = 2)
+        self.lbl_login_fail.grid(
+            row=8,
+            column=0,
+            columnspan=2
         )
 
     def _admin_place_widget(self):
-        self.var = IntVar()
+        self.admin_view_var = IntVar()
+        lbl_title = Label(
+            bg="#0080c0",
+            text="Administrative Function",
+            font=self.font1
+        )
         radiobtn_id = Radiobutton(
             self.window,
             text="Owner ID",
@@ -260,7 +197,7 @@ Enter your username, password and click Sign up",
             bg="#0080c0",
             height=2,
             width=8,
-            variable=self.var,
+            variable=self.admin_view_var,
             value=1,
         )
         radiobtn_info = Radiobutton(
@@ -270,7 +207,7 @@ Enter your username, password and click Sign up",
             bg="#0080c0",
             height=2,
             width=15,
-            variable=self.var,
+            variable=self.admin_view_var,
             value=2,
         )
         radiobtn_menu = Radiobutton(
@@ -280,7 +217,7 @@ Enter your username, password and click Sign up",
             bg="#0080c0",
             height=2,
             width=5,
-            variable=self.var,
+            variable=self.admin_view_var,
             value=3,
         )
         btn_list = Button(
@@ -291,7 +228,8 @@ Enter your username, password and click Sign up",
             height=1,
             width=10,
             #command = a function in controller to return a list corresponding
-            #to the value of var, then output the information in the listbox
+            #to the value of admin_view_var, then output the information in the
+            #listbox
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
         self.view1_list_box = Listbox(
@@ -308,11 +246,11 @@ Enter your username, password and click Sign up",
         )
         btn_update = Button(
             self.window,
-            text="Update",
+            text="Menu Update",
             font="none 12",
             bg="light grey",
             height=1,
-            width=10,
+            width=12,
             #command = a function in controller to return a list of selected
             #restaurant name, address, and its menu, then open a menu window
             command = self.controller.request_menu
@@ -330,24 +268,61 @@ Enter your username, password and click Sign up",
         self.view1_list_box.insert(1, "Press exit to loop")
         # ---DELETE ME---
         
-        Label(
-            bg="#0080c0", text="Administrative Function", font=self.font1
-        ).grid(row=0, columnspan=7)
-        Label(bg="#0080c0", height=2, width=5).grid(row=1, column=0)
-        radiobtn_id.grid(row=2, column=1)
-        radiobtn_info.grid(row=2, column=2)
-        radiobtn_menu.grid(row=2, column=3)
-        btn_list.grid(row=2, column=5, sticky="e")
-        Label(bg="#0080c0", height=2, width=5).grid(row=2, column=4)
-        lbl_prompt.grid(row=3, column=1, columnspan=3, sticky="w")
-        self.view1_list_box.grid(row=4, column=1, columnspan=4, sticky="we")
-        btn_info.grid(row=4, column=5, sticky="e")
-        Label(bg="#0080c0").grid(row=5, columnspan=7)
-        btn_update.grid(row=6, column=2)
-        btn_exit.grid(row=6, column=5)
+        lbl_title.grid(
+            row=0,
+            columnspan=4,
+            pady = 10
+        )
+        radiobtn_id.grid(
+            row=1,
+            column=0,
+            padx = (50, 10),
+            pady = 10
+        )
+        radiobtn_info.grid(
+            row=1,
+            column=1,
+            padx = 10,
+            pady = 10
+        )
+        radiobtn_menu.grid(
+            row=1,
+            column=2,
+            padx = 10,
+            pady = 10
+        )
+        btn_list.grid(
+            row=1,
+            column=3,
+            padx = (10, 50),
+            pady = 10,
+        )
+        self.view1_list_box.grid(
+            row=2,
+            column=0,
+            columnspan=3,
+            padx = (50, 10),
+            pady = 10,
+            sticky="we")
+        btn_info.grid(
+            row=2,
+            column=3,
+            padx = (10, 50)
+        )
+        btn_update.grid(
+            row=3,
+            column=0,
+            columnspan = 3,
+            pady = 30
+        )
+        btn_exit.grid(
+            row=3,
+            column=3,
+            padx = (10, 50),
+            pady = 30
+        )
 
-    def _rest_info_place_widget(self):
-        self.rest_info_list = self.controller.restaurant_info()
+    def _rest_info_place_widget(self, rest_info_list):
             
         lbl_prompt_rest_ID = Label(
             text = "Restaurant ID:",
@@ -356,9 +331,9 @@ Enter your username, password and click Sign up",
             height = 2
         )        
         lbl_rest_ID = Label(
-            text = self.rest_info_list[0],
+            text = rest_info_list[0],
             font = "None 11",
-            bg = "#0080c0",
+            bg = "light gray",
             width = 50
         )     
         lbl_rest_name = Label(
@@ -370,7 +345,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_name = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )
         lbl_rest_address = Label(
             text = "Address:",
@@ -381,7 +356,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_address = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )
         lbl_rest_address = Label(
             text = "Address:",
@@ -392,7 +367,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_address = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )
         lbl_rest_city = Label(
             text = "City:",
@@ -403,7 +378,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_city = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_state = Label(
             text = "State:",
@@ -414,7 +389,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_state = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_zip = Label(
             text = "Zip code:",
@@ -425,7 +400,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_zip = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_vege = Label(
             text = "Vegetarian:",
@@ -436,7 +411,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_vege = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_vegan = Label(
             text = "Vegan:",
@@ -447,7 +422,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_vegan = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_gluten = Label(
             text = "Gluten:",
@@ -458,7 +433,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_gluten = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_menu = Label(
             text = "Menu:",
@@ -469,7 +444,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_menu = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_hours = Label(
             text = "Hours:",
@@ -480,7 +455,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_hours = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         lbl_rest_description = Label(
             text = "Description:",
@@ -491,7 +466,7 @@ Enter your username, password and click Sign up",
         self.entry_rest_description = Entry(
             font = "None 11",
             bg = "white",
-            width = 50
+            width = 57
         )        
         btn_save_rest = Button(
             text = "Save",
@@ -506,48 +481,177 @@ Enter your username, password and click Sign up",
             bg = "light gray",
             command = self.controller.back_to_admin_view
         )
-        self.entry_rest_name.insert(0, str(self.rest_info_list[1]))
-        self.entry_rest_address.insert(0, str(self.rest_info_list[2]))
-        self.entry_rest_city.insert(0, str(self.rest_info_list[3]))
-        self.entry_rest_state.insert(0, str(self.rest_info_list[4]))
-        self.entry_rest_zip.insert(0, str(self.rest_info_list[5]))
-        self.entry_rest_vege.insert(0, str(self.rest_info_list[6]))
-        self.entry_rest_vegan.insert(0, str(self.rest_info_list[7]))
-        self.entry_rest_gluten.insert(0, str(self.rest_info_list[8]))
-        self.entry_rest_menu.insert(0, str(self.rest_info_list[9]))
-        self.entry_rest_hours.insert(0, str(self.rest_info_list[10]))
-        self.entry_rest_description.insert(0, str(self.rest_info_list[11]))
+        self.entry_rest_name.insert(0, str(rest_info_list[1]))
+        self.entry_rest_address.insert(0, str(rest_info_list[2]))
+        self.entry_rest_city.insert(0, str(rest_info_list[3]))
+        self.entry_rest_state.insert(0, str(rest_info_list[4]))
+        self.entry_rest_zip.insert(0, str(rest_info_list[5]))
+        self.entry_rest_vege.insert(0, str(rest_info_list[6]))
+        self.entry_rest_vegan.insert(0, str(rest_info_list[7]))
+        self.entry_rest_gluten.insert(0, str(rest_info_list[8]))
+        self.entry_rest_menu.insert(0, str(rest_info_list[9]))
+        self.entry_rest_hours.insert(0, str(rest_info_list[10]))
+        self.entry_rest_description.insert(0, str(rest_info_list[11]))
         
-        lbl_prompt_rest_ID.grid(row = 0, column = 0, sticky = "w")
-        lbl_rest_ID.grid(row = 0, column = 1, sticky = "w")
-        lbl_rest_name.grid(row = 1, column = 0, sticky = "w")
-        self.entry_rest_name.grid(row = 1, column = 1, sticky = "w")
-        lbl_rest_address.grid(row = 2, column = 0, sticky = "w")
-        self.entry_rest_address.grid(row = 2, column = 1, sticky = "w")
-        lbl_rest_address.grid(row = 2, column = 0, sticky = "w")
-        self.entry_rest_address.grid(row = 2, column = 1, sticky = "w")
-        lbl_rest_city.grid(row = 3, column = 0, sticky = "w")
-        self.entry_rest_city.grid(row = 3, column = 1, sticky = "w")
-        lbl_rest_state.grid(row = 4, column = 0, sticky = "w")
-        self.entry_rest_state.grid(row = 4, column = 1, sticky = "w")
-        lbl_rest_zip.grid(row = 5, column = 0, sticky = "w")
-        self.entry_rest_zip.grid(row = 5, column = 1, sticky = "w")
-        lbl_rest_vege.grid(row = 6, column = 0, sticky = "w")
-        self.entry_rest_vege.grid(row = 6, column = 1, sticky = "w")
-        lbl_rest_vegan.grid(row = 7, column = 0, sticky = "w")
-        self.entry_rest_vegan.grid(row = 7, column = 1, sticky = "w")
-        lbl_rest_gluten.grid(row = 8, column = 0, sticky = "w")
-        self.entry_rest_gluten.grid(row = 8, column = 1, sticky = "w")
-        lbl_rest_menu.grid(row = 9, column = 0, sticky = "w")
-        self.entry_rest_menu.grid(row = 9, column = 1, sticky = "w")
-        lbl_rest_hours.grid(row = 10, column = 0, sticky = "w")
-        self.entry_rest_hours.grid(row = 10, column = 1, sticky = "w")
-        lbl_rest_description.grid(row = 11, column = 0, sticky = "w")
-        self.entry_rest_description.grid(row = 11, column = 1, sticky = "w")
-        Label(bg = "#0080c0").grid(row = 12, column = 0, columnspan = 2)
-        btn_save_rest.grid(row = 13, column = 0, columnspan = 2)
-        Label(bg = "#0080c0").grid(row = 14, column = 0, columnspan = 2)
-        btn_admin_close.grid(row = 15, column = 0, columnspan = 2)
+        lbl_prompt_rest_ID.grid(
+            row = 0,
+            column = 0,
+            padx = 10,
+            pady = (20,0),
+            sticky = "w"
+        )
+        lbl_rest_ID.grid(
+            row = 0,
+            column = 1,
+            padx = (0, 20),
+            pady = (20,0),
+            sticky = "w"
+        )
+        lbl_rest_name.grid(
+            row = 1,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_name.grid(
+            row = 1,
+            column = 1,
+            padx = (0, 20),
+            sticky = "w"
+        )
+        lbl_rest_address.grid(
+            row = 2,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_address.grid(
+            row = 2,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_address.grid(
+            row = 2,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_address.grid(
+            row = 2,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_city.grid(
+            row = 3,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_city.grid(
+            row = 3,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_state.grid(
+            row = 4,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_state.grid(
+            row = 4,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_zip.grid(
+            row = 5,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_zip.grid(
+            row = 5,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_vege.grid(
+            row = 6,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_vege.grid(
+            row = 6,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_vegan.grid(
+            row = 7,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_vegan.grid(
+            row = 7,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_gluten.grid(
+            row = 8,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_gluten.grid(
+            row = 8,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_menu.grid(
+            row = 9,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_menu.grid(
+            row = 9,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_hours.grid(
+            row = 10,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_hours.grid(
+            row = 10,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_rest_description.grid(
+            row = 11,
+            column = 0,
+            padx = 10,
+            sticky = "w"
+        )
+        self.entry_rest_description.grid(
+            row = 11,
+            column = 1,
+            sticky = "w"
+        )
+        btn_save_rest.grid(
+            row = 12,
+            column = 0,
+            columnspan = 2,
+            pady = 20
+        )
+        btn_admin_close.grid(
+            row = 13,
+            column = 0,
+            columnspan = 2,
+            pady = 10
+        )
 
     def _menu_place_widget(self):
         lbl_prompt_name = Label(
@@ -559,8 +663,8 @@ Enter your username, password and click Sign up",
         lbl_name = Label(
             font = "None 11",
             text = self.controller.menu_info[0],
-            bg = "#0080c0",
-            width = 30
+            bg = "light gray",
+            width = 26
         )
         lbl_prompt_address = Label(
             text = "Restaurant address:",
@@ -571,8 +675,8 @@ Enter your username, password and click Sign up",
         lbl_address = Label(
             font = "None 11",
             text = self.controller.menu_info[1],
-            bg = "#0080c0",
-            width = 30
+            bg = "light gray",
+            width = 26
         )
         lbl_menu = Label(
             text = "Menu file:",
@@ -591,6 +695,7 @@ Enter your username, password and click Sign up",
             text = "Save",
             font = "None 11",
             bg = "light gray",
+            width = 10
             #command = call a function in controller to write menu entry
             #to menu data
         )
@@ -598,17 +703,56 @@ Enter your username, password and click Sign up",
             text = "Close",
             font = "None 11",
             bg = "light gray",
+            width = 10,
             command = self.controller.back_to_admin_view
         )
-        lbl_prompt_name.grid(row = 0, column = 0, sticky = "w")
-        lbl_name.grid(row = 0, column = 1, sticky = "w")
-        Label(bg = "#0080c0", width = 10).grid(row = 0, column = 2)
-        lbl_prompt_address.grid(row = 1, column = 0, sticky = "w")
-        lbl_address.grid(row = 1, column = 1, sticky = "w")
-        lbl_menu.grid(row = 2, column = 0, sticky = "w")
-        self.entry_menu.grid(row = 2, column = 1, sticky = "w")
-        btn_save_menu.grid(row = 3, column = 0)
-        btn_close_menu.grid(row = 3, column = 1, columnspan = 2)
+        lbl_prompt_name.grid(
+            row = 0,
+            column = 0,
+            padx = 5,
+            pady = (10,0),
+            sticky = "w"
+        )
+        lbl_name.grid(
+            row = 0,
+            column = 1,
+            pady = (10,0),
+            sticky = "w"
+        )
+        lbl_prompt_address.grid(
+            row = 1,
+            column = 0,
+            padx = 5,
+            sticky = "w"
+        )
+        lbl_address.grid(
+            row = 1,
+            column = 1,
+            sticky = "w"
+        )
+        lbl_menu.grid(
+            row = 2,
+            column = 0,
+            padx = 5,
+            sticky = "w"
+        )
+        self.entry_menu.grid(
+            row = 2,
+            column = 1,
+            sticky = "w"
+        )
+        btn_save_menu.grid(
+            row = 3,
+            column = 0,
+            columnspan = 2,
+            pady = 10
+        )
+        btn_close_menu.grid(
+            row = 4,
+            column = 0,
+            columnspan = 2,
+            pady = 10
+        )
         
     def init_welcome_window(self):
         self.window.title("Where Should We Eat Tonight?")
@@ -617,26 +761,12 @@ Enter your username, password and click Sign up",
         self.window.resizable(0, 0)
         self._welcome_place_widget()
 
-    def admin_login_window(self):
-        self.window.title("Administrator")
+    def login_window(self):
+        self.window.title("Log in")
         self.window.configure(background="#0080c0")
-        self.window.geometry("330x200")
+        self.window.geometry("340x270")
         self.window.resizable(0, 0)
-        self._admin_login_place_widget()
-
-    def owner_login_window(self):
-        self.window.title("Bussiness Owner")
-        self.window.configure(background="#0080c0")
-        self.window.geometry("330x250")
-        self.window.resizable(0, 0)
-        self._owner_login_place_widget()
-
-    def user_login_window(self):
-        self.window.title("Customer")
-        self.window.configure(background="#0080c0")
-        self.window.geometry("330x250")
-        self.window.resizable(0, 0)
-        self._user_login_place_widget()
+        self._login_place_widget()
 
     def admin_window(self):
         self.window.title("Admin View")
@@ -644,43 +774,46 @@ Enter your username, password and click Sign up",
         self.window.geometry("600x500")
         self.window.resizable(0, 0)
         self._admin_place_widget()
-
-    def restaurant_info_window(self):
+        
+    def restaurant_info_window(self, rest_info_list):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
-        self.window.geometry("580x600")
+        self.window.geometry("630x650")
         self.window.resizable(0, 0)
-        self._rest_info_place_widget()
+        self._rest_info_place_widget(rest_info_list)
 
     def menu_window(self):
         self.window.title("Menu Update")
         self.window.configure(background="#0080c0")
-        self.window.geometry("400x200")
+        self.window.geometry("400x250")
         self.window.resizable(0, 0)
         self._menu_place_widget()
-
+'''
 #---------These lines below are used for examining my code------------
 class Controller:
     def __init__(self, root):
         self.view = View(root, self)
 
     def welcome_screen_next_button(self):
-        choice = self.view.var.get()
-        print(f"From Welcome Screen - var = {choice}")
         self.view.clear_frame()
-        if choice == 1:
-            self.view.admin_login_window()
-        elif choice == 2:
-            self.view.owner_login_window()
-        elif choice == 3:
-            self.view.user_login_window()
+        self.view.login_window()
 
+    def login_btn(self):
+        choice = self.view.user_type_var.get()
+        print(f"From Welcome Screen - var = {choice}")
+        if choice == 1:
+            self.validate_admin_login()
+        elif choice == 2:
+            self.validate_owner_login()
+        elif choice == 3:
+            self.validate_user_login()
+        
     def validate_admin_login(self):
-        name = self.view.entry_admin_user_name.get()
+        name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
         print(f"<<< {name} - {password} >>>")
         if name != "python" and password != "python":
-            self.view.lbl_admin_login_fail[
+            self.view.lbl_login_fail[
                 "text"
             ] = 'username and password is "python"'
         else:
@@ -688,24 +821,23 @@ class Controller:
             self.view.admin_window()
         
     def validate_owner_login(self):
-        name = self.view.entry_owner_user_name.get()
-        password = self.view.entry_owner_password.get()
+        name = self.view.entry_user_name.get()
+        password = self.view.entry_password.get()
         print(f"<<< {name} - {password} >>>")
         if name != "python" and password != "python":
-            self.view.lbl_owner_login_fail[
+            self.view.lbl_login_fail[
                 "text"
-            ] = 'username and password is "python" \n \
-                New customer? Click on Sign up'
+            ] = 'username and password is "python"'
         else:
             self.view.clear_frame()
             self.view.owner_window()
 
     def validate_user_login(self):
-        name = self.view.entry_user_user_name.get()
-        password = self.view.entry_user_password.get()
+        name = self.view.entry_user_name.get()
+        password = self.view.entry_password.get()
         print(f"<<< {name} - {password} >>>")
         if name != "python" and password != "python":
-            self.view.lbl_user_login_fail[
+            self.view.lbl_login_fail[
                 "text"
             ] = 'username and password is "python" \n \
                 New customer? Click on Sign up'
@@ -718,24 +850,20 @@ class Controller:
         self.view.init_welcome_window()
 
     def save_new_user(self):
-        name = self.view.entry_user_user_name.get()
-        password = self.view.entry_user_password.get()
-        #write name and password into user table
-
-    def save_new_owner(self):
-        name = self.view.entry_owner_user_name.get()
-        password = self.view.entry_owner_password.get()
-        #write name and password into owner table
+        name = self.view.entry_user_name.get()
+        password = self.view.entry_password.get()
+        #call a function to write name and password into suitable table 
+        #corresponding to the value of user_type_var
 
     def admin_view_more_info_btn(self):
-        self.view.clear_frame()
-        self.view.restaurant_info_window()
-
-    def restaurant_info(self) -> list:
-        a_list = list()
+        # rest_info_list = rest_info_function()
+        # below is just a test------
+        rest_info_list = list()
         for each in range(12):
-            a_list.append(each)
-        return a_list
+            rest_info_list.append(each)
+        #---------------------------
+        self.view.clear_frame()
+        self.view.restaurant_info_window(rest_info_list)
 
     def back_to_admin_view(self):
         self.view.clear_frame()
@@ -755,3 +883,4 @@ if __name__ == "__main__":
     root.mainloop()
     print("Program Ended")
 #-----------Those lines above are used for examining my code------------
+'''
