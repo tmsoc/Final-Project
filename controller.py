@@ -108,6 +108,13 @@ class Controller:
     # Can make it a class variable and just access it, or have the
     # button pass the id # to the method.
     def import_rest_menu(self, rest_id: int) -> None:
+        """
+        Imports a pdf restaurant menu for the
+        given restaurant id number. The user
+        is prompted with a dialog window to select
+        the file to import. The file is then copied
+        to the SavedMenus directory.
+        """
         # gets the file path of the menu to import
         import_file = self._get_user_file_open_path()
         # verifies that the file is a pdf
