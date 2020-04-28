@@ -101,19 +101,24 @@ class Controller:
     # Can make it a class variable and just access it, or have the
     # button pass the id # to the method.
     def import_rest_menu(self, rest_id: int) -> None:
+        # gets the file path of the menu to import
         import_file = self._get_user_file_open_path()
+        # verifies that the file is a pdf
         if self._verify_pdf(import_file):
+            # generates a new filename for the menu
             new_file_name = self._build_menu_file_name(import_file, rest_id)
+            # builds the path to import the menu to
             save_to_path = Path(
                 self._working_directory / self.MENU_DIRECTORY / new_file_name
             )
+            # imports copies the menu
             self.import_file(import_file, save_to_path)
+            # stores the changes to the model
             self._update_restaurant_menu(rest_id, new_file_name)
             self.display_message_window("Import Complete")
+        # if the selected file is not a pdf, prompt the user
         elif import_file.is_file():
             self.display_error_message("Invalid file type. Must be a .pdf")
-        else:
-            print("Cancel")
 
     def validate_owner_login(self, username: str, password: str) -> bool:
 
