@@ -1,17 +1,18 @@
-from restDataAccess import Model
 from tkinter import filedialog
 from tkinter import messagebox  # Should be in the view
 from pathlib import Path
 
-# from view import View
+from restDataAccess import Model
+from view import View
 
 
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
 
-    def __init__(self, model):
+    def __init__(self, model, view):
         self.model = model
+        self.view = View(view, self)
         self._working_directory = self._get_working_directory()
 
     @staticmethod
@@ -83,6 +84,23 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
+    @staticmethod
+    def _validate_login(accounts: list, name: str, password: str) -> int:
+        """
+        Validates if the given name and password
+        match a stored username and password. 
+        RETURNS: The account key if match, else
+        returns -1.
+        """
+        if accounts != None and len(accounts) != 0:
+            for user in accounts:
+                if user["name"].lower() == name.lower():
+                    if user["password"] == password:
+                        return user["key"]
+                    else:
+                        return -1
+        return -1
+
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
         """
         Updates a restaurant menu information
@@ -96,6 +114,81 @@ class Controller:
             self.model.update_restaurant(rest_id, {"menu": False})
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
+
+    # ----------------- VIEW CONTROLS -----------------------
+
+    def begin(self) -> None:
+        self.view.begin()
+
+    def dispaly_admin_window(self):
+        self.view.clear_frame()
+        self.view.admin_window()
+        restaurants = self.restaurant_info()
+        for index, rest in enumerate(restaurants):
+            self.view.view1_list_box.insert(index, rest)
+
+    def welcome_screen_next_button(self):
+        if self.view.user_type_var.get() != 0:
+            self.view.clear_frame()
+            self.view.login_window()
+
+    def login_button_press(self):
+        invalid_entry = True
+        name = self.view.entry_user_name.get()
+        password = self.view.entry_password.get()
+        if name != "" and password != "":
+            user_type = self.view.user_type_var.get()
+            if user_type == 1:
+                accounts = self.model.admin_select_all()
+            elif user_type == 2:
+                accounts = self.model.owners_select_all()
+            else:
+                accounts = self.model.user_select_all()
+
+            account_key = self._validate_login(accounts, name, password)
+            if account_key != -1:
+                invalid_entry = False
+                self.view.clear_frame()
+                if user_type == 1:
+                    self.dispaly_admin_window()
+                elif user_type == 2:
+                    # self.view.owner_window()
+                    pass
+                else:
+                    # self.view.user_window()
+                    pass
+        if invalid_entry:
+            self.view.lbl_login_fail["text"] = "Invalid username or password"
+
+    def save_new_user(self):
+        pass
+
+    def admin_view_more_info_btn(self):
+        # rest_info_list = rest_info_function()
+        # below is just a test------
+        rest_info_list = list()
+        for each in range(12):
+            rest_info_list.append(each)
+        # ---------------------------
+        self.view.clear_frame()
+        self.view.restaurant_info_window(rest_info_list)
+
+    def request_menu(self):
+        # call a function in model to select a restaurant, return a list with menu
+        self.menu_info = list()
+        for each in range(3):
+            self.menu_info.append(each)
+        self.view.clear_frame()
+        self.view.menu_window()
+
+    def back_to_welcome(self):
+        self.view.clear_frame()
+        self.view.init_welcome_window()
+
+    def back_to_admin_view(self):
+        self.dispaly_admin_window()
+
+    # ---------------- END OF VIEW CONTROLS ---------------------
 
     def delete_rest_menu(self, rest_id: int) -> None:
         """
@@ -185,19 +278,18 @@ class Controller:
         return owner_id_list
 
     def restaurant_info(self) -> list:
-
         restaurant_list = self.model.restaurants_select_all()
         restaurant_info_list = []
 
         for restaurant in restaurant_list:
             restaurant_info_str = (
-                restaurant["id"]
+                str(restaurant["id"])
                 + " - "
                 + restaurant["name"]
                 + " : "
                 + restaurant["address"]
                 + restaurant["city"]
-                + restaurant["zip"]
+                + restaurant["zip_code"]
             )
             restaurant_info_list.append(restaurant_info_str)
 

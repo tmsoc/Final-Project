@@ -1,11 +1,16 @@
+from tkinter import *
+
 from restDataAccess import Model
 from controller import Controller
+from view import View
 
 
 def main():
     model = Model()
-    controller = Controller(model)
-
+    root = Tk()
+    controller = Controller(model, root)
+    controller.begin()
+    root.mainloop()
     model.close_connection()
 
 

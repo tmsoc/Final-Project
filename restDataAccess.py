@@ -13,46 +13,68 @@ class Model:
 
     Methods
     -------
-    insert_restaurant(param: dict)
+    restaurant_insert(param: dict)
         Inserts a new restaurant into the restaurant table
     
-    insert_review(param: dict)
+    review_insert(param: dict)
         Inserts a new review into the reviews table
     
-    insert_menu(id: int, path: str)
+    menu_insert(id: int, path: str)
     
-    insert_user(name: str, password: str, birth_date, zip_code=None)
+    user_insert(name: str, password: str, birth_date, zip_code=None)
 
-    insert_owner(self, name: str, password: str, restaurants: str)
+    owner_insert(self, name: str, password: str, restaurants: str)
 
-    select_rest_by_id(id: int)
+    rest_select_by_id(id: int)
         Returns a dictionary item for the restaurant with the given id
     
-    select_review_by_id(id: int)
+    review_select_by_id(id: int)
         Returns a list of all reviews with the given restaurant id
     
-    select_menu(id: int)
-        Returns a menu record for the given restaurant id
+    admin_select()
+        Returns a admin records
 
-    select_user_by_name(name: str)
+    admin_select_all()
+        Returns all stored admin records
+
+    menu_select(id: int)
+        Returns a menu record for the given restaurant id
     
-    select_rest_by_attribute(param: dict, sort_by=None, assending=True)
+    user_select_by_name(name: str)
+        Returns a user record with the given name
+    
+    user_select_by_key(key: int)
+        Returns a user with the given key
+    
+    owner_select_by_name(name: str)
+        Returns an owner record with the given name
+    
+    owner_select_by_key(key: int)
+        Returns an owner record with the given key
+
+    admin_select_by_key(key: int):
+        Returns an admin record with the given key.
+    
+    rest_select_by_attribute(param: dict, sort_by=None, assending=True)
         Returns a list of restaurants based on the given attributes 
         in dictionary form 
     
-    select_all_rest_data()
+    restaurants_select_all()
         Return all stored restaurant data from the restaurants table.
     
-    select_all_reviews()
+    reviews_select_all()
         Return a list of all review records
 
-    select_all_menus()
+    menus_select_all()
         Returns a list of all menu records
     
-    select_all_users()
+    user_select_all()
         Returns a list of all user records
     
-    select_rest_names(assending=True)
+    owners_select_all()
+        Returns a list of all owner records
+    
+    rest_select_names(assending=True)
         Returns a list of all restaurants names with their given id number
 
     update_restaurant(id: int, param: dict)
@@ -68,8 +90,11 @@ class Model:
     delete_menu(key: int)
         Deletes the menu record with the given identification key
     
-    delete_user(self, key: int)
+    delete_user(key: int)
         Deletes the user record with the given identification key
+    
+    delete_owner(key: int)
+        Deletes the owner record with the given identification key
 
     close_connection()
         Closes the database connection
@@ -220,6 +245,20 @@ class Model:
         else:
             return record
 
+    def _select_by_key(self, table: str, key: int):
+        """
+        Selects a record by name field
+        """
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {table} WHERE key=:key", {"key": key},
+            )
+        record = self.cur.fetchone()
+        if record != None:
+            return dict(record)
+        else:
+            return record
+
     def _delete_by_key(self, table: str, key: int) -> bool:
         """
         Deletes the record with the given key
@@ -319,9 +358,17 @@ class Model:
         return self._sql_to_dict(reviews)
 
     def admin_select(self) -> dict:
+        """Returns all admin records"""
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.ADMIN_TABLE}")
         return dict(self.cur.fetchone())
+
+    def admin_select_all(self) -> list:
+        """
+        Returns a list of all admin records.
+        Returns None if no records are found.
+        """
+        return self._select_all_table_records(self.ADMIN_TABLE)
 
     def menu_select(self, id: int) -> str:
         """
@@ -345,11 +392,29 @@ class Model:
         """
         return self._select_by_name(self.USER_TABLE, name)
 
+    def user_select_by_key(self, key: int):
+        """
+        Returns a user record with the given key.
+        """
+        return self._select_by_key(self.USER_TABLE, key)
+
     def owner_select_by_name(self, name: str):
         """
         Returns an owner record with the given name.
         """
         return self._select_by_name(self.OWNER_TABLE, name)
+
+    def owner_select_by_key(self, key: int):
+        """
+        Returns a owner record with the given key.
+        """
+        return self._select_by_key(self.OWNER_TABLE, key)
+
+    def admin_select_by_key(self, key: int):
+        """
+        Returns an admin record with the given key.
+        """
+        return self._select_by_key(self.ADMIN_TABLE, key)
 
     def rest_select_by_attribute(
         self, param: dict, sort_by=None, assending=True
@@ -396,7 +461,7 @@ class Model:
         """
         return self._select_all_table_records(self.MENUS_TABLE)
 
-    def usert_select_all(self) -> list:
+    def user_select_all(self) -> list:
         """
         Returns a list of all user records.
         Returns None if no records are found.
