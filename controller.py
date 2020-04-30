@@ -10,6 +10,10 @@ class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
 
+    admin_key = None
+    user_key = None
+    owner_key = None
+
     def __init__(self, model, view):
         self.model = model
         self.view = View(view, self)
@@ -84,6 +88,10 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
+    @staticmethod
+    def _validate_login() -> bool:
+        pass
+
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
         """
         Updates a restaurant menu information
@@ -112,6 +120,12 @@ class Controller:
         user_type = self.view.user_type_var.get()
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
+        if user_type == 1:
+            accounts = self.model.admin_select()
+        if user_type == 2:
+            pass
+        if user_type == 3:
+            pass
 
         # if choice == 1:
         #     self.validate_admin_login()
