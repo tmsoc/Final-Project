@@ -1,0 +1,31 @@
+ADMIN:
+What if I do not have an account as an admin?
+You will need a pass key to create an account to ensure that you are authorized to use the system.
+How do I see all information on a given restaurant?
+You are able to filter your search through the  restaurant name owner ID or menu. Once you have filtered your search select the restaurant to see all the information in the database on it.
+How do I edit/update information?
+Simply select the restaurant you would like to edit and at the bottom of the page, there will be an update button that will allow you to update/edit/deleted the information on the screen.
+How can I edit reviews?
+Unfortunately for customer authenticity, you are unable to edit the reviews, however you may delete them. Just go to the edit tab and there will be an option underneath the reviews that allows you to delete selected reviews.
+
+OWNER:
+How can I include my restaurant as an owner?
+Select the create an account button after selecting owner view. Input all the data asked for including name email and restaurant info. Please also upload pdf file for your restaurant menu. You will then be allowed to create a username and ID and be given restaurant ID. Please store this information.
+How do I edit my restaurant information?
+Once logged in at the bottom of the page, there will be an option to edit the information on the screen.
+Can I see reviews?
+Yes you may see your reviews at the bottom of the page.
+Can I edit my reviews?
+Unfortunately that is the only information that you as an owner do not have access to edit. This is to ensure that guests are able to view your restaurant in the full with customer authenticity.
+
+GUEST:
+What is this for?
+This app helps those with dietary restriction to locate a restaurant that fit their needs.
+How do I search?
+At the top right corner of the page, there is filter option that allows you to filter restaurants based on selected dietary options.
+How do I get more information on a restaurant?
+Simply select the restaurant you would like to view and another screen will show you all the collected information on the restaurant.
+What information do I have access to?
+You are able to view a restaurant name address hours reviews dietary restrictions and menu.
+Can I leave a review of the restaurant?
+Yes. Select the restaurant you would like to review and at the bottom of the page there will be option to write a review
