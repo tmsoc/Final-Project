@@ -10,10 +10,6 @@ class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
 
-    admin_key = None
-    user_key = None
-    owner_key = None
-
     def __init__(self, model, view):
         self.model = model
         self.view = View(view, self)
@@ -89,8 +85,21 @@ class Controller:
                     data = in_file.read(size_to_read)
 
     @staticmethod
-    def _validate_login() -> bool:
-        pass
+    def _validate_login(accounts: list, name: str, password: str) -> int:
+        """
+        Validates if the given name and password
+        match a stored username and password. 
+        RETURNS: The account key if match, else
+        returns -1.
+        """
+        if accounts != None and len(accounts) != 0:
+            for user in accounts:
+                if user["name"].lower() == name.lower():
+                    if user["password"] == password:
+                        return user["key"]
+                    else:
+                        return -1
+        return -1
 
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
         """
@@ -117,25 +126,61 @@ class Controller:
             self.view.login_window()
 
     def login_button_press(self):
-        user_type = self.view.user_type_var.get()
+        invalid_entry = True
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
-        if user_type == 1:
-            accounts = self.model.admin_select()
-        if user_type == 2:
-            pass
-        if user_type == 3:
-            pass
+        if name != "" and password != "":
+            user_type = self.view.user_type_var.get()
+            if user_type == 1:
+                accounts = self.model.admin_select_all()
+            elif user_type == 2:
+                accounts = self.model.owners_select_all()
+            else:
+                accounts = self.model.user_select_all()
 
-        # if choice == 1:
-        #     self.validate_admin_login()
-        # elif choice == 2:
-        #     self.validate_owner_login()
-        # elif choice == 3:
-        #     self.validate_user_login()
+            account_key = self._validate_login(accounts, name, password)
+            if account_key != -1:
+                invalid_entry = False
+                self.view.clear_frame()
+                if user_type == 1:
+                    self.view.admin_window()
+                elif user_type == 2:
+                    # self.view.owner_window()
+                    pass
+                else:
+                    # self.view.user_window()
+                    pass
+        if invalid_entry:
+            self.view.lbl_login_fail["text"] = "Invalid username or password"
 
     def save_new_user(self):
         pass
+
+    def admin_view_more_info_btn(self):
+        # rest_info_list = rest_info_function()
+        # below is just a test------
+        rest_info_list = list()
+        for each in range(12):
+            rest_info_list.append(each)
+        # ---------------------------
+        self.view.clear_frame()
+        self.view.restaurant_info_window(rest_info_list)
+
+    def request_menu(self):
+        # call a function in model to select a restaurant, return a list with menu
+        self.menu_info = list()
+        for each in range(3):
+            self.menu_info.append(each)
+        self.view.clear_frame()
+        self.view.menu_window()
+
+    def back_to_welcome(self):
+        self.view.clear_frame()
+        self.view.init_welcome_window()
+
+    def back_to_admin_view(self):
+        self.view.clear_frame()
+        self.view.admin_window()
 
     # ---------------- END OF VIEW CONTROLS ---------------------
 

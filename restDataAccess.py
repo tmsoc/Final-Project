@@ -34,6 +34,9 @@ class Model:
     admin_select()
         Returns a admin records
 
+    admin_select_all()
+        Returns all stored admin records
+
     menu_select(id: int)
         Returns a menu record for the given restaurant id
     
@@ -41,10 +44,16 @@ class Model:
         Returns a user record with the given name
     
     user_select_by_key(key: int)
-
+        Returns a user with the given key
     
     owner_select_by_name(name: str)
         Returns an owner record with the given name
+    
+    owner_select_by_key(key: int)
+        Returns an owner record with the given key
+
+    admin_select_by_key(key: int):
+        Returns an admin record with the given key.
     
     rest_select_by_attribute(param: dict, sort_by=None, assending=True)
         Returns a list of restaurants based on the given attributes 
@@ -353,6 +362,13 @@ class Model:
         with self.connection:
             self.cur.execute(f"SELECT * FROM {self.ADMIN_TABLE}")
         return dict(self.cur.fetchone())
+
+    def admin_select_all(self) -> list:
+        """
+        Returns a list of all admin records.
+        Returns None if no records are found.
+        """
+        return self._select_all_table_records(self.ADMIN_TABLE)
 
     def menu_select(self, id: int) -> str:
         """
