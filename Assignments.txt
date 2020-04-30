@@ -8,6 +8,19 @@
 * LINH
 1) start 3 views
 
+(start in linh_branch)
+git checkout master
+git pull
+git chickout linh_branch
+git merge master
+
+
+(To push it into github branch)
+(start in linh_branch)
+git add -A
+git commit -m "your message"
+git push
+
 
 
 * TONY
