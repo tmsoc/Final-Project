@@ -5,3 +5,7 @@ __pycache__
 TempFiles
 .vscode
 ResourceFolder
+
+# Files
+rest_hub_data.db
+database_build.py
