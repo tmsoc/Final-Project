@@ -1,17 +1,18 @@
-from restDataAccess import Model
 from tkinter import filedialog
 from tkinter import messagebox  # Should be in the view
 from pathlib import Path
 
-# from view import View
+from restDataAccess import Model
+from view import View
 
 
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
 
-    def __init__(self, model):
+    def __init__(self, model, view):
         self.model = model
+        self.view = View(view, self)
         self._working_directory = self._get_working_directory()
 
     @staticmethod
@@ -96,6 +97,33 @@ class Controller:
             self.model.update_restaurant(rest_id, {"menu": False})
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
+
+    # ----------------- VIEW CONTROLS -----------------------
+
+    def begin(self) -> None:
+        self.view.begin()
+
+    def welcome_screen_next_button(self):
+        if self.view.user_type_var.get() != 0:
+            self.view.clear_frame()
+            self.view.login_window()
+
+    def login_button_press(self):
+        user_type = self.view.user_type_var.get()
+        name = self.view.entry_user_name.get()
+        password = self.view.entry_password.get()
+
+        # if choice == 1:
+        #     self.validate_admin_login()
+        # elif choice == 2:
+        #     self.validate_owner_login()
+        # elif choice == 3:
+        #     self.validate_user_login()
+
+    def save_new_user(self):
+        pass
+
+    # ---------------- END OF VIEW CONTROLS ---------------------
 
     def delete_rest_menu(self, rest_id: int) -> None:
         """
