@@ -120,6 +120,13 @@ class Controller:
     def begin(self) -> None:
         self.view.begin()
 
+    def dispaly_admin_window(self):
+        self.view.clear_frame()
+        self.view.admin_window()
+        restaurants = self.restaurant_info()
+        for index, rest in enumerate(restaurants):
+            self.view.view1_list_box.insert(index, rest)
+
     def welcome_screen_next_button(self):
         if self.view.user_type_var.get() != 0:
             self.view.clear_frame()
@@ -143,7 +150,7 @@ class Controller:
                 invalid_entry = False
                 self.view.clear_frame()
                 if user_type == 1:
-                    self.view.admin_window()
+                    self.dispaly_admin_window()
                 elif user_type == 2:
                     # self.view.owner_window()
                     pass
@@ -179,8 +186,7 @@ class Controller:
         self.view.init_welcome_window()
 
     def back_to_admin_view(self):
-        self.view.clear_frame()
-        self.view.admin_window()
+        self.dispaly_admin_window()
 
     # ---------------- END OF VIEW CONTROLS ---------------------
 
@@ -272,19 +278,18 @@ class Controller:
         return owner_id_list
 
     def restaurant_info(self) -> list:
-
         restaurant_list = self.model.restaurants_select_all()
         restaurant_info_list = []
 
         for restaurant in restaurant_list:
             restaurant_info_str = (
-                restaurant["id"]
+                str(restaurant["id"])
                 + " - "
                 + restaurant["name"]
                 + " : "
                 + restaurant["address"]
                 + restaurant["city"]
-                + restaurant["zip"]
+                + restaurant["zip_code"]
             )
             restaurant_info_list.append(restaurant_info_str)
 

@@ -49,6 +49,7 @@ class View:
             text="Admin",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=5,
             variable=self.user_type_var,
@@ -59,6 +60,7 @@ class View:
             text="Restaurant Owner",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=14,
             variable=self.user_type_var,
@@ -69,6 +71,7 @@ class View:
             text="Customer",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=8,
             variable=self.user_type_var,
@@ -140,7 +143,7 @@ Enter your username, password and click Sign up",
         self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
 
     def _admin_place_widget(self):
-        self.admin_view_var = IntVar()
+        self.admin_view_var = IntVar(value=1)
         lbl_title = Label(
             bg="#0080c0", text="Administrative Function", font=self.font1
         )
@@ -149,6 +152,7 @@ Enter your username, password and click Sign up",
             text="Owner ID",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=8,
             variable=self.admin_view_var,
@@ -159,6 +163,7 @@ Enter your username, password and click Sign up",
             text="Restaurant Info",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=15,
             variable=self.admin_view_var,
@@ -169,6 +174,7 @@ Enter your username, password and click Sign up",
             text="Menus",
             font="none 12",
             bg="#0080c0",
+            activebackground="#0080c0",
             height=2,
             width=5,
             variable=self.admin_view_var,
@@ -186,9 +192,32 @@ Enter your username, password and click Sign up",
             # listbox
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
-        self.view1_list_box = Listbox(
-            self.window, font="none 12", height=12, selectmode="SINGLE"
+
+        # -----------------start of tony code---------------------
+
+        table_frame = Frame(self.window, relief="groove")
+        table_frame.grid(
+            row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we",
         )
+
+        text_scrollbar = Scrollbar(table_frame)
+        self.view1_list_box = Listbox(
+            table_frame,
+            yscrollcommand=text_scrollbar.set,
+            font="none 12",
+            height=12,
+            width=40,
+            selectmode="SINGLE",
+        )
+        text_scrollbar.config(command=self.view1_list_box.yview)
+
+        self.view1_list_box.grid(row=0, column=0, sticky=(N, S, W, E))
+        text_scrollbar.grid(row=0, column=1, sticky=(N, S, E))
+
+        # -------------------end of tony code----------------------
+        # self.view1_list_box = Listbox(
+        #     self.window, font="none 12", height=12, selectmode="SINGLE"
+        # )
         btn_info = Button(
             self.window,
             text="More info",
@@ -218,9 +247,6 @@ Enter your username, password and click Sign up",
             width=10,
             command=self.controller.back_to_welcome,
         )
-        # ---DELETE ME---
-        self.view1_list_box.insert(1, "Press exit to loop")
-        # ---DELETE ME---
 
         lbl_title.grid(row=0, columnspan=4, pady=10)
         radiobtn_id.grid(row=1, column=0, padx=(50, 10), pady=10)
@@ -229,9 +255,9 @@ Enter your username, password and click Sign up",
         btn_list.grid(
             row=1, column=3, padx=(10, 50), pady=10,
         )
-        self.view1_list_box.grid(
-            row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we"
-        )
+        # self.view1_list_box.grid(
+        #     row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we"
+        # )
         btn_info.grid(row=2, column=3, padx=(10, 50))
         btn_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
