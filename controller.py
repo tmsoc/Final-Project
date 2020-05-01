@@ -88,7 +88,7 @@ class Controller:
     def _validate_login(accounts: list, name: str, password: str) -> int:
         """
         Validates if the given name and password
-        match a stored username and password. 
+        match a stored username and password.
         RETURNS: The account key if match, else
         returns -1.
         """
@@ -120,14 +120,18 @@ class Controller:
     def begin(self) -> None:
         self.view.begin()
 
-    def dispaly_admin_window(self):
+    def display_user_window(self):
+        self.view.clear_frame()
+        self.view.user_window()
+
+    def display_admin_window(self):
         self.view.clear_frame()
         self.view.admin_window()
         restaurants = self.restaurant_info()
         for index, rest in enumerate(restaurants):
             self.view.view1_list_box.insert(index, rest)
 
-    def welcome_screen_next_button(self):
+    def welcome_screen_next_button_press(self):
         if self.view.user_type_var.get() != 0:
             self.view.clear_frame()
             self.view.login_window()
@@ -138,9 +142,9 @@ class Controller:
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            if user_type == 1:
+            if user_type == "admin":
                 accounts = self.model.admin_select_all()
-            elif user_type == 2:
+            elif user_type == "owner":
                 accounts = self.model.owners_select_all()
             else:
                 accounts = self.model.user_select_all()
@@ -149,42 +153,135 @@ class Controller:
             if account_key != -1:
                 invalid_entry = False
                 self.view.clear_frame()
-                if user_type == 1:
-                    self.dispaly_admin_window()
-                elif user_type == 2:
+                if user_type == "admin":
+                    self.display_admin_window()
+                elif user_type == "owner":
                     # self.view.owner_window()
                     pass
                 else:
-                    # self.view.user_window()
-                    pass
+                    self.view.user_window()
+
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
     def save_new_user(self):
+        """
+        this method retrieves the texts from entry_user_name and
+        entry_password, write these new information to account db
+        """
         pass
 
-    def admin_view_more_info_btn(self):
-        # rest_info_list = rest_info_function()
-        # below is just a test------
+    def btn_list_press(self):
+        """
+        returns a list corresponding to the value of admin_view_var, then
+        output the information in the listbox
+        if user clicks on radio button ID -> admin_view_var = "id"
+           -> show in the list box:
+           (line1) owner ID 1 - rest name 1 - rest address 1
+           (line2) owner ID 1 - rest name 1 - rest address 2
+           (line3) owner ID 1 - rest name 2 - rest address 1
+           (line4) owner ID 2 - rest name 1 - rest address 1
+           ...
+        if user clicks on radio button Restaurant info
+        -> admin_view_var = "rest info"
+            -> show in the list box:
+            (line1) rest ID - rest name - rest address
+            ...
+        if user clicks on radio button Menus -> admin_view_var = "menus"
+            -> show in the list box:
+           (line1) rest name 1 - rest address 1 - menu name 1
+           ...
+        """
+        pass
+
+    def admin_view_more_info_press(self):
+        """
+        This method creates a list that has all information of one restaurant
+        that user clicks on in the listbox, then opens a new window through
+        admin_view_restaurant_info_window() in view class, passes this list into
+        the method
+
         rest_info_list = list()
-        for each in range(12):
-            rest_info_list.append(each)
-        # ---------------------------
+        ....
         self.view.clear_frame()
-        self.view.restaurant_info_window(rest_info_list)
+        self.view.admin_view_restaurant_info_window(rest_info_list)
+        """
+        pass
+
+    def user_view_more_info_press(self):
+        """
+        This method creates a list that has all information of one restaurant
+        that user clicks on in the listbox, then opens a new window through
+        user_view_restaurant_info_window() in view class, passes this list into
+        the method
+
+        rest_info_list = list()
+        ....
+        self.view.clear_frame()
+        self.view.user_view_restaurant_info_window(rest_info_list)
+        """
+        pass
 
     def request_menu(self):
-        # call a function in model to select a restaurant, return a list with menu
+        """
+        calls a function in model to select a restaurant, returns a list of
+        rest name, address and menu; pass the list to menu_window() in view
+        to open menu window
         self.menu_info = list()
-        for each in range(3):
-            self.menu_info.append(each)
+        ...
         self.view.clear_frame()
         self.view.menu_window()
+        """
+        pass
+
+    def save_rest_press(self):
+        """
+        writes the texts in entries into db
+        """
+        pass
+
+    def save_menu_press(self):
+        """
+        updates the new menu file anme in entry_menu into menu db
+        """
+        pass
+
+    def rest_search(self):
+        """
+        search rest based on entry_rest_name then insert the list of
+        restaurants which have the same name into the listbox
+        """
+        search = self.view.entry_rest_name.get()
+        restaurant_names = self.model.restaurants_select_all()
+
+        exists = None
+
+        for restaurant in restaurant_names:
+            if search.lower() == restaurant['name'].lower():
+                exists =(
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                    + " : "
+                    + restaurant["address"]
+                    + restaurant["city"]
+                    + restaurant["zip_code"])
+
+        results = exists
+        print(results)
+        return results
+
+
+    def rest_filter(self):
+        """
+        based on values of 3 variables veggie_var, van_var and gluten_free_var
+        create a list of rest ID, rest name and address, display in the listbox
+        """
+        pass
 
     def back_to_welcome(self):
         self.view.clear_frame()
         self.view.init_welcome_window()
-
 
     def back_to_admin_view(self):
         self.dispaly_admin_window()
@@ -278,25 +375,20 @@ class Controller:
 
         return owner_id_list
 
-#   def restaurant_info(self) -> list:
-#       restaurant_list = self.model.restaurants_select_all()
-#       restaurant_info_list = []
+    def restaurant_info(self) -> list:
+        restaurant_list = self.model.restaurants_select_all()
+        restaurant_info_list = []
 
-#       for restaurant in restaurant_list:
-#
-#           restaurant_info_str = restaurant['id'] + ' - ' + restaurant['name'] +
-#           ' : '  + restaurant['address'] + restaurant['city'] + restaurant['zip_code']
-#
-#           restaurant_info_str = (
-#               str(restaurant["id"])
-#               + " - "
-#               + restaurant["name"]
-#               + " : "
-#               + restaurant["address"]
-#               + restaurant["city"]
-#               + restaurant["zip_code"]
-#           )
-#
+        for restaurant in restaurant_list:
+            restaurant_info_str = (
+                str(restaurant["id"])
+                + " - "
+                + restaurant["name"]
+                + " : "
+                + restaurant["address"]
+                + restaurant["city"]
+                + restaurant["zip_code"]
+            )
             restaurant_info_list.append(restaurant_info_str)
 
         return restaurant_info_list
@@ -310,28 +402,4 @@ class Controller:
     #         menu_info_str = restaurant["menu"] # This line gives an error
     #         menu_info_list.append(menu_info_str)
 
-
-    #    return menu_info_list
-
-   #def more_info(): -> list
-
-   #    list_box.get()
-
-   #    all_info = self.model.restaurants_select_all()
-
-   #    everything_format_str = 'Restuaruant ID: ' + restaurant['id'] '\n' +
-   #    'Restuarant name: ' + restaurant['name'] + '\n' +
-   #    'Address: '  + restaurant['address'] + '\n' +
-   #    'City: ' + restaurant['city'] + '\n' +
-   #    'Zip: ' + restaurant['zip_code'] + '\n' +
-   #    'Vegetarian: ' + restaurant['vegetarian'] + '\n' +
-   #    'Vegan:' + restaurant['vegan'] + '\n' +
-   #    'Gluten: ' + restaurant['gluten'] + '\n' +
-   #    'Menu: ' + restaurant['menu'] + '\n' +
-   #    'Hours: ' + restaurant['hours'] + '\n' +
-   #    'Description' + restaurant['description']
-
-   #    return everything_format_str
-#
-   ##     return menu_info_list
-
+    #     return menu_info_list
