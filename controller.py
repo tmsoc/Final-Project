@@ -277,7 +277,23 @@ class Controller:
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
         """
-        pass
+        param_dict = {}
+        veggie = self.view.veggie_var.get()
+        if veggie == 1:
+            param_dict['vegetarian'] = True
+
+        vegan = self.view.vegan_var.get()
+        if vegan == 1:
+            param_dict['vegan'] = True
+
+        gluten = self.view.gluten_free_var.get()
+        if gluten == 1:
+            param_dict['gluten'] = True
+
+        attribute = self.model.rest_select_by_attribute(param_dict)
+
+        print (attribute)
+        return attribute
 
     def back_to_welcome(self):
         self.view.clear_frame()
