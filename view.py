@@ -272,13 +272,13 @@ Enter your username, password and click Sign up",
         btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
 
-    def _rest_info_place_widget(self, rest_info_list):
+    def _rest_info_place_widget(self):
 
         lbl_prompt_rest_ID = Label(
             text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
         )
-        lbl_rest_ID = Label(
-            text=rest_info_list[0], font="None 11", bg="light gray", width=50
+        self.lbl_rest_ID = Label(
+            text="", font="None 11", bg="light gray", width=50
         )
         lbl_rest_name = Label(
             text="Restaurant name:", font="None 11", bg="#0080c0", height=2
@@ -304,10 +304,10 @@ Enter your username, password and click Sign up",
             text="Zip code:", font="None 11", bg="#0080c0", height=2
         )
         self.entry_rest_zip = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_vege = Label(
+        lbl_rest_veg = Label(
             text="Vegetarian:", font="None 11", bg="#0080c0", height=2
         )
-        self.entry_rest_vege = Entry(font="None 11", bg="white", width=57)
+        self.entry_rest_veg = Entry(font="None 11", bg="white", width=57)
         lbl_rest_vegan = Label(
             text="Vegan:", font="None 11", bg="#0080c0", height=2
         )
@@ -342,22 +342,11 @@ Enter your username, password and click Sign up",
             bg="light gray",
             command=self.controller.back_to_admin_view,
         )
-        self.entry_rest_name.insert(0, str(rest_info_list[1]))
-        self.entry_rest_address.insert(0, str(rest_info_list[2]))
-        self.entry_rest_city.insert(0, str(rest_info_list[3]))
-        self.entry_rest_state.insert(0, str(rest_info_list[4]))
-        self.entry_rest_zip.insert(0, str(rest_info_list[5]))
-        self.entry_rest_vege.insert(0, str(rest_info_list[6]))
-        self.entry_rest_vegan.insert(0, str(rest_info_list[7]))
-        self.entry_rest_gluten.insert(0, str(rest_info_list[8]))
-        self.entry_rest_menu.insert(0, str(rest_info_list[9]))
-        self.entry_rest_hours.insert(0, str(rest_info_list[10]))
-        self.entry_rest_description.insert(0, str(rest_info_list[11]))
 
         lbl_prompt_rest_ID.grid(
             row=0, column=0, padx=10, pady=(20, 0), sticky="w"
         )
-        lbl_rest_ID.grid(
+        self.lbl_rest_ID.grid(
             row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
         )
         lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
@@ -372,8 +361,8 @@ Enter your username, password and click Sign up",
         self.entry_rest_state.grid(row=4, column=1, sticky="w")
         lbl_rest_zip.grid(row=5, column=0, padx=10, sticky="w")
         self.entry_rest_zip.grid(row=5, column=1, sticky="w")
-        lbl_rest_vege.grid(row=6, column=0, padx=10, sticky="w")
-        self.entry_rest_vege.grid(row=6, column=1, sticky="w")
+        lbl_rest_veg.grid(row=6, column=0, padx=10, sticky="w")
+        self.entry_rest_veg.grid(row=6, column=1, sticky="w")
         lbl_rest_vegan.grid(row=7, column=0, padx=10, sticky="w")
         self.entry_rest_vegan.grid(row=7, column=1, sticky="w")
         lbl_rest_gluten.grid(row=8, column=0, padx=10, sticky="w")
@@ -563,12 +552,13 @@ Enter your username, password and click Sign up",
         self.window.resizable(0, 0)
         self._admin_place_widget()
 
-    def restaurant_info_window(self, rest_info_list):
+    # def restaurant_info_window(self, rest_info_list):
+    def restaurant_info_window(self):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x650")
         self.window.resizable(0, 0)
-        self._rest_info_place_widget(rest_info_list)
+        self._rest_info_place_widget()
 
     def menu_window(self):
         self.window.title("Menu Update")

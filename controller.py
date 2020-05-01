@@ -124,6 +124,29 @@ class Controller:
             accounts = self.model.user_select_all()
         return accounts
 
+    def _get_list_box_selection(self, list_box) -> str:
+        rest_info = None
+        index = list_box.curselection()
+        if len(index) != 0:
+            rest_info = list_box.get(index[0])
+        return rest_info
+
+    def _populate_admin_details_table(self, restaurant: dict) -> None:
+        self.view.lbl_rest_ID["text"] = restaurant["id"]
+        self.view.entry_rest_name.insert(0, restaurant["name"])
+        self.view.entry_rest_address.insert(0, restaurant["address"])
+        self.view.entry_rest_city.insert(0, restaurant["city"])
+        self.view.entry_rest_state.insert(0, restaurant["state"])
+        self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
+        self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
+        self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
+        self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
+        self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
+        self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
+        self.view.entry_rest_description.insert(
+            0, str(restaurant["description"])
+        )
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:
@@ -200,18 +223,14 @@ class Controller:
         pass
 
     def admin_view_more_info_press(self):
-        """
-        This method creates a list that has all information of one restaurant
-        that user clicks on in the listbox, then opens a new window through
-        admin_view_restaurant_info_window() in view class, passes this list into
-        the method
-        
-        rest_info_list = list()
-        ....
-        self.view.clear_frame()
-        self.view.admin_view_restaurant_info_window(rest_info_list)
-        """
-        pass
+        list_box = self.view.view1_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = selected_rest.split(" ")[0]
+            rest_info = self.model.rest_select_by_id(rest_id)
+            self.view.clear_frame()
+            self.view.restaurant_info_window()
+            self._populate_admin_details_table(rest_info)
 
     def user_view_more_info_press(self):
         """
