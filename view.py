@@ -43,7 +43,7 @@ class View:
             height=2,
             width=40,
         )
-        self.user_type_var = IntVar(value=1)
+        self.user_type_var = StringVar()
         radiobtn_admin = Radiobutton(
             top_frame,
             text="Admin",
@@ -53,7 +53,7 @@ class View:
             height=2,
             width=5,
             variable=self.user_type_var,
-            value=1,
+            value="admin",
         )
         radiobtn_owner = Radiobutton(
             top_frame,
@@ -64,9 +64,9 @@ class View:
             height=2,
             width=14,
             variable=self.user_type_var,
-            value=2,
+            value="owner",
         )
-        radiobtn_guest = Radiobutton(
+        radiobtn_user = Radiobutton(
             top_frame,
             text="Customer",
             font="none 12",
@@ -75,24 +75,24 @@ class View:
             height=2,
             width=8,
             variable=self.user_type_var,
-            value=3,
+            value="user",
         )
-        next_btn = Button(
+        btn_next = Button(
             top_frame,
             text="Next",
             font="none 12",
             bg="light gray",
             height=1,
             width=8,
-            command=self.controller.welcome_screen_next_button,
+            command=self.controller.welcome_screen_next_button_press,
         )
         welcome_label.place(x=80, y=50)
         welcome_option_label.place(x=65, y=150)
         top_frame.place(x=3, y=3)
         radiobtn_admin.place(x=150, y=180)
         radiobtn_owner.place(x=150, y=210)
-        radiobtn_guest.place(x=150, y=240)
-        next_btn.place(x=210, y=320)
+        radiobtn_user.place(x=150, y=240)
+        btn_next.place(x=210, y=320)
 
     def _login_place_widget(self):
         lbl_user_name = Label(
@@ -105,11 +105,17 @@ class View:
         self.entry_password = Entry(
             self.window, font="None 11", show="*", width=15,
         )
-        login_button = Button(
+        btn_login = Button(
             self.window,
             text="Log in",
             font="none 11",
             command=self.controller.login_button_press,
+        )
+        btn_cancel = Button(
+            self.window,
+            text="Cancel",
+            font="none 11",
+            command=self.controller.back_to_welcome,
         )
         lbl_signup_prompt = Label(
             self.window,
@@ -119,11 +125,11 @@ Enter your username, password and click Sign up",
             bg="#0080c0",
             height=2,
         )
-        signup_button = Button(
+        btn_signup = Button(
             self.window,
             text="Sign up",
             font="none 11",
-            # command=self.controller.save_new_user,
+            command=self.controller.save_new_user,
         )
         self.lbl_login_fail = Label(
             self.window, bg="#0080c0", font="None 11", fg="red",
@@ -135,15 +141,16 @@ Enter your username, password and click Sign up",
         self.entry_password.grid(
             row=1, column=1, sticky="we", padx=(0, 50), pady=(10, 30)
         )
-        login_button.grid(row=2, column=0, columnspan=2)
+        btn_login.grid(row=2, column=0, columnspan=2)
         lbl_signup_prompt.grid(
             row=3, column=0, columnspan=2, pady=10, sticky="w"
         )
-        signup_button.grid(row=4, column=0, columnspan=2)
+        btn_signup.grid(row=4, column=0, columnspan=2, pady = 5)
         self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
+        btn_cancel.grid(row=9, column=0, columnspan=2, pady = 5)
 
     def _admin_place_widget(self):
-        self.admin_view_var = IntVar(value=1)
+        self.admin_view_var = StringVar()
         lbl_title = Label(
             bg="#0080c0", text="Administrative Function", font=self.font1
         )
@@ -156,7 +163,7 @@ Enter your username, password and click Sign up",
             height=2,
             width=8,
             variable=self.admin_view_var,
-            value=1,
+            value="id",
         )
         radiobtn_info = Radiobutton(
             self.window,
@@ -167,7 +174,7 @@ Enter your username, password and click Sign up",
             height=2,
             width=15,
             variable=self.admin_view_var,
-            value=2,
+            value="rest info",
         )
         radiobtn_menu = Radiobutton(
             self.window,
@@ -178,7 +185,7 @@ Enter your username, password and click Sign up",
             height=2,
             width=5,
             variable=self.admin_view_var,
-            value=3,
+            value="menus",
         )
         btn_list = Button(
             self.window,
@@ -187,9 +194,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            # command = a function in controller to return a list corresponding
-            # to the value of admin_view_var, then output the information in the
-            # listbox
+            command = self.controller.btn_list_press
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
 
@@ -225,17 +230,15 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            command=self.controller.admin_view_more_info_btn,
+            command=self.controller.admin_view_more_info_press,
         )
-        btn_update = Button(
+        btn_menu_update = Button(
             self.window,
             text="Menu Update",
             font="none 12",
             bg="light grey",
             height=1,
             width=12,
-            # command = a function in controller to return a list of selected
-            # restaurant name, address, and its menu, then open a menu window
             command=self.controller.request_menu,
         )
         btn_exit = Button(
@@ -259,7 +262,7 @@ Enter your username, password and click Sign up",
         #     row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we"
         # )
         btn_info.grid(row=2, column=3, padx=(10, 50))
-        btn_update.grid(row=3, column=0, columnspan=3, pady=30)
+        btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
 
     def _rest_info_place_widget(self, rest_info_list):
@@ -324,8 +327,7 @@ Enter your username, password and click Sign up",
             text="Save",
             font="None 11",
             bg="light gray",
-            # command = call a function in controller to write these entries
-            # to data
+            command = self.controller.save_rest_press
         )
         btn_admin_close = Button(
             text="Close",
@@ -407,9 +409,8 @@ Enter your username, password and click Sign up",
             text="Save",
             font="None 11",
             bg="light gray",
-            width=10
-            # command = call a function in controller to write menu entry
-            # to menu data
+            width=10,
+            command = self.controller.save_menu_press
         )
         btn_close_menu = Button(
             text="Close",
@@ -428,7 +429,8 @@ Enter your username, password and click Sign up",
         btn_close_menu.grid(row=4, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        self.veggie_var = IntVar(value=0)
+        self.veggie_var = StringVar(value=0) 
+        # With Check button, value = 0 means unchosen, 1 means chosen
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)
         lbl_title = Label(
@@ -445,8 +447,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            # command = rest_search -> list : search based on entry_rest_name
-            # then Controller will insert the list into the listbox
+            command = self.controller.rest_search
         )
         table_frame = Frame(self.window, relief="groove")
         text_scrollbar = Scrollbar(table_frame)
@@ -466,7 +467,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            command=self.controller.user_view_more_info_btn,
+            command=self.controller.user_view_more_info_press,
         )
         checkbtn_veggie = Checkbutton(
             self.window,
@@ -505,8 +506,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            # command = rest_filter(veggie, vegan, gluten_free) -> list
-            # then Controller will insert the list into the listbox
+            command = self.controller.rest_filter
         )
         btn_exit = Button(
             self.window,
@@ -545,7 +545,7 @@ Enter your username, password and click Sign up",
     def login_window(self):
         self.window.title("Log in")
         self.window.configure(background="#0080c0")
-        self.window.geometry("340x270")
+        self.window.geometry("340x340")
         self.window.resizable(0, 0)
         self._login_place_widget()
 
@@ -576,3 +576,4 @@ Enter your username, password and click Sign up",
         self.window.geometry("600x500")
         self.window.resizable(0, 0)
         self._user_place_widget()
+
