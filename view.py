@@ -429,7 +429,7 @@ Enter your username, password and click Sign up",
         btn_close_menu.grid(row=4, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        self.veggie_var = StringVar(value=0)
+        self.veggie_var = IntVar(value=0)
         # With Check button, value = 0 means unchosen, 1 means chosen
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)
