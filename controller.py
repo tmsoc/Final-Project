@@ -262,11 +262,13 @@ class Controller:
         search = self.view.entry_rest_name.get()
         restaurant_names = self.model.restaurants_select_all()
 
+        not_valid = True
         exists = None
 
         for restaurant in restaurant_names:
             if (search.lower() == restaurant['name'].lower() or
                     search == str(restaurant['id'])):
+                not_valid = False
                 exists = (
                     str(restaurant["id"])
                     + " - "
@@ -276,12 +278,13 @@ class Controller:
                     + restaurant["city"]
                     + restaurant["zip_code"])
                 restaurant_list.append(exists)
+        if not_valid:
+            restaurant_list = ['No search results found']
 
         results = restaurant_list
 
         for index, rest in enumerate(results):
             self.view.view3_list_box.insert(index, rest)
-
 
     def rest_filter(self):
         """
