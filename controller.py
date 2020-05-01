@@ -115,6 +115,113 @@ class Controller:
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
 
+    def _get_passwords(self, account_type: str) -> list:
+        if account_type == "admin":
+            accounts = self.model.admin_select_all()
+        elif account_type == "owner":
+            accounts = self.model.owners_select_all()
+        else:
+            accounts = self.model.user_select_all()
+        return accounts
+
+    def _get_list_box_selection(self, list_box) -> str:
+        rest_info = None
+        index = list_box.curselection()
+        if len(index) != 0:
+            rest_info = list_box.get(index[0])
+        return rest_info
+
+    def _populate_admin_details_table(self, restaurant: dict) -> None:
+        self.view.lbl_rest_ID["text"] = restaurant["id"]
+        self.view.entry_rest_name.insert(0, restaurant["name"])
+        self.view.entry_rest_address.insert(0, restaurant["address"])
+        self.view.entry_rest_city.insert(0, restaurant["city"])
+        self.view.entry_rest_state.insert(0, restaurant["state"])
+        self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
+        self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
+        self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
+        self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
+        self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
+        self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
+        self.view.entry_rest_description.insert(
+            0, str(restaurant["description"])
+        )
+
+    def _build_dietary_options(self, restaurant):
+        if (
+            restaurant["vegetarian"] != True
+            and restaurant["vegan"] != True
+            and restaurant["gluten"] != True
+        ):
+            dietary_options = "No dietary options available"
+        else:
+            dietary_options_list = []
+            if restaurant["vegetarian"] == True:
+                dietary_options_list.append("Vegetarian")
+            if restaurant["vegan"] == True:
+                dietary_options_list.append("Vegan")
+            if restaurant["gluten"] == True:
+                dietary_options_list.append("Gluten")
+            dietary_options = ", ".join(dietary_options_list)
+        return dietary_options
+
+    def _get_average_review(self, rest_id: int) -> str:
+        reviews = self.model.review_select_by_id(rest_id)
+        if reviews != None:
+            sum = 0
+            for review in reviews:
+                sum += review["rating"]
+            average = sum / len(reviews)
+            return str(round(average * 2) / 2)
+        else:
+            return "No Reviews"
+
+    def _insert_rest_gen_info(self, rest, display):
+        INDENT = "\n    "
+        rest_address = (
+            f"""{INDENT}{rest['address']}"""
+            f"""{INDENT}{rest['city']}, """
+            f"""{rest['state']} {rest['zip_code']}"""
+        )
+        dietary_options = self._build_dietary_options(rest)
+        menu = "Yes" if rest["menu"] else "No"
+        avg_review = self._get_average_review(rest["id"])
+
+        self.view.set_display_write_enable(display)
+        display.insert("end", rest["name"], "HEADER")
+        display.insert("end", f"{INDENT}{rest['description']}", "INFORMATION")
+        display.insert("end", rest_address, "INFORMATION")
+        display.insert("end", f"{INDENT}Rating: {avg_review}", "INFORMATION")
+        display.insert("end", f"\n{INDENT}Dietary Options:", "INFO_BOLD")
+        display.insert("end", f"{INDENT}{dietary_options}", "INFORMATION")
+        display.insert("end", f"\n{INDENT}Menu on File:", "INFO_BOLD")
+        display.insert("end", f"{INDENT}{menu}", "INFORMATION")
+        self.view.set_display_read_only(display)
+
+    def _insert_rest_reviews(self, rest_id, display):
+        reviews = self.model.review_select_by_id(rest_id)
+        self.view.set_display_write_enable(display)
+        if reviews != None:
+            for review in reviews:
+                display.insert("end", f"{review['user']}  ", "HEADER")
+                display.insert(
+                    "end", f"{review['date_time']}\n", "INFORMATION"
+                )
+                display.insert(
+                    "end", f"{review['rating']} Stars\n", "INFO_BOLD"
+                )
+                display.insert("end", f"{review['review']}\n\n", "INFORMATION")
+        else:
+            display.insert("end", "  No Reviews on file", "INFORMATION")
+        self.view.set_display_read_only(display)
+
+    def _insert_rest_info(self, rest) -> None:
+        rest_info_win = self.view.rest_info_dispaly
+        rest_review_win = self.view.rest_reviews_display
+
+        self._insert_rest_gen_info(rest, rest_info_win)
+        self._insert_rest_reviews(rest["id"], rest_review_win)
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:
@@ -124,6 +231,10 @@ class Controller:
         self.view.clear_frame()
         self.view.user_window()
 
+    def display_login_window(self):
+        self.view.clear_frame()
+        self.view.login_window()
+
     def display_admin_window(self):
         self.view.clear_frame()
         self.view.admin_window()
@@ -131,24 +242,23 @@ class Controller:
         for index, rest in enumerate(restaurants):
             self.view.view1_list_box.insert(index, rest)
 
-    def welcome_screen_next_button_press(self):
-        if self.view.user_type_var.get() != 0:
-            self.view.clear_frame()
-            self.view.login_window()
+    def display_rest_detail_window(self):
+        self.view.clear_frame()
+        self.view.rest_detail_Window()
 
-    def login_button_press(self):
+    def welcome_screen_next_button_press(self):
+        if self.view.user_type_var.get() == "user":
+            self.display_user_window()
+        else:
+            self.display_login_window()
+
+    def btn_login_press(self):
         invalid_entry = True
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            if user_type == "admin":
-                accounts = self.model.admin_select_all()
-            elif user_type == "owner":
-                accounts = self.model.owners_select_all()
-            else:
-                accounts = self.model.user_select_all()
-
+            accounts = self._get_passwords(user_type)
             account_key = self._validate_login(accounts, name, password)
             if account_key != -1:
                 invalid_entry = False
@@ -158,9 +268,6 @@ class Controller:
                 elif user_type == "owner":
                     # self.view.owner_window()
                     pass
-                else:
-                    self.view.user_window()
-
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
@@ -195,18 +302,14 @@ class Controller:
         pass
 
     def admin_view_more_info_press(self):
-        """
-        This method creates a list that has all information of one restaurant
-        that user clicks on in the listbox, then opens a new window through
-        admin_view_restaurant_info_window() in view class, passes this list into
-        the method
-        
-        rest_info_list = list()
-        ....
-        self.view.clear_frame()
-        self.view.admin_view_restaurant_info_window(rest_info_list)
-        """
-        pass
+        list_box = self.view.view1_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = selected_rest.split(" ")[0]
+            rest_info = self.model.rest_select_by_id(rest_id)
+            self.view.clear_frame()
+            self.view.restaurant_info_window()
+            self._populate_admin_details_table(rest_info)
 
     def user_view_more_info_press(self):
         """
@@ -220,7 +323,13 @@ class Controller:
         self.view.clear_frame()
         self.view.user_view_restaurant_info_window(rest_info_list)
         """
-        pass
+        list_box = self.view.view3_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = selected_rest.split(" ")[0]
+            rest_info = self.model.rest_select_by_id(rest_id)
+            self.display_rest_detail_window()
+            self._insert_rest_info(rest_info)
 
     def request_menu(self):
         """
@@ -251,12 +360,91 @@ class Controller:
         search rest based on entry_rest_name then insert the list of 
         restaurants which have the same name into the listbox
         """
-        pass
+        restaurant_list = []
+
+        search = self.view.entry_rest_name.get()
+        restaurant_names = self.model.restaurants_select_all()
+
+        not_valid = True
+        exists = None
+
+        for restaurant in restaurant_names:
+            if search.lower() == restaurant["name"].lower() or search == str(
+                restaurant["id"]
+            ):
+                not_valid = False
+                exists = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                    + " : "
+                    + restaurant["address"]
+                    + f", {restaurant['city']}, "
+                    + restaurant["zip_code"]
+                )
+                restaurant_list.append(exists)
+        if not_valid:
+            restaurant_list = ["No search results found"]
+
+        results = restaurant_list
+
+        self.view.view3_list_box.delete(0, "end")
+        for index, rest in enumerate(results):
+            self.view.view3_list_box.insert(index, rest)
 
     def rest_filter(self):
         """
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
+        """
+        restaurant_list = []
+        param_dict = {}
+
+        veggie = self.view.veggie_var.get()
+        vegan = self.view.vegan_var.get()
+        gluten = self.view.gluten_free_var.get()
+
+        if veggie == 0 and vegan == 0 and gluten == 0:
+            all_rest_list = self.restaurant_info()
+            self.view.view3_list_box.delete(0, "end")
+            for index, rest in enumerate(all_rest_list):
+                self.view.view3_list_box.insert(index, rest)
+        else:
+            if veggie == 1:
+                param_dict["vegetarian"] = True
+            if vegan == 1:
+                param_dict["vegan"] = True
+            if gluten == 1:
+                param_dict["gluten"] = True
+
+            if self.model.rest_select_by_attribute(param_dict) is not None:
+                attribute = self.model.rest_select_by_attribute(param_dict)
+
+                for restaurant in attribute:
+                    format = (
+                        str(restaurant["id"])
+                        + " - "
+                        + restaurant["name"]
+                        + " : "
+                        + restaurant["address"]
+                        + f", {restaurant['city']}, "
+                        + restaurant["zip_code"]
+                    )
+                    restaurant_list.append(format)
+            self.view.view3_list_box.delete(0, "end")
+            for index, rest in enumerate(restaurant_list):
+                self.view.view3_list_box.insert(index, rest)
+
+    def exit_button_press(self):
+        """
+        Exit button in restaurant details window
+        Gets back to users window
+        """
+        self.display_user_window()
+
+    def menu_open_button_press(self):
+        """
+        Opens a menu stored in the menus folder.
         """
         pass
 
@@ -367,7 +555,7 @@ class Controller:
                 + restaurant["name"]
                 + " : "
                 + restaurant["address"]
-                + restaurant["city"]
+                + f", {restaurant['city']}, "
                 + restaurant["zip_code"]
             )
             restaurant_info_list.append(restaurant_info_str)
