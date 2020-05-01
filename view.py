@@ -98,21 +98,22 @@ class View:
         lbl_user_name = Label(
             self.window, text="Username:", font="None 11", bg="#0080c0",
         )
-        self.entry_user_name = Entry(self.window, font="None 11", width=15,)
+        self.entry_user_name = Entry(self.window, font="None 11", width=25,)
         lbl_password = Label(
             self.window, text="Password:", font="None 11", bg="#0080c0"
         )
         self.entry_password = Entry(
-            self.window, font="None 11", show="*", width=15,
+            self.window, font="None 11", show="*", width=25,
         )
+        button_frame = Frame(self.window, bg="#0080c0")
         btn_login = Button(
-            self.window,
+            button_frame,
             text="Log in",
             font="none 11",
             command=self.controller.login_button_press,
         )
         btn_cancel = Button(
-            self.window,
+            button_frame,
             text="Cancel",
             font="none 11",
             command=self.controller.back_to_welcome,
@@ -135,19 +136,25 @@ Enter your username, password and click Sign up",
             self.window, bg="#0080c0", font="None 11", fg="red",
         )
 
+        button_frame.grid(row=2, column=0, columnspan=3, sticky=(E, W))
         lbl_user_name.grid(row=0, column=0, sticky="w", padx=5, pady=(20, 10))
         self.entry_user_name.grid(row=0, column=1, sticky="we", padx=(0, 50))
         lbl_password.grid(row=1, column=0, sticky="w", padx=5, pady=(10, 30))
         self.entry_password.grid(
             row=1, column=1, sticky="we", padx=(0, 50), pady=(10, 30)
         )
-        btn_login.grid(row=2, column=0, columnspan=2)
+        # btn_login.grid(row=2, column=0, columnspan=2)
+        btn_login.grid(row=0, column=0, padx=70)
+        """
         lbl_signup_prompt.grid(
             row=3, column=0, columnspan=2, pady=10, sticky="w"
         )
         btn_signup.grid(row=4, column=0, columnspan=2, pady=5)
-        self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
-        btn_cancel.grid(row=9, column=0, columnspan=2, pady=5)
+        """
+        self.lbl_login_fail.grid(row=5, column=0, columnspan=2, pady=10)
+        # self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
+        btn_cancel.grid(row=0, column=1, padx=10, sticky=E)
+        # btn_cancel.grid(row=9, column=0, columnspan=2, pady=5)
 
     def _admin_place_widget(self):
         lbl_title = Label(
@@ -545,7 +552,7 @@ Enter your username, password and click Sign up",
     def login_window(self):
         self.window.title("Log in")
         self.window.configure(background="#0080c0")
-        self.window.geometry("340x340")
+        self.window.geometry("340x200")
         self.window.resizable(0, 0)
         self._login_place_widget()
 
