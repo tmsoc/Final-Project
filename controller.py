@@ -299,7 +299,7 @@ class Controller:
                     + restaurant["name"]
                     + " : "
                     + restaurant["address"]
-                    + restaurant["city"]
+                    + f", {restaurant['city']}, "
                     + restaurant["zip_code"]
                 )
                 restaurant_list.append(exists)
@@ -308,6 +308,7 @@ class Controller:
 
         results = restaurant_list
 
+        self.view.view3_list_box.delete(0, "end")
         for index, rest in enumerate(results):
             self.view.view3_list_box.insert(index, rest)
 
@@ -323,49 +324,43 @@ class Controller:
         vegan = self.view.vegan_var.get()
         gluten = self.view.gluten_free_var.get()
 
-        full_list = self.restaurant_info()
         if veggie == 0 and vegan == 0 and gluten == 0:
-            for index, rest in enumerate(full_list):
+            all_rest_list = self.restaurant_info()
+            self.view.view3_list_box.delete(0, "end")
+            for index, rest in enumerate(all_rest_list):
                 self.view.view3_list_box.insert(index, rest)
+        else:
+            if veggie == 1:
+                param_dict["vegetarian"] = True
+            if vegan == 1:
+                param_dict["vegan"] = True
+            if gluten == 1:
+                param_dict["gluten"] = True
 
-        veggie = self.view.veggie_var.get()
-        if veggie == 1:
-            param_dict["vegetarian"] = True
-        elif veggie == 0:
-            param_dict["vegetarian"] = None
+            if self.model.rest_select_by_attribute(param_dict) is not None:
+                attribute = self.model.rest_select_by_attribute(param_dict)
 
-        vegan = self.view.vegan_var.get()
-        if vegan == 1:
-            param_dict["vegan"] = True
-
-        gluten = self.view.gluten_free_var.get()
-        if gluten == 1:
-            param_dict["gluten"] = True
-
-        if self.model.rest_select_by_attribute(param_dict) is not None:
-            attribute = self.model.rest_select_by_attribute(param_dict)
-
-            for restaurant in attribute:
-
-                format = (
-                    str(restaurant["id"])
-                    + " - "
-                    + restaurant["name"]
-                    + " : "
-                    + restaurant["address"]
-                    + restaurant["city"]
-                    + restaurant["zip_code"]
-                )
-                restaurant_list.append(format)
-        for index, rest in enumerate(restaurant_list):
-            self.view.view3_list_box.insert(index, rest)
+                for restaurant in attribute:
+                    format = (
+                        str(restaurant["id"])
+                        + " - "
+                        + restaurant["name"]
+                        + " : "
+                        + restaurant["address"]
+                        + f", {restaurant['city']}, "
+                        + restaurant["zip_code"]
+                    )
+                    restaurant_list.append(format)
+            self.view.view3_list_box.delete(0, "end")
+            for index, rest in enumerate(restaurant_list):
+                self.view.view3_list_box.insert(index, rest)
 
     def exit_button_press(self):
         """
         Exit button in restaurant details window
         Gets back to users window
         """
-        pass
+        self.display_user_window()
 
     def menu_open_button_press(self):
         """
