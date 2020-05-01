@@ -147,6 +147,54 @@ class Controller:
             0, str(restaurant["description"])
         )
 
+    def _build_dietary_options(self, restaurant):
+        if (
+            restaurant["vegetarian"] != True
+            and restaurant["vegan"] != True
+            and restaurant["gluten"] != True
+        ):
+            dietary_options = "No dietary options available"
+        else:
+            dietary_options_list = []
+            if restaurant["vegetarian"] == True:
+                dietary_options_list.append("Vegetarian")
+            if restaurant["vegan"] == True:
+                dietary_options_list.append("Vegan")
+            if restaurant["gluten"] == True:
+                dietary_options_list.append("Gluten")
+            dietary_options = ", ".join(dietary_options_list)
+        return dietary_options
+
+    def _insert_rest_info(self, rest) -> None:
+        rest_info_win = self.view.rest_info_dispaly
+        rest_review_win = self.view.rest_reviews_display
+
+        INDENT = "\n    "
+        rest_address = (
+            f"""{INDENT}{rest['address']}"""
+            f"""{INDENT}{rest['city']}, """
+            f"""{rest['state']} {rest['zip_code']}"""
+        )
+        dietary_options = self._build_dietary_options(rest)
+        menu = "Yes" if rest["menu"] else "No"
+
+        self.view.set_display_write_enable(rest_info_win)
+        rest_info_win.insert("end", rest["name"], "HEADER")
+        rest_info_win.insert(
+            "end", f"{INDENT}{rest['description']}", "INFORMATION"
+        )
+        rest_info_win.insert("end", rest_address, "INFORMATION")
+        rest_info_win.insert(
+            "end", f"{INDENT}Rating: Need to code", "INFORMATION"
+        )
+        rest_info_win.insert("end", f"\n{INDENT}Dietary Options:", "INFO_BOLD")
+        rest_info_win.insert(
+            "end", f"{INDENT}{dietary_options}", "INFORMATION"
+        )
+        rest_info_win.insert("end", f"\n{INDENT}Menu on File:", "INFO_BOLD")
+        rest_info_win.insert("end", f"{INDENT}{menu}", "INFORMATION")
+        self.view.set_display_read_only(rest_info_win)
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:
@@ -248,8 +296,13 @@ class Controller:
         self.view.clear_frame()
         self.view.user_view_restaurant_info_window(rest_info_list)
         """
-        # get selected restaurant
-        self.display_rest_detail_window()
+        list_box = self.view.view3_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = selected_rest.split(" ")[0]
+            rest_info = self.model.rest_select_by_id(rest_id)
+            self.display_rest_detail_window()
+            self._insert_rest_info(rest_info)
 
     def request_menu(self):
         """

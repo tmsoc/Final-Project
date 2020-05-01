@@ -16,6 +16,16 @@ class View:
         for widget in self.window.winfo_children():
             widget.destroy()
 
+    @staticmethod
+    def set_display_read_only(display):
+        """Sets the display to ready only"""
+        display["state"] = "disabled"
+
+    @staticmethod
+    def set_display_write_enable(display):
+        """Sets the display to write enable"""
+        display["state"] = "normal"
+
     def _welcome_place_widget(self):
         top_frame = Frame(
             master=self.window,
@@ -536,20 +546,22 @@ class View:
         button_frame = Frame(self.window, background="#0080c0")
         reviews_frame = Frame(self.window, background="#0080c0")
         review_scrollbar = Scrollbar(reviews_frame)
-        rest_info_dispaly = Text(
+        self.rest_info_dispaly = Text(
             self.window,
             background="#66C5F4",
             width=TEXT_WIDTH,
             wrap=WORD,
             height=15,
+            state="disabled",
         )
-        rest_reviews_display = Text(
+        self.rest_reviews_display = Text(
             reviews_frame,
             yscrollcommand=review_scrollbar.set,
             background="#66C5F4",
             width=TEXT_WIDTH,
             wrap=WORD,
             height=20,
+            state="disabled",
         )
         exit_button = Button(
             button_frame,
@@ -568,24 +580,24 @@ class View:
         )
 
         review_scrollbar.grid(row=0, column=1, sticky=(N, S, E, W))
-        review_scrollbar.config(command=rest_reviews_display.yview)
+        review_scrollbar.config(command=self.rest_reviews_display.yview)
         reviews_frame.grid(row=2, column=0, padx=10)
 
         button_frame.grid(column=1, row=0, sticky=(N, S, E, W))
-        rest_info_dispaly.grid(
+        self.rest_info_dispaly.grid(
             column=0, row=0, rowspan=2, sticky=(N, S, E, W), padx=10, pady=10
         )
-        rest_reviews_display.grid(column=0, row=0, sticky=(N, S, E, W))
+        self.rest_reviews_display.grid(column=0, row=0, sticky=(N, S, E, W))
         exit_button.grid(column=0, row=0, sticky=(N, E, S), pady=10)
         menu_open_button.grid(column=0, row=1, sticky=(N, E))
 
-        rest_info_dispaly.tag_configure(
+        self.rest_info_dispaly.tag_configure(
             "HEADER", justify="left", font=("Helvetica 15 bold")
         )
-        rest_info_dispaly.tag_configure(
+        self.rest_info_dispaly.tag_configure(
             "INFORMATION", justify="left", font=("Helvetica  12")
         )
-        rest_info_dispaly.tag_configure(
+        self.rest_info_dispaly.tag_configure(
             "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
         )
 
