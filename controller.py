@@ -242,7 +242,7 @@ class Controller:
 
     def save_menu_press(self):
         """
-        updates the new menu file anme in entry_menu into menu db
+        updates the new menu file name in entry_menu into menu db
         """
         pass
 

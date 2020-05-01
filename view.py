@@ -43,7 +43,7 @@ class View:
             height=2,
             width=40,
         )
-        self.user_type_var = StringVar()
+        self.user_type_var = StringVar(value="user")
         radiobtn_admin = Radiobutton(
             top_frame,
             text="Admin",
@@ -145,15 +145,15 @@ Enter your username, password and click Sign up",
         lbl_signup_prompt.grid(
             row=3, column=0, columnspan=2, pady=10, sticky="w"
         )
-        btn_signup.grid(row=4, column=0, columnspan=2, pady = 5)
+        btn_signup.grid(row=4, column=0, columnspan=2, pady=5)
         self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
-        btn_cancel.grid(row=9, column=0, columnspan=2, pady = 5)
+        btn_cancel.grid(row=9, column=0, columnspan=2, pady=5)
 
     def _admin_place_widget(self):
-        self.admin_view_var = StringVar()
         lbl_title = Label(
             bg="#0080c0", text="Administrative Function", font=self.font1
         )
+        self.admin_view_var = StringVar(value="rest info")
         radiobtn_id = Radiobutton(
             self.window,
             text="Owner ID",
@@ -194,7 +194,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            command = self.controller.btn_list_press
+            command=self.controller.btn_list_press,
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
 
@@ -327,7 +327,7 @@ Enter your username, password and click Sign up",
             text="Save",
             font="None 11",
             bg="light gray",
-            command = self.controller.save_rest_press
+            command=self.controller.save_rest_press,
         )
         btn_admin_close = Button(
             text="Close",
@@ -410,7 +410,7 @@ Enter your username, password and click Sign up",
             font="None 11",
             bg="light gray",
             width=10,
-            command = self.controller.save_menu_press
+            command=self.controller.save_menu_press,
         )
         btn_close_menu = Button(
             text="Close",
@@ -429,7 +429,7 @@ Enter your username, password and click Sign up",
         btn_close_menu.grid(row=4, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        self.veggie_var = StringVar(value=0) 
+        self.veggie_var = StringVar(value=0)
         # With Check button, value = 0 means unchosen, 1 means chosen
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)
@@ -437,7 +437,7 @@ Enter your username, password and click Sign up",
             bg="#0080c0", text="Customer Function", font=self.font1
         )
         lbl_search_prompt = Label(
-            bg="#0080c0", text="Restaurant name:", font="None 11", height = 2
+            bg="#0080c0", text="Restaurant name:", font="None 11", height=2
         )
         self.entry_rest_name = Entry(font="None 11", bg="white", width=25)
         btn_search = Button(
@@ -447,7 +447,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            command = self.controller.rest_search
+            command=self.controller.rest_search,
         )
         table_frame = Frame(self.window, relief="groove")
         text_scrollbar = Scrollbar(table_frame)
@@ -506,7 +506,7 @@ Enter your username, password and click Sign up",
             bg="light grey",
             height=1,
             width=10,
-            command = self.controller.rest_filter
+            command=self.controller.rest_filter,
         )
         btn_exit = Button(
             self.window,
@@ -516,7 +516,7 @@ Enter your username, password and click Sign up",
             height=1,
             width=10,
             command=self.controller.back_to_welcome,
-        )        
+        )
         lbl_title.grid(row=0, columnspan=4, pady=10)
         lbl_search_prompt.grid(row=1, column=0, padx=10, pady=10)
         self.entry_rest_name.grid(
@@ -576,4 +576,3 @@ Enter your username, password and click Sign up",
         self.window.geometry("600x500")
         self.window.resizable(0, 0)
         self._user_place_widget()
-
