@@ -115,6 +115,15 @@ class Controller:
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
 
+    def _get_passwords(self, account_type: str) -> list:
+        if account_type == "admin":
+            accounts = self.model.admin_select_all()
+        elif account_type == "owner":
+            accounts = self.model.owners_select_all()
+        else:
+            accounts = self.model.user_select_all()
+        return accounts
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:
@@ -124,6 +133,10 @@ class Controller:
         self.view.clear_frame()
         self.view.user_window()
 
+    def display_login_window(self):
+        self.view.clear_frame()
+        self.view.login_window()
+
     def display_admin_window(self):
         self.view.clear_frame()
         self.view.admin_window()
@@ -132,23 +145,18 @@ class Controller:
             self.view.view1_list_box.insert(index, rest)
 
     def welcome_screen_next_button_press(self):
-        if self.view.user_type_var.get() != 0:
-            self.view.clear_frame()
-            self.view.login_window()
+        if self.view.user_type_var.get() == "user":
+            self.display_user_window()
+        else:
+            self.display_login_window()
 
-    def login_button_press(self):
+    def btn_login_press(self):
         invalid_entry = True
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            if user_type == "admin":
-                accounts = self.model.admin_select_all()
-            elif user_type == "owner":
-                accounts = self.model.owners_select_all()
-            else:
-                accounts = self.model.user_select_all()
-
+            accounts = self._get_passwords(user_type)
             account_key = self._validate_login(accounts, name, password)
             if account_key != -1:
                 invalid_entry = False
@@ -158,9 +166,6 @@ class Controller:
                 elif user_type == "owner":
                     # self.view.owner_window()
                     pass
-                else:
-                    self.view.user_window()
-
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
@@ -367,7 +372,7 @@ class Controller:
                 + restaurant["name"]
                 + " : "
                 + restaurant["address"]
-                + restaurant["city"]
+                + f", {restaurant['city']}, "
                 + restaurant["zip_code"]
             )
             restaurant_info_list.append(restaurant_info_str)

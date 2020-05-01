@@ -110,7 +110,7 @@ class View:
             button_frame,
             text="Log in",
             font="none 11",
-            command=self.controller.login_button_press,
+            command=self.controller.btn_login_press,
         )
         btn_cancel = Button(
             button_frame,
