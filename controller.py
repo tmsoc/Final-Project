@@ -290,7 +290,7 @@ class Controller:
         """
         restaurant_list = []
         param_dict = {}
-        
+
         veggie = self.view.veggie_var.get()
         vegan = self.view.vegan_var.get()
         gluten = self.view.gluten_free_var.get()
@@ -299,10 +299,12 @@ class Controller:
         if veggie == 0 and vegan == 0 and gluten == 0:
             for index, rest in enumerate(full_list):
                 self.view.view3_list_box.insert(index, rest)
-                
+
         veggie = self.view.veggie_var.get()
         if veggie == 1:
             param_dict['vegetarian'] = True
+        elif veggie == 0:
+            param_dict['vegetarian'] = None
 
         vegan = self.view.vegan_var.get()
         if vegan == 1:
@@ -312,33 +314,29 @@ class Controller:
         if gluten == 1:
             param_dict['gluten'] = True
 
-        attribute = self.model.rest_select_by_attribute(param_dict)
+        if self.model.rest_select_by_attribute(param_dict) is not None:
+            attribute = self.model.rest_select_by_attribute(param_dict)
 
-        for restaurant in attribute:
+            for restaurant in attribute:
 
-            format =(
-            str(restaurant['id'])
-            + " - "
-            + restaurant["name"]
-            + " : "
-            + restaurant["address"]
-            + restaurant["city"]
-            + restaurant["zip_code"]
-            + ' Vegetarian: '
-            + ('yes' if restaurant['vegetarian'] == True else 'no')
-            + ' Vegan: ' + ('yes' if restaurant['vegan'] == True else 'no')
-            + ' Gluten: ' + ('yes' if restaurant['gluten'] == True else 'no'))
-            restaurant_list.append(format)
-
+                format = (
+                    str(restaurant['id'])
+                    + " - "
+                    + restaurant["name"]
+                    + " : "
+                    + restaurant["address"]
+                    + restaurant["city"]
+                    + restaurant["zip_code"])
+                restaurant_list.append(format)
         for index, rest in enumerate(restaurant_list):
             self.view.view3_list_box.insert(index, rest)
-
-
+            
 
     def back_to_welcome(self):
         self.view.clear_frame()
         self.view.init_welcome_window()
 
+        
     def back_to_admin_view(self):
         self.dispaly_admin_window()
 
