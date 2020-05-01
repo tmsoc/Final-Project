@@ -115,6 +115,15 @@ class Controller:
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
 
+    def _get_passwords(self, account_type: str) -> list:
+        if account_type == "admin":
+            accounts = self.model.admin_select_all()
+        elif account_type == "owner":
+            accounts = self.model.owners_select_all()
+        else:
+            accounts = self.model.user_select_all()
+        return accounts
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:
@@ -124,6 +133,10 @@ class Controller:
         self.view.clear_frame()
         self.view.user_window()
 
+    def display_login_window(self):
+        self.view.clear_frame()
+        self.view.login_window()
+
     def display_admin_window(self):
         self.view.clear_frame()
         self.view.admin_window()
@@ -132,23 +145,18 @@ class Controller:
             self.view.view1_list_box.insert(index, rest)
 
     def welcome_screen_next_button_press(self):
-        if self.view.user_type_var.get() != 0:
-            self.view.clear_frame()
-            self.view.login_window()
+        if self.view.user_type_var.get() == "user":
+            self.display_user_window()
+        else:
+            self.display_login_window()
 
-    def login_button_press(self):
+    def btn_login_press(self):
         invalid_entry = True
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            if user_type == "admin":
-                accounts = self.model.admin_select_all()
-            elif user_type == "owner":
-                accounts = self.model.owners_select_all()
-            else:
-                accounts = self.model.user_select_all()
-
+            accounts = self._get_passwords(user_type)
             account_key = self._validate_login(accounts, name, password)
             if account_key != -1:
                 invalid_entry = False
@@ -158,9 +166,6 @@ class Controller:
                 elif user_type == "owner":
                     # self.view.owner_window()
                     pass
-                else:
-                    self.view.user_window()
-
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
@@ -242,15 +247,18 @@ class Controller:
 
     def save_menu_press(self):
         """
-        updates the new menu file anme in entry_menu into menu db
+        updates the new menu file name in entry_menu into menu db
         """
         pass
+
 
     def rest_search(self):
         """
         search rest based on entry_rest_name then insert the list of
         restaurants which have the same name into the listbox
         """
+        restaurant_list = []
+
         search = self.view.entry_rest_name.get()
         restaurant_names = self.model.restaurants_select_all()
 
@@ -266,10 +274,13 @@ class Controller:
                     + restaurant["address"]
                     + restaurant["city"]
                     + restaurant["zip_code"])
+                restaurant_list.append(exists)
 
-        results = exists
-        print(results)
-        return results
+        results = restaurant_list
+
+        for index, rest in enumerate(results):
+            self.view.view3_list_box.insert(index, rest)
+
 
 
     def rest_filter(self):
@@ -277,6 +288,7 @@ class Controller:
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
         """
+        restaurant_list = []
         param_dict = {}
         veggie = self.view.veggie_var.get()
         if veggie == 1:
@@ -292,8 +304,26 @@ class Controller:
 
         attribute = self.model.rest_select_by_attribute(param_dict)
 
-        print (attribute)
-        return attribute
+        for restaurant in attribute:
+
+            format =(
+            str(restaurant['id'])
+            + " - "
+            + restaurant["name"]
+            + " : "
+            + restaurant["address"]
+            + restaurant["city"]
+            + restaurant["zip_code"]
+            + ' Vegetarian: '
+            + ('yes' if restaurant['vegetarian'] == True else 'no')
+            + ' Vegan: ' + ('yes' if restaurant['vegan'] == True else 'no')
+            + ' Gluten: ' + ('yes' if restaurant['gluten'] == True else 'no'))
+            restaurant_list.append(format)
+
+        for index, rest in enumerate(restaurant_list):
+            self.view.view3_list_box.insert(index, rest)
+
+
 
     def back_to_welcome(self):
         self.view.clear_frame()
