@@ -265,8 +265,9 @@ class Controller:
         exists = None
 
         for restaurant in restaurant_names:
-            if search.lower() == restaurant['name'].lower():
-                exists =(
+            if (search.lower() == restaurant['name'].lower() or
+                    search == str(restaurant['id'])):
+                exists = (
                     str(restaurant["id"])
                     + " - "
                     + restaurant["name"]
@@ -280,7 +281,6 @@ class Controller:
 
         for index, rest in enumerate(results):
             self.view.view3_list_box.insert(index, rest)
-
 
 
     def rest_filter(self):
