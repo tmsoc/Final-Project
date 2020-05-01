@@ -165,10 +165,18 @@ class Controller:
             dietary_options = ", ".join(dietary_options_list)
         return dietary_options
 
-    def _insert_rest_info(self, rest) -> None:
-        rest_info_win = self.view.rest_info_dispaly
-        rest_review_win = self.view.rest_reviews_display
+    def _get_average_review(self, rest_id: int) -> str:
+        reviews = self.model.review_select_by_id(rest_id)
+        if reviews != None:
+            sum = 0
+            for review in reviews:
+                sum += review["rating"]
+            average = sum / len(reviews)
+            return str(round(average * 2) / 2)
+        else:
+            return "No Reviews"
 
+    def _insert_rest_gen_info(self, rest, display):
         INDENT = "\n    "
         rest_address = (
             f"""{INDENT}{rest['address']}"""
@@ -177,23 +185,42 @@ class Controller:
         )
         dietary_options = self._build_dietary_options(rest)
         menu = "Yes" if rest["menu"] else "No"
+        avg_review = self._get_average_review(rest["id"])
 
-        self.view.set_display_write_enable(rest_info_win)
-        rest_info_win.insert("end", rest["name"], "HEADER")
-        rest_info_win.insert(
-            "end", f"{INDENT}{rest['description']}", "INFORMATION"
-        )
-        rest_info_win.insert("end", rest_address, "INFORMATION")
-        rest_info_win.insert(
-            "end", f"{INDENT}Rating: Need to code", "INFORMATION"
-        )
-        rest_info_win.insert("end", f"\n{INDENT}Dietary Options:", "INFO_BOLD")
-        rest_info_win.insert(
-            "end", f"{INDENT}{dietary_options}", "INFORMATION"
-        )
-        rest_info_win.insert("end", f"\n{INDENT}Menu on File:", "INFO_BOLD")
-        rest_info_win.insert("end", f"{INDENT}{menu}", "INFORMATION")
-        self.view.set_display_read_only(rest_info_win)
+        self.view.set_display_write_enable(display)
+        display.insert("end", rest["name"], "HEADER")
+        display.insert("end", f"{INDENT}{rest['description']}", "INFORMATION")
+        display.insert("end", rest_address, "INFORMATION")
+        display.insert("end", f"{INDENT}Rating: {avg_review}", "INFORMATION")
+        display.insert("end", f"\n{INDENT}Dietary Options:", "INFO_BOLD")
+        display.insert("end", f"{INDENT}{dietary_options}", "INFORMATION")
+        display.insert("end", f"\n{INDENT}Menu on File:", "INFO_BOLD")
+        display.insert("end", f"{INDENT}{menu}", "INFORMATION")
+        self.view.set_display_read_only(display)
+
+    def _insert_rest_reviews(self, rest_id, display):
+        reviews = self.model.review_select_by_id(rest_id)
+        self.view.set_display_write_enable(display)
+        if reviews != None:
+            for review in reviews:
+                display.insert("end", f"{review['user']}  ", "HEADER")
+                display.insert(
+                    "end", f"{review['date_time']}\n", "INFORMATION"
+                )
+                display.insert(
+                    "end", f"{review['rating']} Stars\n", "INFO_BOLD"
+                )
+                display.insert("end", f"{review['review']}\n\n", "INFORMATION")
+        else:
+            display.insert("end", "  No Reviews on file", "INFORMATION")
+        self.view.set_display_read_only(display)
+
+    def _insert_rest_info(self, rest) -> None:
+        rest_info_win = self.view.rest_info_dispaly
+        rest_review_win = self.view.rest_reviews_display
+
+        self._insert_rest_gen_info(rest, rest_info_win)
+        self._insert_rest_reviews(rest["id"], rest_review_win)
 
     # ----------------- VIEW CONTROLS -----------------------
 

@@ -601,6 +601,16 @@ class View:
             "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
         )
 
+        self.rest_reviews_display.tag_configure(
+            "HEADER", justify="left", font=("Helvetica 15 bold")
+        )
+        self.rest_reviews_display.tag_configure(
+            "INFORMATION", justify="left", font=("Helvetica  12")
+        )
+        self.rest_reviews_display.tag_configure(
+            "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
+        )
+
     def init_welcome_window(self):
         self.window.title("Where Should We Eat Tonight?")
         self.window.configure(background="light gray")
