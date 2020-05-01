@@ -167,6 +167,10 @@ class Controller:
         for index, rest in enumerate(restaurants):
             self.view.view1_list_box.insert(index, rest)
 
+    def display_rest_detail_window(self):
+        self.view.clear_frame()
+        self.view.rest_detail_Window()
+
     def welcome_screen_next_button_press(self):
         if self.view.user_type_var.get() == "user":
             self.display_user_window()
@@ -244,7 +248,8 @@ class Controller:
         self.view.clear_frame()
         self.view.user_view_restaurant_info_window(rest_info_list)
         """
-        pass
+        # get selected restaurant
+        self.display_rest_detail_window()
 
     def request_menu(self):
         """
@@ -281,6 +286,19 @@ class Controller:
         """
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
+        """
+        pass
+
+    def exit_button_press(self):
+        """
+        Exit button in restaurant details window
+        Gets back to users window
+        """
+        pass
+
+    def menu_open_button_press(self):
+        """
+        Opens a menu stored in the menus folder.
         """
         pass
 

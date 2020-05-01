@@ -531,6 +531,64 @@ Enter your username, password and click Sign up",
         btn_filter.grid(row=3, column=3, padx=10, pady=10)
         btn_exit.grid(row=4, column=3, padx=10, pady=10)
 
+    def _rest_detail_place_widget(self):
+        TEXT_WIDTH = 56
+        button_frame = Frame(self.window, background="#0080c0")
+        reviews_frame = Frame(self.window, background="#0080c0")
+        review_scrollbar = Scrollbar(reviews_frame)
+        rest_info_dispaly = Text(
+            self.window,
+            background="#66C5F4",
+            width=TEXT_WIDTH,
+            wrap=WORD,
+            height=15,
+        )
+        rest_reviews_display = Text(
+            reviews_frame,
+            yscrollcommand=review_scrollbar.set,
+            background="#66C5F4",
+            width=TEXT_WIDTH,
+            wrap=WORD,
+            height=20,
+        )
+        exit_button = Button(
+            button_frame,
+            text="Exit",
+            background="light grey",
+            width=9,
+            command=self.controller.exit_button_press,
+        )
+        menu_open_button = Button(
+            button_frame,
+            text="Menu",
+            background="light grey",
+            width=9,
+            state="disabled",
+            command=self.controller.menu_open_button_press,
+        )
+
+        review_scrollbar.grid(row=0, column=1, sticky=(N, S, E, W))
+        review_scrollbar.config(command=rest_reviews_display.yview)
+        reviews_frame.grid(row=2, column=0, padx=10)
+
+        button_frame.grid(column=1, row=0, sticky=(N, S, E, W))
+        rest_info_dispaly.grid(
+            column=0, row=0, rowspan=2, sticky=(N, S, E, W), padx=10, pady=10
+        )
+        rest_reviews_display.grid(column=0, row=0, sticky=(N, S, E, W))
+        exit_button.grid(column=0, row=0, sticky=(N, E, S), pady=10)
+        menu_open_button.grid(column=0, row=1, sticky=(N, E))
+
+        rest_info_dispaly.tag_configure(
+            "HEADER", justify="left", font=("Helvetica 15 bold")
+        )
+        rest_info_dispaly.tag_configure(
+            "INFORMATION", justify="left", font=("Helvetica  12")
+        )
+        rest_info_dispaly.tag_configure(
+            "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
+        )
+
     def init_welcome_window(self):
         self.window.title("Where Should We Eat Tonight?")
         self.window.configure(background="light gray")
@@ -552,7 +610,6 @@ Enter your username, password and click Sign up",
         self.window.resizable(0, 0)
         self._admin_place_widget()
 
-    # def restaurant_info_window(self, rest_info_list):
     def restaurant_info_window(self):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
@@ -573,3 +630,10 @@ Enter your username, password and click Sign up",
         self.window.geometry("600x500")
         self.window.resizable(0, 0)
         self._user_place_widget()
+
+    def rest_detail_Window(self):
+        self.window.title("Restaurant Information")
+        self.window.geometry("569x600")
+        self.window.configure(background="#0080c0")
+        self.window.resizable(0, 0)
+        self._rest_detail_place_widget()
