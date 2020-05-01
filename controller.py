@@ -290,6 +290,16 @@ class Controller:
         """
         restaurant_list = []
         param_dict = {}
+        
+        veggie = self.view.veggie_var.get()
+        vegan = self.view.vegan_var.get()
+        gluten = self.view.gluten_free_var.get()
+
+        full_list = self.restaurant_info()
+        if veggie == 0 and vegan == 0 and gluten == 0:
+            for index, rest in enumerate(full_list):
+                self.view.view3_list_box.insert(index, rest)
+                
         veggie = self.view.veggie_var.get()
         if veggie == 1:
             param_dict['vegetarian'] = True
