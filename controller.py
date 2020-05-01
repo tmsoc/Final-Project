@@ -265,7 +265,7 @@ class Controller:
         self.view.init_welcome_window()
 
     def back_to_admin_view(self):
-        self.dispaly_admin_window()
+        self.display_admin_window()
 
     # ---------------- END OF VIEW CONTROLS ---------------------
 
