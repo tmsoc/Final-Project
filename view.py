@@ -118,20 +118,20 @@ class View:
             font="none 11",
             command=self.controller.back_to_welcome,
         )
-        lbl_signup_prompt = Label(
-            self.window,
-            text="Haven't got an account? \n \
-Enter your username, password and click Sign up",
-            font="None 11",
-            bg="#0080c0",
-            height=2,
-        )
-        btn_signup = Button(
-            self.window,
-            text="Sign up",
-            font="none 11",
-            command=self.controller.save_new_user,
-        )
+        #         lbl_signup_prompt = Label(
+        #             self.window,
+        #             text="Haven't got an account? \n \
+        # Enter your username, password and click Sign up",
+        #             font="None 11",
+        #             bg="#0080c0",
+        #             height=2,
+        #         )
+        #         btn_signup = Button(
+        #             self.window,
+        #             text="Sign up",
+        #             font="none 11",
+        #             command=self.controller.save_new_user,
+        #         )
         self.lbl_login_fail = Label(
             self.window, bg="#0080c0", font="None 11", fg="red",
         )
@@ -425,7 +425,7 @@ Enter your username, password and click Sign up",
         btn_close_menu.grid(row=4, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        self.veggie_var = StringVar(value=0)
+        self.veggie_var = IntVar(value=0)
         # With Check button, value = 0 means unchosen, 1 means chosen
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)

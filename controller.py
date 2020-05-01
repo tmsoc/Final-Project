@@ -280,14 +280,85 @@ class Controller:
         search rest based on entry_rest_name then insert the list of 
         restaurants which have the same name into the listbox
         """
-        pass
+        restaurant_list = []
+
+        search = self.view.entry_rest_name.get()
+        restaurant_names = self.model.restaurants_select_all()
+
+        not_valid = True
+        exists = None
+
+        for restaurant in restaurant_names:
+            if search.lower() == restaurant["name"].lower() or search == str(
+                restaurant["id"]
+            ):
+                not_valid = False
+                exists = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                    + " : "
+                    + restaurant["address"]
+                    + restaurant["city"]
+                    + restaurant["zip_code"]
+                )
+                restaurant_list.append(exists)
+        if not_valid:
+            restaurant_list = ["No search results found"]
+
+        results = restaurant_list
+
+        for index, rest in enumerate(results):
+            self.view.view3_list_box.insert(index, rest)
 
     def rest_filter(self):
         """
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
         """
-        pass
+        restaurant_list = []
+        param_dict = {}
+
+        veggie = self.view.veggie_var.get()
+        vegan = self.view.vegan_var.get()
+        gluten = self.view.gluten_free_var.get()
+
+        full_list = self.restaurant_info()
+        if veggie == 0 and vegan == 0 and gluten == 0:
+            for index, rest in enumerate(full_list):
+                self.view.view3_list_box.insert(index, rest)
+
+        veggie = self.view.veggie_var.get()
+        if veggie == 1:
+            param_dict["vegetarian"] = True
+        elif veggie == 0:
+            param_dict["vegetarian"] = None
+
+        vegan = self.view.vegan_var.get()
+        if vegan == 1:
+            param_dict["vegan"] = True
+
+        gluten = self.view.gluten_free_var.get()
+        if gluten == 1:
+            param_dict["gluten"] = True
+
+        if self.model.rest_select_by_attribute(param_dict) is not None:
+            attribute = self.model.rest_select_by_attribute(param_dict)
+
+            for restaurant in attribute:
+
+                format = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                    + " : "
+                    + restaurant["address"]
+                    + restaurant["city"]
+                    + restaurant["zip_code"]
+                )
+                restaurant_list.append(format)
+        for index, rest in enumerate(restaurant_list):
+            self.view.view3_list_box.insert(index, rest)
 
     def exit_button_press(self):
         """
