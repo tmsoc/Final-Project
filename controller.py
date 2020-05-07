@@ -332,10 +332,10 @@ class Controller:
                 for menu in menu_list:
                     not_valid = False
                     rest_str = (
-                        str(menus["id"])
+                        str(menu["id"])
                         + " - "
-                        + menus["menus"]
-                        )
+                        + menu["menu_path"]
+                    )
                     restaurant_list.append(rest_str)
             if not_valid:
                 answer = "Sorry no menus available"
@@ -378,13 +378,28 @@ class Controller:
         self.view.clear_frame()
         self.view.menu_window()
         """
-        pass
+        self.menu_info = []
+
+        list_box = self.view.view1_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = str(selected_rest.split(" ")[0])
+            given_menu = str(self.model.menu_select(rest_id))
+            restaurant_info = self.model.rest_select_by_id(rest_id)
+            address = restaurant_info['address']
+            self.menu_info.append(rest_id)
+            self.menu_info.append(address)
+            self.menu_info.append(given_menu)
+            self.view.clear_frame()
+            self.view.menu_window()
+
+
 
     def save_rest_press(self):
         """
         writes the texts in entries into db
         """
-        rest_id = 3
+        rest_id = self.view.lbl_rest_ID["text"]
 
         param_dict = {}
         list_box = self.view.view1_list_box
@@ -423,7 +438,12 @@ class Controller:
         """
         updates the new menu file name in entry_menu into menu db
         """
-        pass
+        menu = self.view.entry_menu.get()
+        rest_id = self.menu_info[0]
+        self._update_restaurant_menu(rest_id, menu)
+        self.back_to_admin_view()
+
+
 
     def rest_search(self):
         """
