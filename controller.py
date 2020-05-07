@@ -197,7 +197,37 @@ class Controller:
            (line1) rest name 1 - rest address 1 - menu name 1
            ...
         """
-        pass
+        restaurant_list = []
+
+        admin_page = self.view._admin_place_widget()
+        restaurant_names = self.model.restaurants_select_all()
+
+        choice = self.view.admin_view_var.get()
+
+        restaurant_names = self.model.restaurants_select_all()
+        print(choice)
+        if choice == 'id':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                )
+                restaurant_list.append(rest_str)
+
+        elif choice == 'rest info':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    restaurant["name"]
+                    + " - "
+                    + restaurant["address"]
+                )
+                restaurant_list.append(rest_str)
+
+        self.view.view1_list_box.delete(0, "end")
+        results = restaurant_list
+        for index, rest in enumerate(results):
+            self.view.view1_list_box.insert(index, rest)
 
     def admin_view_more_info_press(self):
         """
