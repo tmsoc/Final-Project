@@ -564,25 +564,3 @@ class Model:
 
     def close_connection(self) -> None:
         self.connection.close()
-
-
-# if __name__ == "__main__":
-
-#     def export_csv(export_data: list, file_path: Path) -> None:
-#         """
-#         Exports a given list of dictionary items
-#         to the provided file path. The file header
-#         is generated from the first element in
-#         the list of dictionary items.
-#         """
-#         keys = export_data[0].keys()
-#         with open(file_path, "w", newline="") as out_file:
-#             writer = csv.DictWriter(out_file, fieldnames=keys)
-#             writer.writeheader()
-#             for item in export_data:
-#                 writer.writerow(item)
-
-#     model = Model()
-#     all_rest = model.select_all_restaurants()
-#     export_csv(all_rest, "export_data.csv")
-#     print("export complete")

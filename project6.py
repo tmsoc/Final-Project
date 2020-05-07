@@ -15,7 +15,6 @@ reviews, add reviews, search for hours, menus, and all
 restaurant information.'''
 
 # global space variable for help display message
-filename = 'faq.txt'
 space = '\n'
 
 # creates the size, title, and background color of the app
@@ -27,40 +26,6 @@ root.configure(bg='Moccasin')
 # sets fonts
 click_font = font.Font(family='Comic Sans MS', size=20)
 exit_font = font.Font(family='Comic Sans MS', size=12)
-
-guide_dict = {}
-
-
-def read_line(filename: str) -> list:
-# turn each line in the file to a list of string, and
-# the content to list of lists
-    global guide_dict
-    try:
-        with open(filename, 'r') as guide_info:
-            lines = guide_info.readlines()
-            
-            header = None
-            l = []
-
-            for line in lines:
-                if header is None:
-                    header = line.strip()
-                else:
-                    l.append(line)
-                    l.append(space)
-
-                if line.isspace():
-                    guide_dict[header] = l
-                    l = []
-                    header = None
-
-            if header is not None:
-                guide_dict[header] = l
-                
-    except FileNotFoundError as error:
-        new_filename = input("File not found. please input a new file name")
-        read_line(new_file)
-
 
 
 def create_window():
@@ -85,49 +50,107 @@ def create_window():
     guest_button.place(relx=0.5, rely=0.8, anchor=CENTER)
     guest_button['font'] = click_font
 
-    # creates an exit button
-    exit_button = Button(window, text='Exit Program', command=exit_program)
-    exit_button.place(relx=1.0, rely=1.0, anchor=SE)
-    exit_button['font'] = exit_font
-
 
 def admin_box():
-    'Returns Q and A for admin in dict'
-    user_list = guide_dict['ADMIN:']
+    'Creates a message box with FAQ to be displayed'
 
-    user_str = ''
+    question1 = 'What if I do not have an account? \n'
+    answer1 = ('You will need a pass key to create an account to ' +
+               'ensure that you are authorized to use the system. \n')
 
-    #converts dict into a str
-    for each in user_list:
-        user_str += each
+    question2 = 'How do I see all information on a given resturaunt?\n'
+    answer2 = ('You are able to filter your search through the ' +
+               'restuarant name, owner ID, or menu. Once you have ' +
+               'filtered your search, select the restaurant to see ' +
+               'all the information in the database on it.\n')
 
-    tkinter.messagebox.showinfo("Admin FAQS", user_str)
+    question3 = 'How do I edit/update information?\n'
+    answer3 = ('Simply select the restaurant you would like to edit ' +
+               'and at the bottum of the page, there will be an ' +
+               'update button that will allow you to update/edit/delete' +
+               ' the information on the screen.\n')
+
+    question4 = 'How can I edit reviews?\n'
+    answer4 = ('Unfortunately for customer authenticity, you are unable ' +
+               'to edit the reviews, however you may delete them. Just ' +
+               'go to the edit tab and there will be an option underneath ' +
+               'the reviews that allows you to delete selected reviews.\n')
+    # puts all Q and A into one
+    question_answer = (question1 + space + answer1 + space +
+                       question2 + space + answer2 + space +
+                       question3 + space + answer3 + space +
+                       question4 + space + answer4)
+
+    tkinter.messagebox.showinfo("Admin FAQS", question_answer)
 
 
 def owner_box():
-    'Returns Q and A for owner in dict'
-    user_list = guide_dict['OWNER:']
+    'Creates owner FAQ window to be displayed'
 
-    user_str = ''
+    question1 = 'How can I include my resturarant? \n'
+    answer1 = ('Select the create an account button after selecting ' +
+               'owner view. Input all the data asked for including ' +
+               'name, email, and resturant info. Please also upload a ' +
+               'pdf file for your resturant menu. You will then be ' +
+               'allowed to create a username and ID and be given a ' +
+               'Restaurant ID. PLease store this information. \n')
 
-    #converts dict into a str
-    for each in user_list:
-        user_str += each
+    question2 = "How do I edit my restaurant information?\n"
+    answer2 = ('Once logged in, at the bottum of the page, there ' +
+               'will be an option to edit the information on the screen.')
 
-    tkinter.messagebox.showinfo("Owner FAQs", user_str)
+    question3 = 'Can I see reviews?\n'
+    answer3 = 'Yes you may see your reviews at the bottum of the page\n'
+
+    question4 = 'Can I edit my reviews?\n'
+    answer4 = ('Unforuntatley that is the only information that you as an ' +
+               'owner do not have access to edit. This is to ensure that ' +
+               'guests are able to view your restuarant in the full ' +
+               ' with custoimer authenticity.\n')
+
+    # puts all Q and A into one
+    question_answer = (question1 + space + answer1 + space +
+                       question2 + space + answer2 + space +
+                       question3 + space + answer3 + space +
+                       question4 + space + answer4)
+
+    tkinter.messagebox.showinfo("Owner FAQs", question_answer)
 
 
 def guest_box():
-    'Returns Q and A for guest in dict'
-    user_list = guide_dict['GUEST:']
+    'Creates a FAQS box to be displayed when ran'
+    question1 = 'What is this for? \n'
+    answer1 = ('This app helps those with dietary restrictions ' +
+               'locate a resturant that fit their needs. \n')
 
-    user_str = ''
+    question2 = 'How do I search? \n'
+    answer2 = ('At the top right corner of the page, there is filter' +
+               'option that allows you to filter resturants based on ' +
+               'selected dietary options. \n')
 
-    #converts dict into a str
-    for each in user_list:
-        user_str += each
+    question3 = 'How do I get more information on a resturant? \n'
+    answer3 = ('Simply select the restaurant you would like to view ' +
+               'and another screen will show you all the collected ' +
+               'information on the restaurant.\n')
 
-    tkinter.messagebox.showinfo("Guest FAQs", user_str)
+    question4 = 'What information do I have access to? \n'
+    answer4 = ("You are able to view a restaurant's name, address, " +
+               "address, hours, reviews, dietary restrictions, and " +
+               "menu. \n")
+
+    question5 = 'Can I leave a review of the resturant? \n'
+    answer5 = ('Yes. Select the restaurant you would like to review' +
+               ' and at the bottum of the page, there will be a' +
+               'option to write a review')
+
+    # puts all Q and A into one
+    question_answer = (question1 + space + answer1 + space +
+                       question2 + space + answer2 + space +
+                       question3 + space + answer3 + space +
+                       question4 + space + answer4 + space +
+                       question5 + space + answer5)
+
+    tkinter.messagebox.showinfo("Guest FAQs", question_answer)
 
 
 def exit_program():
@@ -148,5 +171,4 @@ exit_button['font'] = exit_font
 
 if __name__ == '__main__':
     # continuous loop to run the program
-    read_line(filename)
     root.mainloop()
