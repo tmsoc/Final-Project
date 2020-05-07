@@ -88,7 +88,7 @@ class Controller:
     def _validate_login(accounts: list, name: str, password: str) -> int:
         """
         Validates if the given name and password
-        match a stored username and password. 
+        match a stored username and password.
         RETURNS: The account key if match, else
         returns -1.
         """
@@ -273,14 +273,14 @@ class Controller:
 
     def save_new_user(self):
         """
-        this method retrieves the texts from entry_user_name and 
+        this method retrieves the texts from entry_user_name and
         entry_password, write these new information to account db
         """
         pass
 
     def btn_list_press(self):
         """
-        returns a list corresponding to the value of admin_view_var, then 
+        returns a list corresponding to the value of admin_view_var, then
         output the information in the listbox
         if user clicks on radio button ID -> admin_view_var = "id"
            -> show in the list box:
@@ -289,7 +289,7 @@ class Controller:
            (line3) owner ID 1 - rest name 2 - rest address 1
            (line4) owner ID 2 - rest name 1 - rest address 1
            ...
-        if user clicks on radio button Restaurant info 
+        if user clicks on radio button Restaurant info
         -> admin_view_var = "rest info"
             -> show in the list box:
             (line1) rest ID - rest name - rest address
@@ -299,7 +299,52 @@ class Controller:
            (line1) rest name 1 - rest address 1 - menu name 1
            ...
         """
-        pass
+        restaurant_list = []
+
+        menu_list = self.model.menus_select_all()
+        restaurant_names = self.model.restaurants_select_all()
+        choice = self.view.admin_view_var.get()
+
+        not_valid = True
+
+        if choice == 'id':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                )
+                restaurant_list.append(rest_str)
+
+        elif choice == 'rest info':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    str(restaurant['id'])
+                    + ' - '
+                    +restaurant["name"]
+                    + " - "
+                    + restaurant["address"]
+                )
+                restaurant_list.append(rest_str)
+
+        elif choice == 'menus':
+            if menu_list != None:
+                for menu in menu_list:
+                    not_valid = False
+                    rest_str = (
+                        str(menus["id"])
+                        + " - "
+                        + menus["menus"]
+                        )
+                    restaurant_list.append(rest_str)
+            if not_valid:
+                answer = "Sorry no menus available"
+                restaurant_list.append(answer)
+
+        self.view.view1_list_box.delete(0, "end")
+        results = restaurant_list
+        for index, rest in enumerate(results):
+            self.view.view1_list_box.insert(index, rest)
 
     def admin_view_more_info_press(self):
         list_box = self.view.view1_list_box
@@ -313,7 +358,7 @@ class Controller:
 
     def user_view_more_info_press(self):
         """
-        
+
         """
         list_box = self.view.view3_list_box
         selected_rest = self._get_list_box_selection(list_box)
@@ -339,7 +384,40 @@ class Controller:
         """
         writes the texts in entries into db
         """
-        pass
+        rest_id = 3
+
+        param_dict = {}
+        list_box = self.view.view1_list_box
+
+        name = self.view.entry_rest_name.get()
+        address = self.view.entry_rest_address.get()
+        address2 = self.view.entry_rest_address.get()
+        city = self.view.entry_rest_city.get()
+        state = self.view.entry_rest_state.get()
+        zip = self.view.entry_rest_zip.get()
+        veg = (True if self.view.entry_rest_veg.get() == 'True' else False)
+        vegan = (True if self.view.entry_rest_vegan.get() == 'True' else False)
+        gluten = (True if self.view.entry_rest_gluten.get() == 'True' else False)
+        menu = (True if self.view.entry_rest_menu.get() == 'True' else False)
+        hours = self.view.entry_rest_hours.get()
+        description = self.view.entry_rest_description.get()
+
+        param_dict = {
+        "name" : name,
+        'address' : address,
+        'city' : city,
+        'state' : state,
+        'zip_code' : zip,
+        'vegetarian' : veg,
+        'vegan' : vegan,
+        'gluten' : gluten,
+        'menu' : menu,
+        'hours' : hours,
+        'description' : description}
+
+        self.model.update_restaurant(rest_id, param_dict)
+        self.back_to_admin_view()
+
 
     def save_menu_press(self):
         """
@@ -349,7 +427,7 @@ class Controller:
 
     def rest_search(self):
         """
-        search rest based on entry_rest_name then insert the list of 
+        search rest based on entry_rest_name then insert the list of
         restaurants which have the same name into the listbox
         """
         restaurant_list = []
