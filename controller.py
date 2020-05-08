@@ -84,21 +84,19 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
-    @staticmethod
-    def _validate_login(accounts: list, name: str, password: str) -> int:
+    def _validate_login(
+        self, account_type: str, name: str, password: str
+    ) -> int:
         """
         Validates if the given name and password
         match a stored username and password.
         RETURNS: The account key if match, else
         returns -1.
         """
-        if accounts != None and len(accounts) != 0:
-            for user in accounts:
-                if user["name"].lower() == name.lower():
-                    if user["password"] == password:
-                        return user["key"]
-                    else:
-                        return -1
+        account = self._get_password(account_type, name)
+        if account != None:
+            if account["password"] == password:
+                return account["key"]
         return -1
 
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
@@ -115,14 +113,13 @@ class Controller:
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
 
-    def _get_passwords(self, account_type: str) -> list:
+    def _get_password(self, account_type: str, name: str):
         if account_type == "admin":
-            accounts = self.model.admin_select_all()
+            return self.model.admin_select_search_name(name)
         elif account_type == "owner":
-            accounts = self.model.owners_select_all()
-        else:
-            accounts = self.model.user_select_all()
-        return accounts
+            return self.model.owner_select_search_name(name)
+        else:  # user type
+            return self.model.user_select_search_name(name)
 
     def _get_list_box_selection(self, list_box) -> str:
         rest_info = None
@@ -258,8 +255,10 @@ class Controller:
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            accounts = self._get_passwords(user_type)
-            account_key = self._validate_login(accounts, name, password)
+            search_name = name.lower()
+            account_key = self._validate_login(
+                user_type, search_name, password
+            )
             if account_key != -1:
                 invalid_entry = False
                 self.view.clear_frame()
@@ -267,7 +266,7 @@ class Controller:
                     self.display_admin_window()
                 elif user_type == "owner":
                     # self.view.owner_window()
-                    pass
+                    self.back_to_welcome()
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 

@@ -57,19 +57,23 @@ git push
 * user table -
     name - <string>
     password - <string>
+    search_name - <string>
+    birth_date - <string>
     zip_code - <string>
     key - <int> Unique to the user. Populated by the db 
 
 * owner table -
     name - <string>
     password - <string>
+    search_name - <string>
     restaurants - <string>
     key - <int> Unique to the owner. Populated by the db
 
 
 * admin table - 
     name - <string>
-    password - <string>    
+    password - <string>
+    search_name - <string>
     key - <int> Unique to the admin. Populated by the db
 """
 Linh's here
