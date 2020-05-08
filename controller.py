@@ -433,7 +433,7 @@ class Controller:
     def get_path(self):
         uploaded_menu = self._get_user_file_open_path()
         if uploaded_menu == None:
-            pass
+            self.view.entry_menu.get()
         else:
             self.view.entry_menu.delete(0, 'end')
             self.view.entry_menu.insert(0, uploaded_menu)
@@ -450,7 +450,6 @@ class Controller:
         if already_exists != None:
             self.delete_rest_menu(rest_id)
             print("false")
-
 
         self.import_menu(rest_id, import_file)
 
