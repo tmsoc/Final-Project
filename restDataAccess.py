@@ -99,6 +99,16 @@ class Model:
     close_connection()
         Closes the database connection
     
+    admin_select_search_name(name: str)
+        Returns an admin record by the its searchable name.
+        Returns None if no record is found.
+
+    user_select_search_name(name: str)
+        Returns an user record by the its searchable name.
+        Returns None if no record is found.
+
+    owner_select_search_name(name: str)
+    
     """
 
     REST_TABLE = "restaurant"
@@ -259,6 +269,23 @@ class Model:
         else:
             return record
 
+    def _select_by_search_name(self, table: str, name: str):
+        """
+        Selects the record in the specified table
+        with the given searchable name. Returns None
+        if no record is found.
+        """
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {table} WHERE search_name=:name",
+                {"name": name},
+            )
+        record = self.cur.fetchone()
+        if record != None:
+            return dict(record)
+        else:
+            return record
+
     def _delete_by_key(self, table: str, key: int) -> bool:
         """
         Deletes the record with the given key
@@ -398,6 +425,13 @@ class Model:
         """
         return self._select_by_key(self.USER_TABLE, key)
 
+    def user_select_search_name(self, name: str):
+        """
+        Returns an user record by the its searchable name.
+        Returns None if no record is found.
+        """
+        return self._select_by_search_name(self.USER_TABLE, name)
+
     def owner_select_by_name(self, name: str):
         """
         Returns an owner record with the given name.
@@ -410,11 +444,25 @@ class Model:
         """
         return self._select_by_key(self.OWNER_TABLE, key)
 
+    def owner_select_search_name(self, name: str):
+        """
+        Returns an owner record by the its searchable name.
+        Returns None if no record is found.
+        """
+        return self._select_by_search_name(self.OWNER_TABLE, name)
+
     def admin_select_by_key(self, key: int):
         """
         Returns an admin record with the given key.
         """
         return self._select_by_key(self.ADMIN_TABLE, key)
+
+    def admin_select_search_name(self, name: str):
+        """
+        Returns an admin record by the its searchable name.
+        Returns None if no record is found.
+        """
+        return self._select_by_search_name(self.ADMIN_TABLE, name)
 
     def rest_select_by_attribute(
         self, param: dict, sort_by=None, assending=True
@@ -565,23 +613,3 @@ class Model:
     def close_connection(self) -> None:
         self.connection.close()
 
-    def admin_select_search_name(self, name: str):
-        return self._select_by_search_name(self.ADMIN_TABLE, name)
-
-    def user_select_search_name(self, name: str):
-        return self._select_by_search_name(self.USER_TABLE, name)
-
-    def owner_select_search_name(self, name: str):
-        return self._select_by_search_name(self.OWNER_TABLE, name)
-
-    def _select_by_search_name(self, table: str, name: str):
-        with self.connection:
-            self.cur.execute(
-                f"SELECT * FROM {table} WHERE search_name=:name",
-                {"name": name},
-            )
-        record = self.cur.fetchone()
-        if record != None:
-            return dict(record)
-        else:
-            return record
