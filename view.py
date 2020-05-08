@@ -409,8 +409,13 @@ class View:
             text="Menu file:", font="None 11", bg="#0080c0", height=2
         )
         self.entry_menu = Entry(font="None 11", bg="white", width=30)
-        self.entry_menu.insert(0, self.controller.menu_info[2])
-
+        btn_upload_menu = Button(
+            text="Select Menu",
+            font="None 11",
+            bg="light gray",
+            width=10,
+            command=self.controller.get_path,
+        )
         btn_save_menu = Button(
             text="Save",
             font="None 11",
@@ -431,8 +436,9 @@ class View:
         lbl_address.grid(row=1, column=1, sticky="w")
         lbl_menu.grid(row=2, column=0, padx=5, sticky="w")
         self.entry_menu.grid(row=2, column=1, sticky="w")
-        btn_save_menu.grid(row=3, column=0, columnspan=2, pady=10)
-        btn_close_menu.grid(row=4, column=0, columnspan=2, pady=10)
+        btn_upload_menu.grid(row=3, column=0, columnspan=2, pady=10)
+        btn_save_menu.grid(row=4, column=0, columnspan=2, pady=10)
+        btn_close_menu.grid(row=5, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
         self.veggie_var = IntVar(value=0)

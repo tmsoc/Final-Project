@@ -393,8 +393,6 @@ class Controller:
             self.view.clear_frame()
             self.view.menu_window()
 
-
-
     def save_rest_press(self):
         """
         writes the texts in entries into db
@@ -413,7 +411,6 @@ class Controller:
         veg = (True if self.view.entry_rest_veg.get() == 'True' else False)
         vegan = (True if self.view.entry_rest_vegan.get() == 'True' else False)
         gluten = (True if self.view.entry_rest_gluten.get() == 'True' else False)
-        menu = (True if self.view.entry_rest_menu.get() == 'True' else False)
         hours = self.view.entry_rest_hours.get()
         description = self.view.entry_rest_description.get()
 
@@ -426,7 +423,6 @@ class Controller:
         'vegetarian' : veg,
         'vegan' : vegan,
         'gluten' : gluten,
-        'menu' : menu,
         'hours' : hours,
         'description' : description}
 
@@ -434,16 +430,31 @@ class Controller:
         self.back_to_admin_view()
 
 
+    def get_path(self):
+        uploaded_menu = self._get_user_file_open_path()
+        if uploaded_menu == None:
+            pass
+        else:
+            self.view.entry_menu.delete(0, 'end')
+            self.view.entry_menu.insert(0, uploaded_menu)
+
+
     def save_menu_press(self):
         """
         updates the new menu file name in entry_menu into menu db
         """
-        menu = self.view.entry_menu.get()
-        rest_id = self.menu_info[0]
-        self._update_restaurant_menu(rest_id, menu)
+        import_file = Path(self.view.entry_menu.get())
+        rest_id = int(self.menu_info[0])
+        already_exists = self.model.menu_select(rest_id)
+
+        if already_exists != None:
+            self.delete_rest_menu(rest_id)
+            print("false")
+
+
+        self.import_menu(rest_id, import_file)
+
         self.back_to_admin_view()
-
-
 
     def rest_search(self):
         """
@@ -583,6 +594,24 @@ class Controller:
         # if the selected file is not a pdf, prompt the user
         elif import_file.is_file():
             self.display_error_message("Invalid file type. Must be a .pdf")
+
+    def import_menu(self, rest_id: int, file_path: Path) -> None:
+        if self._verify_pdf(file_path):
+            # generates a new filename for the menu
+            new_file_name = self._build_menu_file_name(file_path, rest_id)
+            # builds the path to import the menu to
+            save_to_path = Path(
+                self._working_directory / self.MENU_DIRECTORY / new_file_name
+            )
+            # imports copies the menu
+            self.import_file(file_path, save_to_path)
+            # stores the changes to the model
+            self._update_restaurant_menu(rest_id, new_file_name)
+            self.display_message_window("Import Complete")
+        # if the selected file is not a pdf, prompt the user
+        elif file_path.is_file():
+            self.display_error_message("Invalid file type. Must be a .pdf")
+
 
     def display_owner_id(self) -> list:
 
