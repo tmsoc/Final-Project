@@ -564,3 +564,24 @@ class Model:
 
     def close_connection(self) -> None:
         self.connection.close()
+
+    def admin_select_search_name(self, name: str):
+        return self._select_by_search_name(self.ADMIN_TABLE, name)
+
+    def user_select_search_name(self, name: str):
+        return self._select_by_search_name(self.USER_TABLE, name)
+
+    def owner_select_search_name(self, name: str):
+        return self._select_by_search_name(self.OWNER_TABLE, name)
+
+    def _select_by_search_name(self, table: str, name: str):
+        with self.connection:
+            self.cur.execute(
+                f"SELECT * FROM {table} WHERE search_name=:name",
+                {"name": name},
+            )
+        record = self.cur.fetchone()
+        if record != None:
+            return dict(record)
+        else:
+            return record

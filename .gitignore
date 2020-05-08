@@ -11,3 +11,4 @@ ResourceFolder
 rest_hub_data.db
 database_build.py
 ReadMe.txt
+rest_hub_data-test.db
