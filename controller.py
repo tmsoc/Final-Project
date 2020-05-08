@@ -227,6 +227,7 @@ class Controller:
     def display_user_window(self):
         self.view.clear_frame()
         self.view.user_window()
+        self.rest_filter()
 
     def display_login_window(self):
         self.view.clear_frame()
@@ -304,37 +305,28 @@ class Controller:
         restaurant_names = self.model.restaurants_select_all()
         choice = self.view.admin_view_var.get()
 
-        not_valid = True
+        if choice == "id":
+            for restaurant in restaurant_names:
+                rest_str = str(restaurant["id"]) + " - " + restaurant["name"]
+                restaurant_list.append(rest_str)
 
-        if choice == 'id':
+        elif choice == "rest info":
             for restaurant in restaurant_names:
                 rest_str = (
                     str(restaurant["id"])
                     + " - "
                     + restaurant["name"]
-                )
-                restaurant_list.append(rest_str)
-
-        elif choice == 'rest info':
-            for restaurant in restaurant_names:
-                rest_str = (
-                    str(restaurant['id'])
-                    + ' - '
-                    +restaurant["name"]
                     + " - "
                     + restaurant["address"]
                 )
                 restaurant_list.append(rest_str)
 
-        elif choice == 'menus':
+        elif choice == "menus":
+            not_valid = True
             if menu_list != None:
                 for menu in menu_list:
                     not_valid = False
-                    rest_str = (
-                        str(menu["id"])
-                        + " - "
-                        + menu["menu_path"]
-                    )
+                    rest_str = str(menu["id"]) + " - " + menu["menu_path"]
                     restaurant_list.append(rest_str)
             if not_valid:
                 answer = "Sorry no menus available"
@@ -382,10 +374,10 @@ class Controller:
         list_box = self.view.view1_list_box
         selected_rest = self._get_list_box_selection(list_box)
         if selected_rest != None:
-            rest_id = str(selected_rest.split(" ")[0])
+            rest_id = int(selected_rest.split(" ")[0])
             given_menu = str(self.model.menu_select(rest_id))
             restaurant_info = self.model.rest_select_by_id(rest_id)
-            address = restaurant_info['address']
+            address = restaurant_info["address"]
             self.menu_info.append(rest_id)
             self.menu_info.append(address)
             self.menu_info.append(given_menu)
@@ -399,57 +391,54 @@ class Controller:
         rest_id = self.view.lbl_rest_ID["text"]
 
         param_dict = {}
-        list_box = self.view.view1_list_box
+        # list_box = self.view.view1_list_box
 
         name = self.view.entry_rest_name.get()
         address = self.view.entry_rest_address.get()
-        address2 = self.view.entry_rest_address.get()
+        # address2 = self.view.entry_rest_address.get()
         city = self.view.entry_rest_city.get()
         state = self.view.entry_rest_state.get()
-        zip = self.view.entry_rest_zip.get()
-        veg = (True if self.view.entry_rest_veg.get() == 'True' else False)
-        vegan = (True if self.view.entry_rest_vegan.get() == 'True' else False)
-        gluten = (True if self.view.entry_rest_gluten.get() == 'True' else False)
+        zip_code = self.view.entry_rest_zip.get()
+        veg = True if self.view.entry_rest_veg.get() == "True" else False
+        vegan = True if self.view.entry_rest_vegan.get() == "True" else False
+        gluten = True if self.view.entry_rest_gluten.get() == "True" else False
+        # NEED TO SWITCH MENU TO LABEL OR READONLY
         hours = self.view.entry_rest_hours.get()
         description = self.view.entry_rest_description.get()
 
         param_dict = {
-        "name" : name,
-        'address' : address,
-        'city' : city,
-        'state' : state,
-        'zip_code' : zip,
-        'vegetarian' : veg,
-        'vegan' : vegan,
-        'gluten' : gluten,
-        'hours' : hours,
-        'description' : description}
+            "name": name,
+            "address": address,
+            "city": city,
+            "state": state,
+            "zip_code": zip_code,
+            "vegetarian": veg,
+            "vegan": vegan,
+            "gluten": gluten,
+            "hours": hours,
+            "description": description,
+        }
 
         self.model.update_restaurant(rest_id, param_dict)
         self.back_to_admin_view()
 
-
     def get_path(self):
         uploaded_menu = self._get_user_file_open_path()
-        if uploaded_menu == None:
-            pass
-        else:
-            self.view.entry_menu.delete(0, 'end')
+        if self._verify_pdf(uploaded_menu):
+            self.view.entry_menu.delete(0, "end")
             self.view.entry_menu.insert(0, uploaded_menu)
-
 
     def save_menu_press(self):
         """
         updates the new menu file name in entry_menu into menu db
         """
         import_file = Path(self.view.entry_menu.get())
-        rest_id = int(self.menu_info[0])
+        rest_id = self.menu_info[0]
         already_exists = self.model.menu_select(rest_id)
 
         if already_exists != None:
             self.delete_rest_menu(rest_id)
             print("false")
-
 
         self.import_menu(rest_id, import_file)
 
@@ -575,24 +564,8 @@ class Controller:
         the file to import. The file is then copied
         to the SavedMenus directory.
         """
-        # gets the file path of the menu to import
         import_file = self._get_user_file_open_path()
-        # verifies that the file is a pdf
-        if self._verify_pdf(import_file):
-            # generates a new filename for the menu
-            new_file_name = self._build_menu_file_name(import_file, rest_id)
-            # builds the path to import the menu to
-            save_to_path = Path(
-                self._working_directory / self.MENU_DIRECTORY / new_file_name
-            )
-            # imports copies the menu
-            self.import_file(import_file, save_to_path)
-            # stores the changes to the model
-            self._update_restaurant_menu(rest_id, new_file_name)
-            self.display_message_window("Import Complete")
-        # if the selected file is not a pdf, prompt the user
-        elif import_file.is_file():
-            self.display_error_message("Invalid file type. Must be a .pdf")
+        self.import_menu(rest_id, import_file)
 
     def import_menu(self, rest_id: int, file_path: Path) -> None:
         if self._verify_pdf(file_path):
@@ -610,7 +583,6 @@ class Controller:
         # if the selected file is not a pdf, prompt the user
         elif file_path.is_file():
             self.display_error_message("Invalid file type. Must be a .pdf")
-
 
     def display_owner_id(self) -> list:
 

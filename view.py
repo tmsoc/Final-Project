@@ -181,6 +181,7 @@ class View:
             width=8,
             variable=self.admin_view_var,
             value="id",
+            command=self.controller.btn_list_press,
         )
         radiobtn_info = Radiobutton(
             self.window,
@@ -192,6 +193,7 @@ class View:
             width=15,
             variable=self.admin_view_var,
             value="rest info",
+            command=self.controller.btn_list_press,
         )
         radiobtn_menu = Radiobutton(
             self.window,
@@ -203,6 +205,7 @@ class View:
             width=5,
             variable=self.admin_view_var,
             value="menus",
+            command=self.controller.btn_list_press,
         )
         btn_list = Button(
             self.window,
@@ -212,6 +215,7 @@ class View:
             height=1,
             width=10,
             command=self.controller.btn_list_press,
+            state="disabled",
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
 
@@ -490,6 +494,7 @@ class View:
             height=1,
             width=12,
             variable=self.veggie_var,
+            command=self.controller.rest_filter,
         )
         checkbtn_vegan = Checkbutton(
             self.window,
@@ -500,6 +505,7 @@ class View:
             height=1,
             width=12,
             variable=self.vegan_var,
+            command=self.controller.rest_filter,
         )
         checkbtn_gluten_free = Checkbutton(
             self.window,
@@ -510,6 +516,7 @@ class View:
             height=1,
             width=12,
             variable=self.gluten_free_var,
+            command=self.controller.rest_filter,
         )
         btn_filter = Button(
             self.window,
@@ -519,6 +526,7 @@ class View:
             height=1,
             width=10,
             command=self.controller.rest_filter,
+            state="disabled",
         )
         btn_exit = Button(
             self.window,
@@ -628,40 +636,40 @@ class View:
         self.window.title("Log in")
         self.window.configure(background="#0080c0")
         self.window.geometry("340x200")
-        self.window.resizable(0, 0)
+        # self.window.resizable(0, 0)
         self._login_place_widget()
 
     def admin_window(self):
         self.window.title("Admin View")
         self.window.configure(background="#0080c0")
         self.window.geometry("600x500")
-        self.window.resizable(0, 0)
+        # self.window.resizable(0, 0)
         self._admin_place_widget()
 
     def restaurant_info_window(self):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x650")
-        self.window.resizable(0, 0)
+        # self.window.resizable(0, 0)
         self._rest_info_place_widget()
 
     def menu_window(self):
         self.window.title("Menu Update")
         self.window.configure(background="#0080c0")
-        self.window.geometry("400x250")
-        self.window.resizable(0, 0)
+        self.window.geometry("400x290")
+        # self.window.resizable(0, 0)
         self._menu_place_widget()
 
     def user_window(self):
         self.window.title("Customer View")
         self.window.configure(background="#0080c0")
         self.window.geometry("600x500")
-        self.window.resizable(0, 0)
+        # self.window.resizable(0, 0)
         self._user_place_widget()
 
     def rest_detail_Window(self):
         self.window.title("Restaurant Information")
         self.window.geometry("569x600")
         self.window.configure(background="#0080c0")
-        self.window.resizable(0, 0)
+        # self.window.resizable(0, 0)
         self._rest_detail_place_widget()
