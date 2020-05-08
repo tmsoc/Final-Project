@@ -5,6 +5,7 @@ __pycache__
 TempFiles
 .vscode
 ResourceFolder
+.vs
 
 # Files
 rest_hub_data.db
