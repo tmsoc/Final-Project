@@ -84,21 +84,19 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
-    @staticmethod
-    def _validate_login(accounts: list, name: str, password: str) -> int:
+    def _validate_login(
+        self, account_type: str, name: str, password: str
+    ) -> int:
         """
         Validates if the given name and password
-        match a stored username and password. 
+        match a stored username and password.
         RETURNS: The account key if match, else
         returns -1.
         """
-        if accounts != None and len(accounts) != 0:
-            for user in accounts:
-                if user["name"].lower() == name.lower():
-                    if user["password"] == password:
-                        return user["key"]
-                    else:
-                        return -1
+        account = self._get_password(account_type, name)
+        if account != None:
+            if account["password"] == password:
+                return account["key"]
         return -1
 
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
@@ -115,14 +113,13 @@ class Controller:
             menu = self.model.menu_select(rest_id)
             self.model.delete_menu(menu["key"])
 
-    def _get_passwords(self, account_type: str) -> list:
+    def _get_password(self, account_type: str, name: str):
         if account_type == "admin":
-            accounts = self.model.admin_select_all()
+            return self.model.admin_select_search_name(name)
         elif account_type == "owner":
-            accounts = self.model.owners_select_all()
-        else:
-            accounts = self.model.user_select_all()
-        return accounts
+            return self.model.owner_select_search_name(name)
+        else:  # user type
+            return self.model.user_select_search_name(name)
 
     def _get_list_box_selection(self, list_box) -> str:
         rest_info = None
@@ -242,6 +239,10 @@ class Controller:
         for index, rest in enumerate(restaurants):
             self.view.view1_list_box.insert(index, rest)
 
+    def display_owner_window(self):
+        self.view.clear_frame()
+        self.view.owner_window()
+
     def display_rest_detail_window(self):
         self.view.clear_frame()
         self.view.rest_detail_Window()
@@ -258,29 +259,30 @@ class Controller:
         password = self.view.entry_password.get()
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
-            accounts = self._get_passwords(user_type)
-            account_key = self._validate_login(accounts, name, password)
+            search_name = name.lower()
+            account_key = self._validate_login(
+                user_type, search_name, password
+            )
             if account_key != -1:
                 invalid_entry = False
                 self.view.clear_frame()
                 if user_type == "admin":
                     self.display_admin_window()
                 elif user_type == "owner":
-                    # self.view.owner_window()
-                    pass
+                    self.display_owner_window()
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
     def save_new_user(self):
         """
-        this method retrieves the texts from entry_user_name and 
+        this method retrieves the texts from entry_user_name and
         entry_password, write these new information to account db
         """
         pass
 
     def btn_list_press(self):
         """
-        returns a list corresponding to the value of admin_view_var, then 
+        returns a list corresponding to the value of admin_view_var, then
         output the information in the listbox
         if user clicks on radio button ID -> admin_view_var = "id"
            -> show in the list box:
@@ -289,7 +291,7 @@ class Controller:
            (line3) owner ID 1 - rest name 2 - rest address 1
            (line4) owner ID 2 - rest name 1 - rest address 1
            ...
-        if user clicks on radio button Restaurant info 
+        if user clicks on radio button Restaurant info
         -> admin_view_var = "rest info"
             -> show in the list box:
             (line1) rest ID - rest name - rest address
@@ -299,7 +301,52 @@ class Controller:
            (line1) rest name 1 - rest address 1 - menu name 1
            ...
         """
-        pass
+        restaurant_list = []
+
+        menu_list = self.model.menus_select_all()
+        restaurant_names = self.model.restaurants_select_all()
+        choice = self.view.admin_view_var.get()
+
+        not_valid = True
+
+        if choice == 'id':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    str(restaurant["id"])
+                    + " - "
+                    + restaurant["name"]
+                )
+                restaurant_list.append(rest_str)
+
+        elif choice == 'rest info':
+            for restaurant in restaurant_names:
+                rest_str = (
+                    str(restaurant['id'])
+                    + ' - '
+                    +restaurant["name"]
+                    + " - "
+                    + restaurant["address"]
+                )
+                restaurant_list.append(rest_str)
+
+        elif choice == 'menus':
+            if menu_list != None:
+                for menu in menu_list:
+                    not_valid = False
+                    rest_str = (
+                        str(menu["id"])
+                        + " - "
+                        + menu["menu_path"]
+                    )
+                    restaurant_list.append(rest_str)
+            if not_valid:
+                answer = "Sorry no menus available"
+                restaurant_list.append(answer)
+
+        self.view.view1_list_box.delete(0, "end")
+        results = restaurant_list
+        for index, rest in enumerate(results):
+            self.view.view1_list_box.insert(index, rest)
 
     def admin_view_more_info_press(self):
         list_box = self.view.view1_list_box
@@ -313,7 +360,7 @@ class Controller:
 
     def user_view_more_info_press(self):
         """
-        
+
         """
         list_box = self.view.view3_list_box
         selected_rest = self._get_list_box_selection(list_box)
@@ -333,23 +380,87 @@ class Controller:
         self.view.clear_frame()
         self.view.menu_window()
         """
-        pass
+        self.menu_info = []
+
+        list_box = self.view.view1_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            rest_id = str(selected_rest.split(" ")[0])
+            given_menu = str(self.model.menu_select(rest_id))
+            restaurant_info = self.model.rest_select_by_id(rest_id)
+            address = restaurant_info['address']
+            self.menu_info.append(rest_id)
+            self.menu_info.append(address)
+            self.menu_info.append(given_menu)
+            self.view.clear_frame()
+            self.view.menu_window()
 
     def save_rest_press(self):
         """
         writes the texts in entries into db
         """
-        pass
+        rest_id = self.view.lbl_rest_ID["text"]
+
+        param_dict = {}
+        list_box = self.view.view1_list_box
+
+        name = self.view.entry_rest_name.get()
+        address = self.view.entry_rest_address.get()
+        address2 = self.view.entry_rest_address.get()
+        city = self.view.entry_rest_city.get()
+        state = self.view.entry_rest_state.get()
+        zip = self.view.entry_rest_zip.get()
+        veg = (True if self.view.entry_rest_veg.get() == 'True' else False)
+        vegan = (True if self.view.entry_rest_vegan.get() == 'True' else False)
+        gluten = (True if self.view.entry_rest_gluten.get() == 'True' else False)
+        hours = self.view.entry_rest_hours.get()
+        description = self.view.entry_rest_description.get()
+
+        param_dict = {
+        "name" : name,
+        'address' : address,
+        'city' : city,
+        'state' : state,
+        'zip_code' : zip,
+        'vegetarian' : veg,
+        'vegan' : vegan,
+        'gluten' : gluten,
+        'hours' : hours,
+        'description' : description}
+
+        self.model.update_restaurant(rest_id, param_dict)
+        self.back_to_admin_view()
+
+
+    def get_path(self):
+        uploaded_menu = self._get_user_file_open_path()
+        if uploaded_menu == None:
+            pass
+        else:
+            self.view.entry_menu.delete(0, 'end')
+            self.view.entry_menu.insert(0, uploaded_menu)
+
 
     def save_menu_press(self):
         """
         updates the new menu file name in entry_menu into menu db
         """
-        pass
+        import_file = Path(self.view.entry_menu.get())
+        rest_id = int(self.menu_info[0])
+        already_exists = self.model.menu_select(rest_id)
+
+        if already_exists != None:
+            self.delete_rest_menu(rest_id)
+            print("false")
+
+
+        self.import_menu(rest_id, import_file)
+
+        self.back_to_admin_view()
 
     def rest_search(self):
         """
-        search rest based on entry_rest_name then insert the list of 
+        search rest based on entry_rest_name then insert the list of
         restaurants which have the same name into the listbox
         """
         restaurant_list = []
@@ -440,6 +551,42 @@ class Controller:
         """
         pass
 
+    def create_rest_press(self):
+        """
+        calls new_rest_window() to open a new window with multiple entries 
+        for owner to input
+        """
+        pass
+
+    def change_username_press(self):
+        """
+        open a simpledialog, ask owner to enter new username, the new value 
+        will be replaced in data table
+        """
+        pass
+
+    def change_password_press(self):
+        """
+        open a simpledialog, ask owner to enter new password, the new value 
+        will be replaced in data table
+        """
+        pass
+
+    def edit_press(self):
+        """
+        calls rest_info() to open a new window, entries filled with 
+        information of the restaurant selected in the listbox
+        """
+        pass
+
+    def delete_rest_press(self):
+        """
+        open a messagebox to confirm that owner really wants to delete the 
+        restaurant selected in the listbox. If yes, call a function in model 
+        to delete the restaurant from dataset
+        """
+        pass
+
     def back_to_welcome(self):
         self.view.clear_frame()
         self.view.init_welcome_window()
@@ -485,6 +632,24 @@ class Controller:
         # if the selected file is not a pdf, prompt the user
         elif import_file.is_file():
             self.display_error_message("Invalid file type. Must be a .pdf")
+
+    def import_menu(self, rest_id: int, file_path: Path) -> None:
+        if self._verify_pdf(file_path):
+            # generates a new filename for the menu
+            new_file_name = self._build_menu_file_name(file_path, rest_id)
+            # builds the path to import the menu to
+            save_to_path = Path(
+                self._working_directory / self.MENU_DIRECTORY / new_file_name
+            )
+            # imports copies the menu
+            self.import_file(file_path, save_to_path)
+            # stores the changes to the model
+            self._update_restaurant_menu(rest_id, new_file_name)
+            self.display_message_window("Import Complete")
+        # if the selected file is not a pdf, prompt the user
+        elif file_path.is_file():
+            self.display_error_message("Invalid file type. Must be a .pdf")
+
 
     def display_owner_id(self) -> list:
 
