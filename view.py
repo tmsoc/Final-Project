@@ -472,7 +472,7 @@ class View:
             yscrollcommand=text_scrollbar.set,
             font="none 12",
             height=12,
-            width=40,
+            width=48,
             selectmode="SINGLE",
         )
         text_scrollbar.config(command=self.view3_list_box.yview)
@@ -537,6 +537,7 @@ class View:
             width=10,
             command=self.controller.back_to_welcome,
         )
+
         lbl_title.grid(row=0, columnspan=4, pady=10)
         lbl_search_prompt.grid(row=1, column=0, padx=10, pady=10)
         self.entry_rest_name.grid(
@@ -547,7 +548,7 @@ class View:
             row=2, column=0, columnspan=3, padx=10, pady=10, sticky="we",
         )
         self.view3_list_box.grid(row=0, column=0, sticky=(N, S, W, E))
-        text_scrollbar.grid(row=0, column=2, sticky=(N, S, E))
+        text_scrollbar.grid(row=0, column=1, sticky=(N, S, E))
         btn_info.grid(row=2, column=3, padx=10)
         checkbtn_veggie.grid(row=3, column=0, padx=10, pady=10)
         checkbtn_vegan.grid(row=3, column=1, padx=10, pady=10)
