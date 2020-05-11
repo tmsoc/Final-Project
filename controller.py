@@ -219,6 +219,9 @@ class Controller:
         self._insert_rest_gen_info(rest, rest_info_win)
         self._insert_rest_reviews(rest["id"], rest_review_win)
 
+        if rest['menu'] == True:
+            self.view.menu_open_button['state'] = "active"
+
     # ----------------- VIEW CONTROLS -----------------------
 
     def begin(self) -> None:

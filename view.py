@@ -585,7 +585,7 @@ class View:
             width=9,
             command=self.controller.exit_button_press,
         )
-        menu_open_button = Button(
+        self.menu_open_button = Button(
             button_frame,
             text="Menu",
             background="light grey",
@@ -604,7 +604,7 @@ class View:
         )
         self.rest_reviews_display.grid(column=0, row=0, sticky=(N, S, E, W))
         exit_button.grid(column=0, row=0, sticky=(N, E, S), pady=10)
-        menu_open_button.grid(column=0, row=1, sticky=(N, E))
+        self.menu_open_button.grid(column=0, row=1, sticky=(N, E))
 
         self.rest_info_dispaly.tag_configure(
             "HEADER", justify="left", font=("Helvetica 15 bold")
