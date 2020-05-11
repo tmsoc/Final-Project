@@ -1,6 +1,7 @@
 from tkinter import filedialog
 from tkinter import messagebox  # Should be in the view
 from pathlib import Path
+import subprocess
 
 from restDataAccess import Model
 from view import View
@@ -9,6 +10,8 @@ from view import View
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
+    active_rest_id = int()
+    active_owner_id = int()
 
     def __init__(self, model, view):
         self.model = model
@@ -84,9 +87,14 @@ class Controller:
                     out_file.write(data)
                     data = in_file.read(size_to_read)
 
-    def _validate_login(
-        self, account_type: str, name: str, password: str
-    ) -> int:
+    @staticmethod
+    def _open_local_file(file_path: Path) -> None:
+        """
+        function used to open files
+        """
+        subprocess.Popen(str(file_path), shell=True)
+
+    def _validate_login(self, account_type: str, name: str, password: str) -> int:
         """
         Validates if the given name and password
         match a stored username and password.
@@ -140,9 +148,7 @@ class Controller:
         self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
         self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
         self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
-        self.view.entry_rest_description.insert(
-            0, str(restaurant["description"])
-        )
+        self.view.entry_rest_description.insert(0, str(restaurant["description"]))
 
     def _build_dietary_options(self, restaurant):
         if (
@@ -201,12 +207,8 @@ class Controller:
         if reviews != None:
             for review in reviews:
                 display.insert("end", f"{review['user']}  ", "HEADER")
-                display.insert(
-                    "end", f"{review['date_time']}\n", "INFORMATION"
-                )
-                display.insert(
-                    "end", f"{review['rating']} Stars\n", "INFO_BOLD"
-                )
+                display.insert("end", f"{review['date_time']}\n", "INFORMATION")
+                display.insert("end", f"{review['rating']} Stars\n", "INFO_BOLD")
                 display.insert("end", f"{review['review']}\n\n", "INFORMATION")
         else:
             display.insert("end", "  No Reviews on file", "INFORMATION")
@@ -219,8 +221,8 @@ class Controller:
         self._insert_rest_gen_info(rest, rest_info_win)
         self._insert_rest_reviews(rest["id"], rest_review_win)
 
-        if rest['menu'] == True:
-            self.view.menu_open_button['state'] = "active"
+        if rest["menu"] == True:
+            self.view.menu_open_button["state"] = "normal"
 
     # ----------------- VIEW CONTROLS -----------------------
 
@@ -260,9 +262,7 @@ class Controller:
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
             search_name = name.lower()
-            account_key = self._validate_login(
-                user_type, search_name, password
-            )
+            account_key = self._validate_login(user_type, search_name, password)
             if account_key != -1:
                 invalid_entry = False
                 self.view.clear_frame()
@@ -361,6 +361,7 @@ class Controller:
             rest_info = self.model.rest_select_by_id(rest_id)
             self.display_rest_detail_window()
             self._insert_rest_info(rest_info)
+            self.active_rest_id = rest_id
 
     def request_menu(self):
         """
@@ -536,8 +537,20 @@ class Controller:
 
     def menu_open_button_press(self):
         """
-        Opens a menu stored in the menus folder.
+        Opens a menu of the active restaurant
+        stored in the menus folder.
         """
+        menu_record = self.model.menu_select(self.active_rest_id)
+        menu_path = menu_record["menu_path"]
+        abs_menu_path = Path(
+            self._working_directory / self.MENU_DIRECTORY / menu_path
+        )
+        self._open_local_file(abs_menu_path)
+
+    def user_add_review_button_press(self):
+        '''
+        Add review to the user screen
+        '''
         pass
 
     def back_to_welcome(self):
