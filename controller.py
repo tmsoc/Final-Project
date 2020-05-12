@@ -10,9 +10,10 @@ from view import View
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
-    _active_rest_id = int()
-    _active_owner_id = int()
+    _active_rest_id = int()  # Not used yet
+    _active_owner_id = int()  # Not used yet
     _menu_info = list()
+    _master_search_list = list()
 
     def __init__(self, model, view):
         self.model = model
@@ -109,6 +110,33 @@ class Controller:
             if account["password"] == password:
                 return account["key"]
         return -1
+
+    @staticmethod
+    def _rest_dict_to_str(restaurant: dict):
+        rest_str = ""
+        rest_str += restaurant["name"].lower()
+        rest_str += restaurant["address"].lower()
+        rest_str += restaurant["city"].lower()
+        rest_str += restaurant["state"].lower()
+        rest_str += restaurant["zip_code"].lower()
+        rest_str += restaurant["description"].lower()
+        return rest_str
+
+    @staticmethod
+    def _user_rest_format_list(restaurants: list):
+        restaurant_list = []
+        for restaurant in restaurants:
+            format = (
+                str(restaurant["id"])
+                + " - "
+                + restaurant["name"]
+                + " : "
+                + restaurant["address"]
+                + f", {restaurant['city']}, "
+                + restaurant["zip_code"]
+            )
+            restaurant_list.append(format)
+        return restaurant_list
 
     def _update_restaurant_menu(self, rest_id: int, menu: str) -> None:
         """
@@ -241,7 +269,8 @@ class Controller:
     def display_user_window(self):
         self.view.clear_frame()
         self.view.user_window()
-        self.rest_filter()
+        self.rest_dietary_filter()
+        # self.rest_search()
 
     def display_login_window(self):
         self.view.clear_frame()
@@ -459,49 +488,41 @@ class Controller:
 
         self.back_to_admin_view()
 
-    def rest_search(self):
-        """
-        search rest based on entry_rest_name then insert the list of
-        restaurants which have the same name into the listbox
-        """
-        restaurant_list = []
+    def rest_search(self, *args):
+        search_field = self.view.user_search_field.get().lower()
+        search_items = search_field.split(" ")
+        results = []
+        if search_field == "":
+            results = self._master_search_list
+        else:
+            for rest in self._master_search_list:
+                rest_str = self._rest_dict_to_str(rest)
+                for item in search_items:
+                    if item in rest_str and item != "":
+                        results.append(rest)
+                        break
 
-        search = self.view.entry_rest_name.get()
-        restaurant_names = self.model.restaurants_select_all()
+        if len(results) == 0:
+            rest_list = ["No search results found"]
+        else:
+            rest_list = self._user_rest_format_list(results)
 
-        not_valid = True
-        exists = None
+        self.user_window_print_list(rest_list)
 
-        for restaurant in restaurant_names:
-            if search.lower() == restaurant["name"].lower() or search == str(
-                restaurant["id"]
-            ):
-                not_valid = False
-                exists = (
-                    str(restaurant["id"])
-                    + " - "
-                    + restaurant["name"]
-                    + " : "
-                    + restaurant["address"]
-                    + f", {restaurant['city']}, "
-                    + restaurant["zip_code"]
-                )
-                restaurant_list.append(exists)
-        if not_valid:
-            restaurant_list = ["No search results found"]
+    def user_clear_search(self):
+        self.view.user_search_field.delete(0, "end")
 
-        results = restaurant_list
-
+    def user_window_print_list(self, item_list: list):
         self.view.view3_list_box.delete(0, "end")
-        for index, rest in enumerate(results):
-            self.view.view3_list_box.insert(index, rest)
+        for index, item in enumerate(item_list):
+            self.view.view3_list_box.insert(index, item)
 
-    def rest_filter(self):
+    def rest_dietary_filter(self):
         """
         based on values of 3 variables veggie_var, van_var and gluten_free_var
         create a list of rest ID, rest name and address, display in the listbox
         """
-        restaurant_list = []
+        # restaurant_list = []
         param_dict = {}
 
         veggie = self.view.veggie_var.get()
@@ -509,10 +530,7 @@ class Controller:
         gluten = self.view.gluten_free_var.get()
 
         if veggie == 0 and vegan == 0 and gluten == 0:
-            all_rest_list = self.restaurant_info()
-            self.view.view3_list_box.delete(0, "end")
-            for index, rest in enumerate(all_rest_list):
-                self.view.view3_list_box.insert(index, rest)
+            self._master_search_list = self.model.restaurants_select_all()
         else:
             if veggie == 1:
                 param_dict["vegetarian"] = True
@@ -521,23 +539,10 @@ class Controller:
             if gluten == 1:
                 param_dict["gluten"] = True
 
-            if self.model.rest_select_by_attribute(param_dict) is not None:
-                attribute = self.model.rest_select_by_attribute(param_dict)
-
-                for restaurant in attribute:
-                    format = (
-                        str(restaurant["id"])
-                        + " - "
-                        + restaurant["name"]
-                        + " : "
-                        + restaurant["address"]
-                        + f", {restaurant['city']}, "
-                        + restaurant["zip_code"]
-                    )
-                    restaurant_list.append(format)
-            self.view.view3_list_box.delete(0, "end")
-            for index, rest in enumerate(restaurant_list):
-                self.view.view3_list_box.insert(index, rest)
+            self._master_search_list = self.model.rest_select_by_attribute(
+                param_dict
+            )
+        self.rest_search()
 
     def exit_button_press(self):
         """

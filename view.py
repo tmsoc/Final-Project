@@ -453,17 +453,26 @@ class View:
             bg="#0080c0", text="Customer Function", font=self.font1
         )
         lbl_search_prompt = Label(
-            bg="#0080c0", text="Restaurant name:", font="None 11", height=2
+            bg="#0080c0", text="Restaurant Search:", font="None 11", height=2
         )
-        self.entry_rest_name = Entry(font="None 11", bg="white", width=25)
+        # self.entry_rest_name = Entry(font="None 11", bg="white", width=25)
+        self.search_variable = StringVar()
+        self.search_variable.trace_add("write", self.controller.rest_search)
+        self.user_search_field = Entry(
+            font="None 11",
+            bg="white",
+            width=35,
+            textvariable=self.search_variable,
+        )
         btn_search = Button(
             self.window,
-            text="Search",
+            # text="Search",
+            text="Clear",
             font="none 12",
             bg="light grey",
             height=1,
             width=10,
-            command=self.controller.rest_search,
+            command=self.controller.user_clear_search,
         )
         table_frame = Frame(self.window, relief="groove")
         text_scrollbar = Scrollbar(table_frame)
@@ -494,7 +503,7 @@ class View:
             height=1,
             width=12,
             variable=self.veggie_var,
-            command=self.controller.rest_filter,
+            command=self.controller.rest_dietary_filter,
         )
         checkbtn_vegan = Checkbutton(
             self.window,
@@ -505,7 +514,7 @@ class View:
             height=1,
             width=12,
             variable=self.vegan_var,
-            command=self.controller.rest_filter,
+            command=self.controller.rest_dietary_filter,
         )
         checkbtn_gluten_free = Checkbutton(
             self.window,
@@ -516,18 +525,18 @@ class View:
             height=1,
             width=12,
             variable=self.gluten_free_var,
-            command=self.controller.rest_filter,
+            command=self.controller.rest_dietary_filter,
         )
-        btn_filter = Button(
-            self.window,
-            text="Filter",
-            font="none 12",
-            bg="light grey",
-            height=1,
-            width=10,
-            command=self.controller.rest_filter,
-            state="disabled",
-        )
+        # btn_filter = Button(
+        #     self.window,
+        #     text="Filter",
+        #     font="none 12",
+        #     bg="light grey",
+        #     height=1,
+        #     width=10,
+        #     command=self.controller.rest_filter,
+        #     state="disabled",
+        # )
         btn_exit = Button(
             self.window,
             text="Exit",
@@ -540,7 +549,7 @@ class View:
 
         lbl_title.grid(row=0, columnspan=4, pady=10)
         lbl_search_prompt.grid(row=1, column=0, padx=10, pady=10)
-        self.entry_rest_name.grid(
+        self.user_search_field.grid(
             row=1, column=1, columnspan=2, pady=10, sticky="w"
         )
         btn_search.grid(row=1, column=3, padx=10, pady=10)
@@ -553,8 +562,8 @@ class View:
         checkbtn_veggie.grid(row=3, column=0, padx=10, pady=10)
         checkbtn_vegan.grid(row=3, column=1, padx=10, pady=10)
         checkbtn_gluten_free.grid(row=3, column=2, padx=10, pady=10)
-        btn_filter.grid(row=3, column=3, padx=10, pady=10)
-        btn_exit.grid(row=4, column=3, padx=10, pady=10)
+        # btn_filter.grid(row=3, column=3, padx=10, pady=10)
+        btn_exit.grid(row=3, column=3, padx=10, pady=10)
 
     def _rest_detail_place_widget(self):
         TEXT_WIDTH = 56
