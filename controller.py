@@ -569,6 +569,10 @@ class Controller:
         """
         pass
 
+    def exit_user_window(self):
+        self._master_search_list.clear()
+        self.back_to_welcome()
+
     def back_to_welcome(self):
         self.view.clear_frame()
         self.view.init_welcome_window()

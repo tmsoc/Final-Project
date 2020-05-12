@@ -544,7 +544,7 @@ class View:
             bg="light grey",
             height=1,
             width=10,
-            command=self.controller.back_to_welcome,
+            command=self.controller.exit_user_window,
         )
 
         lbl_title.grid(row=0, columnspan=4, pady=10)
