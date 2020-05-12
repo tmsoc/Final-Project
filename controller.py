@@ -297,7 +297,10 @@ class Controller:
         else:
             self.display_login_window()
 
-    def btn_login_press(self, event):
+    def password_return_press(self, event):
+        self.btn_login_press()
+
+    def btn_login_press(self):
         invalid_entry = True
         name = self.view.entry_user_name.get()
         password = self.view.entry_password.get()
