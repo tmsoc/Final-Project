@@ -581,6 +581,7 @@ class View:
         exit_button = Button(
             button_frame,
             text="Exit",
+            font="none 12",
             background="light grey",
             width=9,
             command=self.controller.exit_button_press,
@@ -588,6 +589,7 @@ class View:
         self.menu_open_button = Button(
             button_frame,
             text="Open Menu",
+            font="none 12",
             background="light grey",
             width=9,
             state="disabled",
@@ -595,8 +597,9 @@ class View:
         )
         user_add_review_button = Button(
             button_frame,
-            text='Add Review',
-            background='light grey',
+            text="Add Review",
+            font="none 12",
+            background="light grey",
             width=9,
             state="disabled",
             command=self.controller.user_add_review_button_press,
@@ -679,7 +682,7 @@ class View:
 
     def rest_detail_Window(self):
         self.window.title("Restaurant Information")
-        self.window.geometry("569x600")
+        self.window.geometry("590x600")
         self.window.configure(background="#0080c0")
         # self.window.resizable(0, 0)
         self._rest_detail_place_widget()

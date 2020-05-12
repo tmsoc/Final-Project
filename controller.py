@@ -10,8 +10,9 @@ from view import View
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
-    active_rest_id = int()
-    active_owner_id = int()
+    _active_rest_id = int()
+    _active_owner_id = int()
+    _menu_info = list()
 
     def __init__(self, model, view):
         self.model = model
@@ -94,7 +95,9 @@ class Controller:
         """
         subprocess.Popen(str(file_path), shell=True)
 
-    def _validate_login(self, account_type: str, name: str, password: str) -> int:
+    def _validate_login(
+        self, account_type: str, name: str, password: str
+    ) -> int:
         """
         Validates if the given name and password
         match a stored username and password.
@@ -148,7 +151,9 @@ class Controller:
         self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
         self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
         self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
-        self.view.entry_rest_description.insert(0, str(restaurant["description"]))
+        self.view.entry_rest_description.insert(
+            0, str(restaurant["description"])
+        )
 
     def _build_dietary_options(self, restaurant):
         if (
@@ -207,8 +212,12 @@ class Controller:
         if reviews != None:
             for review in reviews:
                 display.insert("end", f"{review['user']}  ", "HEADER")
-                display.insert("end", f"{review['date_time']}\n", "INFORMATION")
-                display.insert("end", f"{review['rating']} Stars\n", "INFO_BOLD")
+                display.insert(
+                    "end", f"{review['date_time']}\n", "INFORMATION"
+                )
+                display.insert(
+                    "end", f"{review['rating']} Stars\n", "INFO_BOLD"
+                )
                 display.insert("end", f"{review['review']}\n\n", "INFORMATION")
         else:
             display.insert("end", "  No Reviews on file", "INFORMATION")
@@ -262,7 +271,9 @@ class Controller:
         if name != "" and password != "":
             user_type = self.view.user_type_var.get()
             search_name = name.lower()
-            account_key = self._validate_login(user_type, search_name, password)
+            account_key = self._validate_login(
+                user_type, search_name, password
+            )
             if account_key != -1:
                 invalid_entry = False
                 self.view.clear_frame()
@@ -357,7 +368,7 @@ class Controller:
         list_box = self.view.view3_list_box
         selected_rest = self._get_list_box_selection(list_box)
         if selected_rest != None:
-            rest_id = selected_rest.split(" ")[0]
+            rest_id = int(selected_rest.split(" ", 1)[0])
             rest_info = self.model.rest_select_by_id(rest_id)
             self.display_rest_detail_window()
             self._insert_rest_info(rest_info)
@@ -373,7 +384,7 @@ class Controller:
         self.view.clear_frame()
         self.view.menu_window()
         """
-        self.menu_info = []
+        # self.menu_info = []
 
         list_box = self.view.view1_list_box
         selected_rest = self._get_list_box_selection(list_box)
@@ -382,9 +393,9 @@ class Controller:
             given_menu = str(self.model.menu_select(rest_id))
             restaurant_info = self.model.rest_select_by_id(rest_id)
             address = restaurant_info["address"]
-            self.menu_info.append(rest_id)
-            self.menu_info.append(address)
-            self.menu_info.append(given_menu)
+            self._menu_info.append(rest_id)
+            self._menu_info.append(address)
+            self._menu_info.append(given_menu)
             self.view.clear_frame()
             self.view.menu_window()
 
@@ -437,7 +448,7 @@ class Controller:
         updates the new menu file name in entry_menu into menu db
         """
         import_file = Path(self.view.entry_menu.get())
-        rest_id = self.menu_info[0]
+        rest_id = self._menu_info[0]
         already_exists = self.model.menu_select(rest_id)
 
         if already_exists != None:
@@ -548,9 +559,9 @@ class Controller:
         self._open_local_file(abs_menu_path)
 
     def user_add_review_button_press(self):
-        '''
+        """
         Add review to the user screen
-        '''
+        """
         pass
 
     def back_to_welcome(self):
