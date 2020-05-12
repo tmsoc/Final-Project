@@ -648,6 +648,100 @@ class View:
             "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
         )
 
+    def _owner_place_widget(self):
+        lbl_title = Label(
+            bg="#0080c0", text="Bussiness Owner Function", font=self.font1
+        )
+        btn_create_rest = Button(
+            self.window,
+            text="Create new restaurant",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=18,
+            command=self.controller.create_rest_press,
+        )
+        btn_change_username = Button(
+            self.window,
+            text="Change username",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=18,
+            command=self.controller.change_username_press,
+        )
+        btn_change_password = Button(
+            self.window,
+            text="Change password",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=18,
+            command=self.controller.change_password_press,
+        )
+
+        table_frame = Frame(self.window, relief="groove")
+        text_scrollbar = Scrollbar(table_frame)
+        self.view2_list_box = Listbox(
+            table_frame,
+            yscrollcommand=text_scrollbar.set,
+            font="none 12",
+            height=12,
+            width=55,
+            selectmode="SINGLE",
+        )
+        text_scrollbar.config(command=self.view2_list_box.yview)
+
+        self.view2_list_box.grid(row=0, column=0, sticky=(N, S, W, E))
+        text_scrollbar.grid(row=0, column=1, sticky=(N, S, E))
+
+        btn_edit = Button(
+            self.window,
+            text="Edit",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=8,
+            command=self.controller.edit_press,
+        )
+        btn_delete = Button(
+            self.window,
+            text="Delete",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=8,
+            command=self.controller.delete_rest_press,
+        )
+        btn_exit = Button(
+            self.window,
+            text="Exit",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=8,
+            command=self.controller.back_to_welcome,
+        )
+
+        lbl_title.grid(row=0, columnspan=4, pady=10)
+        btn_create_rest.grid(row=1, column=0, padx=(20, 5), pady=10)
+        btn_change_username.grid(row=1, column=1, padx=5, pady=10)
+        btn_change_password.grid(row=1, column=2, padx=5, pady=10)
+        table_frame.grid(
+            row=2,
+            column=0,
+            columnspan=3,
+            rowspan=2,
+            padx=(20, 10),
+            pady=10,
+            sticky="we",
+        )
+        btn_edit.grid(row=2, column=3)
+        btn_delete.grid(
+            row=3, column=3, columnspan=3, sticky="n",
+        )
+        btn_exit.grid(row=4, column=3, pady=10)
+
     def init_welcome_window(self):
         self.window.title("Where Should We Eat Tonight?")
         self.window.configure(background="light gray")
@@ -696,3 +790,10 @@ class View:
         self.window.configure(background="#0080c0")
         # self.window.resizable(0, 0)
         self._rest_detail_place_widget()
+
+    def owner_window(self):
+        self.window.title("Bussiness Owner View")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("650x420")
+        self.window.resizable(0, 0)
+        self._owner_place_widget()

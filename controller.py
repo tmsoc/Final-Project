@@ -283,6 +283,10 @@ class Controller:
         for index, rest in enumerate(restaurants):
             self.view.view1_list_box.insert(index, rest)
 
+    def display_owner_window(self):
+        self.view.clear_frame()
+        self.view.owner_window()
+
     def display_rest_detail_window(self):
         self.view.clear_frame()
         self.view.rest_detail_Window()
@@ -309,8 +313,7 @@ class Controller:
                 if user_type == "admin":
                     self.display_admin_window()
                 elif user_type == "owner":
-                    # self.view.owner_window()
-                    self.back_to_welcome()
+                    self.display_owner_window()
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
@@ -318,6 +321,42 @@ class Controller:
         """
         this method retrieves the texts from entry_user_name and
         entry_password, write these new information to account db
+        """
+        pass
+
+    def create_rest_press(self):
+        """
+        calls new_rest_window() to open a new window with multiple entries 
+        for owner to input
+        """
+        pass
+
+    def change_username_press(self):
+        """
+        open a simpledialog, ask owner to enter new username, the new value 
+        will be replaced in data table
+        """
+        pass
+
+    def change_password_press(self):
+        """
+        open a simpledialog, ask owner to enter new password, the new value 
+        will be replaced in data table
+        """
+        pass
+
+    def edit_press(self):
+        """
+        calls rest_info() to open a new window, entries filled with 
+        information of the restaurant selected in the listbox
+        """
+        pass
+
+    def delete_rest_press(self):
+        """
+        open a messagebox to confirm that owner really wants to delete the 
+        restaurant selected in the listbox. If yes, call a function in model 
+        to delete the restaurant from dataset
         """
         pass
 
