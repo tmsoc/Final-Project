@@ -396,7 +396,7 @@ class View:
         )
         lbl_name = Label(
             font="None 11",
-            text=self.controller.menu_info[0],
+            text=self.controller._menu_info[0],
             bg="light gray",
             width=26,
         )
@@ -405,7 +405,7 @@ class View:
         )
         lbl_address = Label(
             font="None 11",
-            text=self.controller.menu_info[1],
+            text=self.controller._menu_info[1],
             bg="light gray",
             width=26,
         )
