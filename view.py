@@ -115,6 +115,7 @@ class View:
         self.entry_password = Entry(
             self.window, font="None 11", show="*", width=25,
         )
+        self.entry_password.bind("<Return>", self.controller.btn_login_press)
         button_frame = Frame(self.window, bg="#0080c0")
         btn_login = Button(
             button_frame,
