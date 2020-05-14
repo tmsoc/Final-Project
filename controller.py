@@ -291,6 +291,10 @@ class Controller:
         self.view.clear_frame()
         self.view.rest_detail_Window()
 
+    def display_new_rest_window(self):
+        self.view.clear_frame()
+        self.view.new_rest_window()
+
     def welcome_screen_next_button_press(self):
         if self.view.user_type_var.get() == "user":
             self.display_user_window()
@@ -334,26 +338,27 @@ class Controller:
         """
         pass
 
-    def change_username_press(self):
-        """
-        open a simpledialog, ask owner to enter new username, the new value 
-        will be replaced in data table
-        """
-        pass
+    #def change_username_press(self):
+    #    """
+    #    open a simpledialog, ask owner to enter new username, the new value 
+    #    will be replaced in data table
+    #    """
+    #    pass
+    #
+    #def change_password_press(self):
+    #    """
+    #    open a simpledialog, ask owner to enter new password, the new value 
+    #    will be replaced in data table
+    #    """
+    #    pass
 
-    def change_password_press(self):
+    def edit_info_press(self):
         """
-        open a simpledialog, ask owner to enter new password, the new value 
-        will be replaced in data table
-        """
-        pass
-
-    def edit_press(self):
-        """
-        calls rest_info() to open a new window, entries filled with 
+        calls restaurant_info_window() to open a new window, entries filled with 
         information of the restaurant selected in the listbox
         """
-        pass
+        self.view.clear_frame()
+        self.view.restaurant_info_window()
 
     def delete_rest_press(self):
         """
@@ -611,6 +616,20 @@ class Controller:
         """
         pass
 
+    def add_menu_press(self):
+        """
+        open a dialogbox to get the path to the menu file, store the menu file 
+        name to dataset
+        """
+        pass
+
+    def save_new_rest_press(self):
+        """
+        get all information of the new restaurant from entries in the window 
+        to dataset
+        """
+        pass
+
     def exit_user_window(self):
         self._master_search_list.clear()
         self.back_to_welcome()
@@ -621,6 +640,9 @@ class Controller:
 
     def back_to_admin_view(self):
         self.display_admin_window()
+
+    def back_to_owner_view(self):
+        self.display_owner_window()
 
     # ---------------- END OF VIEW CONTROLS ---------------------
 
