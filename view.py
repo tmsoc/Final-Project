@@ -992,20 +992,20 @@ class View:
         self.window.configure(background="#0080c0")
         self.window.geometry("630x650")
         self._new_rest_place_widget(False)
-        btn_add_menu = Button(
+        self.btn_edit_menu = Button(
             self.rest_edit_button_frame,
             text="Add Menu",
             font="None 11",
             bg="light gray",
-            width=8,
-            command=self.controller.owner_add_menu_press,
+            width=10,
+            command=self.controller.owner_edit_menu_press,
         )
         btn_save_rest = Button(
             self.rest_edit_button_frame,
             text="Save",
             font="None 11",
             bg="light gray",
-            width=8,
+            width=10,
             command=self.controller.save_rest_press,
         )
         btn_new_rest_close = Button(
@@ -1013,12 +1013,12 @@ class View:
             text="Close",
             font="None 11",
             bg="light gray",
-            width=8,
+            width=10,
             command=self.controller.back_to_owner_view,
         )
         self.rest_edit_button_frame.columnconfigure(0, weight=1)
         self.rest_edit_button_frame.columnconfigure(1, weight=1)
         self.rest_edit_button_frame.columnconfigure(2, weight=1)
-        btn_add_menu.grid(row=0, column=0, pady=10)
+        self.btn_edit_menu.grid(row=0, column=0, pady=10)
         btn_save_rest.grid(row=0, column=1, pady=10)
         btn_new_rest_close.grid(row=0, column=2, pady=10)

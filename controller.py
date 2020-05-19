@@ -195,6 +195,7 @@ class Controller:
         self.view.entry_rest_description.insert(0, restaurant["description"])
         if restaurant["menu"]:
             self.view.entry_rest_menu.insert(0, "On File")
+            self.view.btn_edit_menu["text"] = "Delete Menu"
         else:
             self.view.entry_rest_menu.insert(0, "None")
 
@@ -671,20 +672,42 @@ class Controller:
         """
         pass
 
-    def owner_add_menu_press(self):
+    def owner_edit_menu_press(self):
         """
-        Imports a pdf restaurant menu for the
+        Imports or deletes an menu for the active
+        restaurant. 
+        
+        If no menu is on file, method
+        imports a pdf restaurant menu for the
         active restaurant id number. The user
         is prompted with a dialog window to select
         the file to import. The file is then copied
         to the SavedMenus directory.
+
+        If a menu is on file, the menu is deleted
+        from the SaveMenus directory.
         """
-        import_file = self._get_user_file_open_path()
-        self.import_menu(self._active_rest_id, import_file)
-        self.view.entry_rest_menu["state"] = "normal"
-        self.view.entry_rest_menu.delete(0, "end")
-        self.view.entry_rest_menu.insert(0, "On File")
-        self.view.entry_rest_menu["state"] = "readonly"
+        restaurant = self.model.rest_select_by_id(self._active_rest_id)
+        if restaurant["menu"] == True:
+            menu_file = self.model.menu_select(self._active_rest_id)
+            complete = self.delete_menu_file(
+                self._active_rest_id, Path(menu_file["menu_path"])
+            )
+            if complete:
+                self.view.entry_rest_menu["state"] = "normal"
+                self.view.entry_rest_menu.delete(0, "end")
+                self.view.entry_rest_menu.insert(0, "None")
+                self.view.entry_rest_menu["state"] = "readonly"
+                self.view.btn_edit_menu["text"] = "Add Menu"
+        else:
+            import_file = self._get_user_file_open_path()
+            complete = self.import_menu(self._active_rest_id, import_file)
+            if complete:
+                self.view.entry_rest_menu["state"] = "normal"
+                self.view.entry_rest_menu.delete(0, "end")
+                self.view.entry_rest_menu.insert(0, "On File")
+                self.view.entry_rest_menu["state"] = "readonly"
+                self.view.btn_edit_menu["text"] = "Delete Menu"
 
     def save_new_rest_press(self):
         """
@@ -728,7 +751,20 @@ class Controller:
     #     import_file = self._get_user_file_open_path()
     #     self.import_menu(rest_id, import_file)
 
-    def import_menu(self, rest_id: int, file_path: Path) -> None:
+    def delete_menu_file(self, rest_id: int, file_path: Path):
+        abs_file_path = Path(
+            self._working_directory / self.MENU_DIRECTORY / file_path
+        )
+        if abs_file_path.is_file():
+            self.delete_rest_menu(rest_id)
+            abs_file_path.unlink()
+            self.display_message_window("Menu Deleted")
+            return True
+        else:
+            self.display_error_message("Menu File Not Found")
+            return False
+
+    def import_menu(self, rest_id: int, file_path: Path):
         if self._verify_pdf(file_path):
             # NEEDS TESTING
             already_exists = self.model.menu_select(rest_id)
@@ -746,9 +782,11 @@ class Controller:
             # stores the changes to the model
             self._update_restaurant_menu(rest_id, new_file_name)
             self.display_message_window("Import Complete")
+            return True
         # if the selected file is not a pdf, prompt the user
         elif file_path.is_file():
             self.display_error_message("Invalid file type. Must be a .pdf")
+            return False
 
     def display_owner_id(self) -> list:
 
