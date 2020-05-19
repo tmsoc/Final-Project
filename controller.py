@@ -466,8 +466,8 @@ class Controller:
         list_box = self.view.view1_list_box
         selected_rest = self._get_list_box_selection(list_box)
         if selected_rest != None:
-            rest_id = selected_rest.split(" ")[0]
-            rest_info = self.model.rest_select_by_id(rest_id)
+            self._active_rest_id = int(selected_rest.split(" ", 1)[0])
+            rest_info = self.model.rest_select_by_id(self._active_rest_id)
             self.view.clear_frame()
             self.view.admin_restaurant_info_window()
             self._populate_admin_details_table(rest_info)
@@ -479,11 +479,10 @@ class Controller:
         list_box = self.view.view3_list_box
         selected_rest = self._get_list_box_selection(list_box)
         if selected_rest != None:
-            rest_id = int(selected_rest.split(" ", 1)[0])
-            rest_info = self.model.rest_select_by_id(rest_id)
+            self._active_rest_id = int(selected_rest.split(" ", 1)[0])
+            rest_info = self.model.rest_select_by_id(self._active_rest_id)
             self.display_rest_detail_window()
             self._insert_rest_info(rest_info)
-            self.active_rest_id = rest_id
 
     def request_menu(self):
         """
@@ -547,6 +546,7 @@ class Controller:
 
         # self.model.update_restaurant(rest_id, param_dict)
         self.model.update_restaurant(self._active_rest_id, param_dict)
+        self.display_message_window("Save Complete")
         # self.back_to_admin_view()
 
     def get_path(self):
@@ -659,7 +659,7 @@ class Controller:
         Opens a menu of the active restaurant
         stored in the menus folder.
         """
-        menu_record = self.model.menu_select(self.active_rest_id)
+        menu_record = self.model.menu_select(self._active_rest_id)
         menu_path = menu_record["menu_path"]
         abs_menu_path = Path(
             self._working_directory / self.MENU_DIRECTORY / menu_path
@@ -672,7 +672,7 @@ class Controller:
         """
         pass
 
-    def owner_edit_menu_press(self):
+    def rest_info_edit_menu_press(self):
         """
         Imports or deletes an menu for the active
         restaurant. 

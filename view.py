@@ -290,6 +290,7 @@ class View:
         btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
 
+    # NO LONGER USED!!!!!!
     def _rest_info_place_widget(self):
 
         lbl_prompt_rest_ID = Label(
@@ -831,8 +832,19 @@ class View:
             font="None 11", bg="white", width=57
         )
 
-        lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
-        self.entry_rest_name.grid(row=1, column=1, padx=(0, 20), sticky="w")
+        if new_restaurant:
+            lbl_rest_name.grid(
+                row=1, column=0, padx=10, pady=(20, 0), sticky="w"
+            )
+            self.entry_rest_name.grid(
+                row=1, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
+            )
+        else:
+            lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
+            self.entry_rest_name.grid(
+                row=1, column=1, padx=(0, 20), sticky="w"
+            )
+
         lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
         self.entry_rest_address.grid(row=2, column=1, sticky="w")
         lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
@@ -860,9 +872,6 @@ class View:
             self.entry_rest_menu = Entry(
                 font="None 11", bg="white", width=57, state="readonly",
             )
-            # self.entry_rest_menu["state"] = "normal"
-            # self.entry_rest_menu.insert(0, "temp text")
-            # self.entry_rest_menu["state"] = "readonly"
 
             lbl_rest_menu.grid(row=7, column=0, padx=10, sticky="w")
             self.entry_rest_menu.grid(row=7, column=1, sticky="w")
@@ -958,7 +967,7 @@ class View:
         """
         self.window.title("New Restaurant")
         self.window.configure(background="#0080c0")
-        self.window.geometry("630x500")
+        self.window.geometry("630x430")
         self._new_rest_place_widget(True)
         btn_save_new_rest = Button(
             self.rest_edit_button_frame,
@@ -984,13 +993,7 @@ class View:
     def admin_restaurant_info_window(self):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
-        self.window.geometry("630x650")
-        self._rest_info_place_widget()
-
-    def owner_restaurant_edit_window(self):
-        self.window.title("Restaurant Information")
-        self.window.configure(background="#0080c0")
-        self.window.geometry("630x650")
+        self.window.geometry("630x500")
         self._new_rest_place_widget(False)
         self.btn_edit_menu = Button(
             self.rest_edit_button_frame,
@@ -998,7 +1001,43 @@ class View:
             font="None 11",
             bg="light gray",
             width=10,
-            command=self.controller.owner_edit_menu_press,
+            command=self.controller.rest_info_edit_menu_press,
+        )
+        btn_save_rest = Button(
+            self.rest_edit_button_frame,
+            text="Save",
+            font="None 11",
+            bg="light gray",
+            width=10,
+            command=self.controller.save_rest_press,
+        )
+        btn_new_rest_close = Button(
+            self.rest_edit_button_frame,
+            text="Close",
+            font="None 11",
+            bg="light gray",
+            width=10,
+            command=self.controller.back_to_admin_view,
+        )
+        self.rest_edit_button_frame.columnconfigure(0, weight=1)
+        self.rest_edit_button_frame.columnconfigure(1, weight=1)
+        self.rest_edit_button_frame.columnconfigure(2, weight=1)
+        self.btn_edit_menu.grid(row=0, column=0, pady=10)
+        btn_save_rest.grid(row=0, column=1, pady=10)
+        btn_new_rest_close.grid(row=0, column=2, pady=10)
+
+    def owner_restaurant_edit_window(self):
+        self.window.title("Restaurant Information")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("630x500")
+        self._new_rest_place_widget(False)
+        self.btn_edit_menu = Button(
+            self.rest_edit_button_frame,
+            text="Add Menu",
+            font="None 11",
+            bg="light gray",
+            width=10,
+            command=self.controller.rest_info_edit_menu_press,
         )
         btn_save_rest = Button(
             self.rest_edit_button_frame,
