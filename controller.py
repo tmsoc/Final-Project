@@ -11,9 +11,9 @@ class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
     _active_rest_id = int()  # Not used yet
-    _active_owner_id = int()  # Not used yet
+    _active_account_id = int()
     _menu_info = list()
-    _master_search_list = list()
+    _active_restaurant_list = list()
 
     def __init__(self, model, view):
         self.model = model
@@ -320,7 +320,9 @@ class Controller:
                 if user_type == "admin":
                     self.display_admin_window()
                 elif user_type == "owner":
+                    self._active_account_id = account_key
                     self.display_owner_window()
+                    self.display_owner_restaurant_list()
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
@@ -338,16 +340,16 @@ class Controller:
         """
         pass
 
-    #def change_username_press(self):
+    # def change_username_press(self):
     #    """
-    #    open a simpledialog, ask owner to enter new username, the new value 
+    #    open a simpledialog, ask owner to enter new username, the new value
     #    will be replaced in data table
     #    """
     #    pass
     #
-    #def change_password_press(self):
+    # def change_password_press(self):
     #    """
-    #    open a simpledialog, ask owner to enter new password, the new value 
+    #    open a simpledialog, ask owner to enter new password, the new value
     #    will be replaced in data table
     #    """
     #    pass
@@ -535,14 +537,37 @@ class Controller:
 
         self.back_to_admin_view()
 
+    def get_owner_rest_list(self):
+        """
+        Tony
+        """
+        restaurant_owner = self.model.owner_select_by_key(
+            self._active_account_id
+        )
+        restaurant_list_str = restaurant_owner["restaurants"]
+        return restaurant_list_str.split(",")
+
+    def display_owner_restaurant_list(self):
+        """
+        Tony
+        """
+        self._active_restaurant_list.clear()
+        restaurant_id_list = self.get_owner_rest_list()
+        for id in restaurant_id_list:
+            restaurant = self.model.rest_select_by_id(id)
+            self._active_restaurant_list.append(restaurant)
+        rest_list = self._user_rest_format_list(self._active_restaurant_list)
+        for index, rest in enumerate(rest_list):
+            self.view.view2_list_box.insert(index, rest)
+
     def rest_search(self, *args):
         search_field = self.view.user_search_field.get().lower()
         search_items = search_field.split(" ")
         results = []
         if search_field == "":
-            results = self._master_search_list
+            results = self._active_restaurant_list
         else:
-            for rest in self._master_search_list:
+            for rest in self._active_restaurant_list:
                 rest_str = self._rest_dict_to_str(rest)
                 for item in search_items:
                     if item in rest_str and item != "":
@@ -577,7 +602,7 @@ class Controller:
         gluten = self.view.gluten_free_var.get()
 
         if veggie == 0 and vegan == 0 and gluten == 0:
-            self._master_search_list = self.model.restaurants_select_all()
+            self._active_restaurant_list = self.model.restaurants_select_all()
         else:
             if veggie == 1:
                 param_dict["vegetarian"] = True
@@ -586,7 +611,7 @@ class Controller:
             if gluten == 1:
                 param_dict["gluten"] = True
 
-            self._master_search_list = self.model.rest_select_by_attribute(
+            self._active_restaurant_list = self.model.rest_select_by_attribute(
                 param_dict
             )
         self.rest_search()
@@ -631,7 +656,7 @@ class Controller:
         pass
 
     def exit_user_window(self):
-        self._master_search_list.clear()
+        self._active_restaurant_list.clear()
         self.back_to_welcome()
 
     def back_to_welcome(self):
