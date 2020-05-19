@@ -81,6 +81,10 @@ class Model:
         Updates all the given attributes from the param argument to
         the restaurant with the given id number
     
+    update_owner(key: int, param: dict)
+        Updates all the given attributes from the param argument to
+        the owner with the given key number
+    
     delete_restaurant(id: int)
         Deletes the restaurant with the given id
 
@@ -108,6 +112,8 @@ class Model:
         Returns None if no record is found.
 
     owner_select_search_name(name: str)
+        Returns an user record by the its searchable name.
+        Returns None if no record is found.
     
     """
 
@@ -177,6 +183,22 @@ class Model:
             set_param.append(f"{key}=:{key}")
             # builds and returns the UPDATE string
         return "UPDATE {} SET {} WHERE id={}".format(
+            table, ", ".join(set_param), id
+        )
+
+    @staticmethod
+    def _build_update_string_key(id: int, table: str, param: dict) -> str:
+        """
+        Returns a sql UPDATE string with the SET
+        values provided by the given dictionary to
+        the specified entry id in the specified table.
+        """
+        set_param = list()
+        for key in param:
+            # stores a list of key formatted for the SET argument
+            set_param.append(f"{key}=:{key}")
+            # builds and returns the UPDATE string
+        return "UPDATE {} SET {} WHERE key={}".format(
             table, ", ".join(set_param), id
         )
 
@@ -563,6 +585,24 @@ class Model:
         else:
             return False
 
+    def update_owner(self, key: int, param: dict) -> bool:
+        """
+        Updates all the given attributes from the param argument to
+        the owner with the given key number
+        """
+        # Verifies the the id number given is valid
+        if self._verify_key(self.OWNER_TABLE, key):
+            # builds the sql UPDATE string
+            sql_str = self._build_update_string_key(
+                key, self.OWNER_TABLE, param
+            )
+            # updates the record
+            with self.connection:
+                self.cur.execute(sql_str, param)
+            return True
+        else:
+            return False
+
     def delete_restaurant(self, id: int) -> bool:
         """
         Deletes the restaurant record with the
@@ -612,4 +652,3 @@ class Model:
 
     def close_connection(self) -> None:
         self.connection.close()
-

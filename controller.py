@@ -10,8 +10,8 @@ class Controller:
     MENU_DIRECTORY = "SavedMenus"
     _active_rest_id = int()  # Not used yet
     _active_account_id = int()
-    _menu_info = list()
     _active_restaurant_list = list()
+    _menu_info = list()
 
     def __init__(self, model, view):
         self.model = model
@@ -507,26 +507,15 @@ class Controller:
             self.view.clear_frame()
             self.view.menu_window()
 
-    def save_rest_press(self):
-        """
-        writes the texts in entries into db
-        """
-        # rest_id = self.view.lbl_rest_ID["text"]
-
-        # param_dict = {}
-        # list_box = self.view.view1_list_box
-
+    def _read_rest_edit_window(self) -> dict:
         name = self.view.entry_rest_name.get()
         address = self.view.entry_rest_address.get()
-        # address2 = self.view.entry_rest_address.get()
         city = self.view.entry_rest_city.get()
         state = self.view.entry_rest_state.get()
         zip_code = self.view.entry_rest_zip.get()
         veg = True if self.view.veggie_edit_var.get() == 1 else False
         vegan = True if self.view.vegan_edit_var.get() == 1 else False
         gluten = True if self.view.gluten_edit_var.get() == 1 else False
-        # NEED TO SWITCH MENU TO LABEL OR READONLY
-        # hours = self.view.entry_rest_hours.get()
         description = self.view.entry_rest_description.get()
 
         param_dict = {
@@ -538,14 +527,17 @@ class Controller:
             "vegetarian": veg,
             "vegan": vegan,
             "gluten": gluten,
-            # "hours": hours,
             "description": description,
         }
+        return param_dict
 
-        # self.model.update_restaurant(rest_id, param_dict)
+    def save_rest_press(self):
+        """
+        writes the texts in entries into db
+        """
+        param_dict = self._read_rest_edit_window()
         self.model.update_restaurant(self._active_rest_id, param_dict)
         self.view.display_message_window("Save Complete")
-        # self.back_to_admin_view()
 
     def get_path(self):
         uploaded_menu = self.view.get_user_file_open_path()
@@ -707,12 +699,70 @@ class Controller:
                 self.view.entry_rest_menu["state"] = "readonly"
                 self.view.btn_edit_menu["text"] = "Delete Menu"
 
+    def _restaurant_validate_entry(self, rest_info: dict) -> bool:
+        """
+        Verifies that the given restaurant
+        information has a valid zip code
+        and is not a duplicate restaurant.
+        """
+        zip_code = rest_info["zip_code"]
+        new_rest_city = {"city": rest_info["city"]}
+        rest_in_same_city = self.model.rest_select_by_attribute(new_rest_city)
+        if not zip_code.isnumeric() or len(zip_code) != 5:
+            self.view.display_error_message("Invalid Zip Code")
+            return False
+        if rest_in_same_city != None:
+            for existing in rest_in_same_city:
+                if (
+                    rest_info["name"] == existing["name"]
+                    and rest_info["address"] == existing["address"]
+                ):
+                    self.view.display_error_message(
+                        "Duplicate Restaurant Found"
+                    )
+                    return False
+        return True
+
+    def _add_rest_to_owner_list(self, rest_id: int, owner_key: int):
+        """
+        Adds the given restaurant id
+        to the given owner id record
+        """
+        owner = self.model.owner_select_by_key(owner_key)
+        rest_list = owner["restaurants"]
+        if len(rest_list) > 0:
+            rest_list += f",{rest_id}"
+        else:
+            rest_list = str(rest_id)
+        self.model.update_owner(owner_key, {"restaurants": rest_list})
+
     def save_new_rest_press(self):
         """
         get all information of the new restaurant from entries in the window 
         to dataset
         """
-        pass
+        rest_info = self._read_rest_edit_window()
+        if (
+            rest_info["name"] == ""
+            or rest_info["address"] == ""
+            or rest_info["city"] == ""
+            or rest_info["state"] == ""
+            or rest_info["zip_code"] == ""
+            or rest_info["description"] == ""
+        ):
+            self.view.display_error_message("All text fields are required")
+        else:
+            valid_entry = self._restaurant_validate_entry(rest_info)
+            if valid_entry:
+                # stores the new restaurant
+                self.model.restaurant_insert(rest_info)
+                # adds restaurant to owners list of restaurants
+                saved_rest = self.model.rest_select_by_attribute(rest_info)
+                new_id = int(saved_rest[0]["id"])
+                self._add_rest_to_owner_list(new_id, self._active_account_id)
+                # prompts the user
+                self.view.btn_save_new_rest["state"] = "disabled"
+                self.view.display_message_window("Restaurant Saved")
 
     def exit_user_window(self):
         self._active_restaurant_list.clear()

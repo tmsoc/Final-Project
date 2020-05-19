@@ -1001,7 +1001,7 @@ class View:
         self.window.configure(background="#0080c0")
         self.window.geometry("630x430")
         self._new_rest_place_widget(True)
-        btn_save_new_rest = Button(
+        self.btn_save_new_rest = Button(
             self.rest_edit_button_frame,
             text="Save",
             font="None 11",
@@ -1019,7 +1019,7 @@ class View:
         )
         self.rest_edit_button_frame.columnconfigure(0, weight=1)
         self.rest_edit_button_frame.columnconfigure(1, weight=1)
-        btn_save_new_rest.grid(row=0, column=0, pady=10)
+        self.btn_save_new_rest.grid(row=0, column=0, pady=10)
         btn_new_rest_close.grid(row=0, column=1, pady=10)
 
     def admin_restaurant_info_window(self):
