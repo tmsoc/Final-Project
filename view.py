@@ -1,4 +1,7 @@
 from tkinter import *
+from tkinter import filedialog
+from tkinter import messagebox
+from pathlib import Path
 
 
 class View:
@@ -8,6 +11,7 @@ class View:
     def __init__(self, root, controller):
         self.window = root
         self.controller = controller
+        self.window.iconbitmap("Food-Dome.ico")
         self.window.resizable(0, 0)
 
     def begin(self) -> None:
@@ -26,6 +30,34 @@ class View:
     def set_display_write_enable(display):
         """Sets the display to write enable"""
         display["state"] = "normal"
+
+    @staticmethod
+    def display_error_message(message: str) -> None:
+        """
+        Displays an error message to the user
+        with the given message.
+        """
+        messagebox.showinfo(
+            message=message, icon="error", title="Error",
+        )
+
+    @staticmethod
+    def display_message_window(message: str) -> None:
+        """
+        Displays an info window to the
+        user with the given message
+        """
+        messagebox.showinfo(message=message)
+
+    @staticmethod
+    def get_user_file_open_path() -> Path:
+        """
+        Opens a filedialog window to the
+        user to select a file to open/import.
+        Returns a Path to the selected file.
+        Returns an empty string if user cancles.
+        """
+        return Path(filedialog.askopenfilename())
 
     def _welcome_place_widget(self):
         top_frame = Frame(
@@ -291,109 +323,109 @@ class View:
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
 
     # NO LONGER USED!!!!!!
-    def _rest_info_place_widget(self):
+    # def _rest_info_place_widget(self):
 
-        lbl_prompt_rest_ID = Label(
-            text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
-        )
-        self.lbl_rest_ID = Label(
-            text="", font="None 11", bg="light gray", width=50
-        )
-        lbl_rest_name = Label(
-            text="Restaurant name:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_name = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_address = Label(
-            text="Address:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_address = Label(
-            text="Address:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_city = Label(
-            text="City:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_city = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_state = Label(
-            text="State:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_state = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_zip = Label(
-            text="Zip code:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_zip = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_veg = Label(
-            text="Vegetarian:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_veg = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_vegan = Label(
-            text="Vegan:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_vegan = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_gluten = Label(
-            text="Gluten:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_gluten = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_menu = Label(
-            text="Menu:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_menu = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_hours = Label(
-            text="Hours:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_hours = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_description = Label(
-            text="Description:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_description = Entry(
-            font="None 11", bg="white", width=57
-        )
-        btn_save_rest = Button(
-            text="Save",
-            font="None 11",
-            bg="light gray",
-            command=self.controller.save_rest_press,
-        )
-        btn_admin_close = Button(
-            text="Close",
-            font="None 11",
-            bg="light gray",
-            command=self.controller.back_to_admin_view,
-        )
+    #     lbl_prompt_rest_ID = Label(
+    #         text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.lbl_rest_ID = Label(
+    #         text="", font="None 11", bg="light gray", width=50
+    #     )
+    #     lbl_rest_name = Label(
+    #         text="Restaurant name:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_name = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_address = Label(
+    #         text="Address:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_address = Label(
+    #         text="Address:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_city = Label(
+    #         text="City:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_city = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_state = Label(
+    #         text="State:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_state = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_zip = Label(
+    #         text="Zip code:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_zip = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_veg = Label(
+    #         text="Vegetarian:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_veg = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_vegan = Label(
+    #         text="Vegan:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_vegan = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_gluten = Label(
+    #         text="Gluten:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_gluten = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_menu = Label(
+    #         text="Menu:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_menu = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_hours = Label(
+    #         text="Hours:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_hours = Entry(font="None 11", bg="white", width=57)
+    #     lbl_rest_description = Label(
+    #         text="Description:", font="None 11", bg="#0080c0", height=2
+    #     )
+    #     self.entry_rest_description = Entry(
+    #         font="None 11", bg="white", width=57
+    #     )
+    #     btn_save_rest = Button(
+    #         text="Save",
+    #         font="None 11",
+    #         bg="light gray",
+    #         command=self.controller.save_rest_press,
+    #     )
+    #     btn_admin_close = Button(
+    #         text="Close",
+    #         font="None 11",
+    #         bg="light gray",
+    #         command=self.controller.back_to_admin_view,
+    #     )
 
-        lbl_prompt_rest_ID.grid(
-            row=0, column=0, padx=10, pady=(20, 0), sticky="w"
-        )
-        self.lbl_rest_ID.grid(
-            row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
-        )
-        lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
-        self.entry_rest_name.grid(row=1, column=1, padx=(0, 20), sticky="w")
-        lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
-        self.entry_rest_address.grid(row=2, column=1, sticky="w")
-        lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
-        self.entry_rest_address.grid(row=2, column=1, sticky="w")
-        lbl_rest_city.grid(row=3, column=0, padx=10, sticky="w")
-        self.entry_rest_city.grid(row=3, column=1, sticky="w")
-        lbl_rest_state.grid(row=4, column=0, padx=10, sticky="w")
-        self.entry_rest_state.grid(row=4, column=1, sticky="w")
-        lbl_rest_zip.grid(row=5, column=0, padx=10, sticky="w")
-        self.entry_rest_zip.grid(row=5, column=1, sticky="w")
-        lbl_rest_veg.grid(row=6, column=0, padx=10, sticky="w")
-        self.entry_rest_veg.grid(row=6, column=1, sticky="w")
-        lbl_rest_vegan.grid(row=7, column=0, padx=10, sticky="w")
-        self.entry_rest_vegan.grid(row=7, column=1, sticky="w")
-        lbl_rest_gluten.grid(row=8, column=0, padx=10, sticky="w")
-        self.entry_rest_gluten.grid(row=8, column=1, sticky="w")
-        lbl_rest_menu.grid(row=9, column=0, padx=10, sticky="w")
-        self.entry_rest_menu.grid(row=9, column=1, sticky="w")
-        lbl_rest_hours.grid(row=10, column=0, padx=10, sticky="w")
-        self.entry_rest_hours.grid(row=10, column=1, sticky="w")
-        lbl_rest_description.grid(row=11, column=0, padx=10, sticky="w")
-        self.entry_rest_description.grid(row=11, column=1, sticky="w")
-        btn_save_rest.grid(row=12, column=0, columnspan=2, pady=20)
-        btn_admin_close.grid(row=13, column=0, columnspan=2, pady=10)
+    #     lbl_prompt_rest_ID.grid(
+    #         row=0, column=0, padx=10, pady=(20, 0), sticky="w"
+    #     )
+    #     self.lbl_rest_ID.grid(
+    #         row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
+    #     )
+    #     lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
+    #     self.entry_rest_name.grid(row=1, column=1, padx=(0, 20), sticky="w")
+    #     lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
+    #     self.entry_rest_address.grid(row=2, column=1, sticky="w")
+    #     lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
+    #     self.entry_rest_address.grid(row=2, column=1, sticky="w")
+    #     lbl_rest_city.grid(row=3, column=0, padx=10, sticky="w")
+    #     self.entry_rest_city.grid(row=3, column=1, sticky="w")
+    #     lbl_rest_state.grid(row=4, column=0, padx=10, sticky="w")
+    #     self.entry_rest_state.grid(row=4, column=1, sticky="w")
+    #     lbl_rest_zip.grid(row=5, column=0, padx=10, sticky="w")
+    #     self.entry_rest_zip.grid(row=5, column=1, sticky="w")
+    #     lbl_rest_veg.grid(row=6, column=0, padx=10, sticky="w")
+    #     self.entry_rest_veg.grid(row=6, column=1, sticky="w")
+    #     lbl_rest_vegan.grid(row=7, column=0, padx=10, sticky="w")
+    #     self.entry_rest_vegan.grid(row=7, column=1, sticky="w")
+    #     lbl_rest_gluten.grid(row=8, column=0, padx=10, sticky="w")
+    #     self.entry_rest_gluten.grid(row=8, column=1, sticky="w")
+    #     lbl_rest_menu.grid(row=9, column=0, padx=10, sticky="w")
+    #     self.entry_rest_menu.grid(row=9, column=1, sticky="w")
+    #     lbl_rest_hours.grid(row=10, column=0, padx=10, sticky="w")
+    #     self.entry_rest_hours.grid(row=10, column=1, sticky="w")
+    #     lbl_rest_description.grid(row=11, column=0, padx=10, sticky="w")
+    #     self.entry_rest_description.grid(row=11, column=1, sticky="w")
+    #     btn_save_rest.grid(row=12, column=0, columnspan=2, pady=20)
+    #     btn_admin_close.grid(row=13, column=0, columnspan=2, pady=10)
 
     def _menu_place_widget(self):
         lbl_prompt_name = Label(
@@ -991,6 +1023,10 @@ class View:
         btn_new_rest_close.grid(row=0, column=1, pady=10)
 
     def admin_restaurant_info_window(self):
+        """
+        From admin window
+        Window to modify a restaurant entry
+        """
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x500")
@@ -1027,6 +1063,10 @@ class View:
         btn_new_rest_close.grid(row=0, column=2, pady=10)
 
     def owner_restaurant_edit_window(self):
+        """
+        From Owner window
+        Window to modify a restaurant entry
+        """
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x500")

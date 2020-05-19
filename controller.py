@@ -1,5 +1,3 @@
-from tkinter import filedialog
-from tkinter import messagebox  # Should be in the view
 from pathlib import Path
 import subprocess
 
@@ -25,15 +23,15 @@ class Controller:
         """Returns a path to the working directory"""
         return Path(__file__).parent.absolute()
 
-    @staticmethod
-    def _get_user_file_open_path() -> Path:
-        """
-        Opens a filedialog window to the
-        user to select a file to open/import.
-        Returns a Path to the selected file.
-        Returns an empty string if user cancles.
-        """
-        return Path(filedialog.askopenfilename())
+    # @staticmethod
+    # def _get_user_file_open_path() -> Path:
+    #     """
+    #     Opens a filedialog window to the
+    #     user to select a file to open/import.
+    #     Returns a Path to the selected file.
+    #     Returns an empty string if user cancles.
+    #     """
+    #     return Path(filedialog.askopenfilename())
 
     @staticmethod
     def _verify_pdf(file_path: Path) -> bool:
@@ -56,25 +54,25 @@ class Controller:
 
     # This method need to be placed in the View
     # once it is merged into the master branch
-    @staticmethod
-    def display_error_message(message: str) -> None:
-        """
-        Displays an error message to the user
-        with the given message.
-        """
-        messagebox.showinfo(
-            message=message, icon="error", title="Error",
-        )
+    # @staticmethod
+    # def display_error_message(message: str) -> None:
+    #     """
+    #     Displays an error message to the user
+    #     with the given message.
+    #     """
+    #     messagebox.showinfo(
+    #         message=message, icon="error", title="Error",
+    #     )
 
-    # This method need to be placed in the View
-    # once it is merged into the master branch
-    @staticmethod
-    def display_message_window(message: str) -> None:
-        """
-        Displays an info window to the
-        user with the given message
-        """
-        messagebox.showinfo(message=message)
+    # # This method need to be placed in the View
+    # # once it is merged into the master branch
+    # @staticmethod
+    # def display_message_window(message: str) -> None:
+    #     """
+    #     Displays an info window to the
+    #     user with the given message
+    #     """
+    #     messagebox.showinfo(message=message)
 
     @staticmethod
     def import_file(import_file_path: Path, save_file_path: Path) -> None:
@@ -546,11 +544,11 @@ class Controller:
 
         # self.model.update_restaurant(rest_id, param_dict)
         self.model.update_restaurant(self._active_rest_id, param_dict)
-        self.display_message_window("Save Complete")
+        self.view.display_message_window("Save Complete")
         # self.back_to_admin_view()
 
     def get_path(self):
-        uploaded_menu = self._get_user_file_open_path()
+        uploaded_menu = self.view.get_user_file_open_path()
         # if self._verify_pdf(uploaded_menu):
         if uploaded_menu.is_file():
             self.view.entry_menu.delete(0, "end")
@@ -700,7 +698,7 @@ class Controller:
                 self.view.entry_rest_menu["state"] = "readonly"
                 self.view.btn_edit_menu["text"] = "Add Menu"
         else:
-            import_file = self._get_user_file_open_path()
+            import_file = self.view.get_user_file_open_path()
             complete = self.import_menu(self._active_rest_id, import_file)
             if complete:
                 self.view.entry_rest_menu["state"] = "normal"
@@ -758,10 +756,10 @@ class Controller:
         if abs_file_path.is_file():
             self.delete_rest_menu(rest_id)
             abs_file_path.unlink()
-            self.display_message_window("Menu Deleted")
+            self.view.display_message_window("Menu Deleted")
             return True
         else:
-            self.display_error_message("Menu File Not Found")
+            self.view.display_error_message("Menu File Not Found")
             return False
 
     def import_menu(self, rest_id: int, file_path: Path):
@@ -781,11 +779,13 @@ class Controller:
             self.import_file(file_path, save_to_path)
             # stores the changes to the model
             self._update_restaurant_menu(rest_id, new_file_name)
-            self.display_message_window("Import Complete")
+            self.view.display_message_window("Import Complete")
             return True
         # if the selected file is not a pdf, prompt the user
         elif file_path.is_file():
-            self.display_error_message("Invalid file type. Must be a .pdf")
+            self.view.display_error_message(
+                "Invalid file type. Must be a .pdf"
+            )
             return False
 
     def display_owner_id(self) -> list:
