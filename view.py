@@ -50,6 +50,17 @@ class View:
         messagebox.showinfo(message=message)
 
     @staticmethod
+    def display_confirm_action(message: str, title: str) -> bool:
+        """
+        Prompts the to confirm the current
+        action. Returns True if user selects
+        Yes, Returns False if user selects No.
+        """
+        return messagebox.askyesno(
+            message=message, icon="warning", title=title
+        )
+
+    @staticmethod
     def get_user_file_open_path() -> Path:
         """
         Opens a filedialog window to the

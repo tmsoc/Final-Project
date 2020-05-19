@@ -679,16 +679,20 @@ class Controller:
         """
         restaurant = self.model.rest_select_by_id(self._active_rest_id)
         if restaurant["menu"] == True:
-            menu_file = self.model.menu_select(self._active_rest_id)
-            complete = self.delete_menu_file(
-                self._active_rest_id, Path(menu_file["menu_path"])
-            )
-            if complete:
-                self.view.entry_rest_menu["state"] = "normal"
-                self.view.entry_rest_menu.delete(0, "end")
-                self.view.entry_rest_menu.insert(0, "None")
-                self.view.entry_rest_menu["state"] = "readonly"
-                self.view.btn_edit_menu["text"] = "Add Menu"
+            message = "Are you sure you wish to delete this Menu?"
+            title = "Delete File"
+            confirmation = self.view.display_confirm_action(message, title)
+            if confirmation:
+                menu_file = self.model.menu_select(self._active_rest_id)
+                complete = self.delete_menu_file(
+                    self._active_rest_id, Path(menu_file["menu_path"])
+                )
+                if complete:
+                    self.view.entry_rest_menu["state"] = "normal"
+                    self.view.entry_rest_menu.delete(0, "end")
+                    self.view.entry_rest_menu.insert(0, "None")
+                    self.view.entry_rest_menu["state"] = "readonly"
+                    self.view.btn_edit_menu["text"] = "Add Menu"
         else:
             import_file = self.view.get_user_file_open_path()
             complete = self.import_menu(self._active_rest_id, import_file)
