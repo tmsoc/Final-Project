@@ -167,21 +167,46 @@ class Controller:
             rest_info = list_box.get(index[0])
         return rest_info
 
+    # Need to change mehtod name
     def _populate_admin_details_table(self, restaurant: dict) -> None:
-        self.view.lbl_rest_ID["text"] = restaurant["id"]
+        # self.view.lbl_rest_ID["text"] = restaurant["id"]
+        # self.view.entry_rest_name.insert(0, restaurant["name"])
+        # self.view.entry_rest_address.insert(0, restaurant["address"])
+        # self.view.entry_rest_city.insert(0, restaurant["city"])
+        # self.view.entry_rest_state.insert(0, restaurant["state"])
+        # self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
+        # self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
+        # self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
+        # self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
+        # self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
+        # self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
+        # self.view.entry_rest_description.insert(
+        #     0, str(restaurant["description"])
+        # )
+        self.view.entry_rest_ID["state"] = "normal"
+        self.view.entry_rest_menu["state"] = "normal"
+
+        self.view.entry_rest_ID.insert(0, restaurant["id"])
         self.view.entry_rest_name.insert(0, restaurant["name"])
         self.view.entry_rest_address.insert(0, restaurant["address"])
         self.view.entry_rest_city.insert(0, restaurant["city"])
         self.view.entry_rest_state.insert(0, restaurant["state"])
         self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
-        self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
-        self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
-        self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
-        self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
-        self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
-        self.view.entry_rest_description.insert(
-            0, str(restaurant["description"])
-        )
+        self.view.entry_rest_description.insert(0, restaurant["description"])
+        if restaurant["menu"]:
+            self.view.entry_rest_menu.insert(0, "On File")
+        else:
+            self.view.entry_rest_menu.insert(0, "None")
+
+        self.view.entry_rest_ID["state"] = "readonly"
+        self.view.entry_rest_menu["state"] = "readonly"
+
+        if restaurant["vegetarian"]:
+            self.view.veggie_edit_var.set(1)
+        if restaurant["vegan"]:
+            self.view.vegan_edit_var.set(1)
+        if restaurant["gluten"]:
+            self.view.gluten_edit_var.set(1)
 
     def _build_dietary_options(self, restaurant):
         if (
@@ -354,13 +379,20 @@ class Controller:
     #    """
     #    pass
 
-    def edit_info_press(self):
+    def owner_edit_info_press(self):
         """
         calls restaurant_info_window() to open a new window, entries filled with 
         information of the restaurant selected in the listbox
         """
-        self.view.clear_frame()
-        self.view.restaurant_info_window()
+        list_box = self.view.view2_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            self._active_rest_id = int(selected_rest.split(" ")[0])
+            rest_info = self.model.rest_select_by_id(self._active_rest_id)
+            self.view.clear_frame()
+            self.view.owner_restaurant_edit_window()
+            # Need to change method name
+            self._populate_admin_details_table(rest_info)
 
     def delete_rest_press(self):
         """
@@ -436,7 +468,7 @@ class Controller:
             rest_id = selected_rest.split(" ")[0]
             rest_info = self.model.rest_select_by_id(rest_id)
             self.view.clear_frame()
-            self.view.restaurant_info_window()
+            self.view.admin_restaurant_info_window()
             self._populate_admin_details_table(rest_info)
 
     def user_view_more_info_press(self):
@@ -481,9 +513,9 @@ class Controller:
         """
         writes the texts in entries into db
         """
-        rest_id = self.view.lbl_rest_ID["text"]
+        # rest_id = self.view.lbl_rest_ID["text"]
 
-        param_dict = {}
+        # param_dict = {}
         # list_box = self.view.view1_list_box
 
         name = self.view.entry_rest_name.get()
@@ -492,11 +524,11 @@ class Controller:
         city = self.view.entry_rest_city.get()
         state = self.view.entry_rest_state.get()
         zip_code = self.view.entry_rest_zip.get()
-        veg = True if self.view.entry_rest_veg.get() == "True" else False
-        vegan = True if self.view.entry_rest_vegan.get() == "True" else False
-        gluten = True if self.view.entry_rest_gluten.get() == "True" else False
+        veg = True if self.view.veggie_edit_var.get() == 1 else False
+        vegan = True if self.view.vegan_edit_var.get() == 1 else False
+        gluten = True if self.view.gluten_edit_var.get() == 1 else False
         # NEED TO SWITCH MENU TO LABEL OR READONLY
-        hours = self.view.entry_rest_hours.get()
+        # hours = self.view.entry_rest_hours.get()
         description = self.view.entry_rest_description.get()
 
         param_dict = {
@@ -508,16 +540,18 @@ class Controller:
             "vegetarian": veg,
             "vegan": vegan,
             "gluten": gluten,
-            "hours": hours,
+            # "hours": hours,
             "description": description,
         }
 
-        self.model.update_restaurant(rest_id, param_dict)
-        self.back_to_admin_view()
+        # self.model.update_restaurant(rest_id, param_dict)
+        self.model.update_restaurant(self._active_rest_id, param_dict)
+        # self.back_to_admin_view()
 
     def get_path(self):
         uploaded_menu = self._get_user_file_open_path()
-        if self._verify_pdf(uploaded_menu):
+        # if self._verify_pdf(uploaded_menu):
+        if uploaded_menu.is_file():
             self.view.entry_menu.delete(0, "end")
             self.view.entry_menu.insert(0, uploaded_menu)
 
@@ -527,11 +561,6 @@ class Controller:
         """
         import_file = Path(self.view.entry_menu.get())
         rest_id = self._menu_info[0]
-        already_exists = self.model.menu_select(rest_id)
-
-        if already_exists != None:
-            self.delete_rest_menu(rest_id)
-            print("false")
 
         self.import_menu(rest_id, import_file)
 
@@ -556,6 +585,7 @@ class Controller:
         for id in restaurant_id_list:
             restaurant = self.model.rest_select_by_id(id)
             self._active_restaurant_list.append(restaurant)
+        # Need to change name of method
         rest_list = self._user_rest_format_list(self._active_restaurant_list)
         for index, rest in enumerate(rest_list):
             self.view.view2_list_box.insert(index, rest)
@@ -641,12 +671,20 @@ class Controller:
         """
         pass
 
-    def add_menu_press(self):
+    def owner_add_menu_press(self):
         """
-        open a dialogbox to get the path to the menu file, store the menu file 
-        name to dataset
+        Imports a pdf restaurant menu for the
+        active restaurant id number. The user
+        is prompted with a dialog window to select
+        the file to import. The file is then copied
+        to the SavedMenus directory.
         """
-        pass
+        import_file = self._get_user_file_open_path()
+        self.import_menu(self._active_rest_id, import_file)
+        self.view.entry_rest_menu["state"] = "normal"
+        self.view.entry_rest_menu.delete(0, "end")
+        self.view.entry_rest_menu.insert(0, "On File")
+        self.view.entry_rest_menu["state"] = "readonly"
 
     def save_new_rest_press(self):
         """
@@ -668,6 +706,7 @@ class Controller:
 
     def back_to_owner_view(self):
         self.display_owner_window()
+        self.display_owner_restaurant_list()
 
     # ---------------- END OF VIEW CONTROLS ---------------------
 
@@ -678,22 +717,24 @@ class Controller:
         """
         self._update_restaurant_menu(rest_id, None)
 
-    # We need to determine out how to get restaurant id from View
-    # Can make it a class variable and just access it, or have the
-    # button pass the id # to the method.
-    def import_rest_menu(self, rest_id: int) -> None:
-        """
-        Imports a pdf restaurant menu for the
-        given restaurant id number. The user
-        is prompted with a dialog window to select
-        the file to import. The file is then copied
-        to the SavedMenus directory.
-        """
-        import_file = self._get_user_file_open_path()
-        self.import_menu(rest_id, import_file)
+    # def import_rest_menu(self, rest_id: int) -> None:
+    #     """
+    #     Imports a pdf restaurant menu for the
+    #     given restaurant id number. The user
+    #     is prompted with a dialog window to select
+    #     the file to import. The file is then copied
+    #     to the SavedMenus directory.
+    #     """
+    #     import_file = self._get_user_file_open_path()
+    #     self.import_menu(rest_id, import_file)
 
     def import_menu(self, rest_id: int, file_path: Path) -> None:
         if self._verify_pdf(file_path):
+            # NEEDS TESTING
+            already_exists = self.model.menu_select(rest_id)
+            if already_exists != None:
+                self.delete_rest_menu(rest_id)
+
             # generates a new filename for the menu
             new_file_name = self._build_menu_file_name(file_path, rest_id)
             # builds the path to import the menu to

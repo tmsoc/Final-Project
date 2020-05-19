@@ -706,7 +706,7 @@ class View:
             bg="light grey",
             height=1,
             width=8,
-            command=self.controller.edit_info_press,
+            command=self.controller.owner_edit_info_press,
         )
         btn_delete = Button(
             self.window,
@@ -748,7 +748,7 @@ class View:
         )
         btn_exit.grid(row=4, column=3, pady=10)
 
-    def _new_rest_place_widget(self, add_menu: bool):
+    def _new_rest_place_widget(self, new_restaurant: bool):
         # -------------Tony Code--------
 
         dietary_options_frame = LabelFrame(
@@ -793,16 +793,13 @@ class View:
         self.rest_edit_button_frame = Frame(self.window, background="#0080c0")
 
         # -------------Tony Code--------
-
-        lbl_prompt_rest_ID = Label(
-            text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
-        )
-        # self.lbl_rest_ID = Label(
-        #     text="", font="None 11", bg="light gray", width=50
-        # )
-        self.lbl_rest_ID = Entry(
-            font="None 11", bg="white", width=57, state="readonly"
-        )
+        if not new_restaurant:
+            lbl_prompt_rest_ID = Label(
+                text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
+            )
+            self.entry_rest_ID = Entry(
+                font="None 11", bg="white", width=57, state="readonly"
+            )
         lbl_rest_name = Label(
             text="Restaurant name:", font="None 11", bg="#0080c0", height=2
         )
@@ -834,12 +831,6 @@ class View:
             font="None 11", bg="white", width=57
         )
 
-        lbl_prompt_rest_ID.grid(
-            row=0, column=0, padx=10, pady=(20, 0), sticky="w"
-        )
-        self.lbl_rest_ID.grid(
-            row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
-        )
         lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
         self.entry_rest_name.grid(row=1, column=1, padx=(0, 20), sticky="w")
         lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
@@ -856,16 +847,22 @@ class View:
         self.entry_rest_description.grid(row=6, column=1, sticky="w")
 
         # -------------Tony Code--------
-        if add_menu:
+        if not new_restaurant:
+            lbl_prompt_rest_ID.grid(
+                row=0, column=0, padx=10, pady=(20, 0), sticky="w"
+            )
+            self.entry_rest_ID.grid(
+                row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
+            )
             lbl_rest_menu = Label(
                 text="Menu:", font="None 11", bg="#0080c0", height=2
             )
             self.entry_rest_menu = Entry(
                 font="None 11", bg="white", width=57, state="readonly",
             )
-            self.entry_rest_menu["state"] = "normal"
-            self.entry_rest_menu.insert(0, "temp text")
-            self.entry_rest_menu["state"] = "readonly"
+            # self.entry_rest_menu["state"] = "normal"
+            # self.entry_rest_menu.insert(0, "temp text")
+            # self.entry_rest_menu["state"] = "readonly"
 
             lbl_rest_menu.grid(row=7, column=0, padx=10, sticky="w")
             self.entry_rest_menu.grid(row=7, column=1, sticky="w")
@@ -915,12 +912,6 @@ class View:
         self.window.geometry("600x500")
         self._admin_place_widget()
 
-    def restaurant_info_window(self):
-        self.window.title("Restaurant Information")
-        self.window.configure(background="#0080c0")
-        self.window.geometry("630x650")
-        self._rest_info_place_widget()
-
     def menu_window(self):
         """
         From Admin Win.
@@ -968,8 +959,7 @@ class View:
         self.window.title("New Restaurant")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x500")
-        self._new_rest_place_widget(False)
-
+        self._new_rest_place_widget(True)
         btn_save_new_rest = Button(
             self.rest_edit_button_frame,
             text="Save",
@@ -990,3 +980,45 @@ class View:
         self.rest_edit_button_frame.columnconfigure(1, weight=1)
         btn_save_new_rest.grid(row=0, column=0, pady=10)
         btn_new_rest_close.grid(row=0, column=1, pady=10)
+
+    def admin_restaurant_info_window(self):
+        self.window.title("Restaurant Information")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("630x650")
+        self._rest_info_place_widget()
+
+    def owner_restaurant_edit_window(self):
+        self.window.title("Restaurant Information")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("630x650")
+        self._new_rest_place_widget(False)
+        btn_add_menu = Button(
+            self.rest_edit_button_frame,
+            text="Add Menu",
+            font="None 11",
+            bg="light gray",
+            width=8,
+            command=self.controller.owner_add_menu_press,
+        )
+        btn_save_rest = Button(
+            self.rest_edit_button_frame,
+            text="Save",
+            font="None 11",
+            bg="light gray",
+            width=8,
+            command=self.controller.save_rest_press,
+        )
+        btn_new_rest_close = Button(
+            self.rest_edit_button_frame,
+            text="Close",
+            font="None 11",
+            bg="light gray",
+            width=8,
+            command=self.controller.back_to_owner_view,
+        )
+        self.rest_edit_button_frame.columnconfigure(0, weight=1)
+        self.rest_edit_button_frame.columnconfigure(1, weight=1)
+        self.rest_edit_button_frame.columnconfigure(2, weight=1)
+        btn_add_menu.grid(row=0, column=0, pady=10)
+        btn_save_rest.grid(row=0, column=1, pady=10)
+        btn_new_rest_close.grid(row=0, column=2, pady=10)
