@@ -8,7 +8,7 @@ from view import View
 class Controller:
 
     MENU_DIRECTORY = "SavedMenus"
-    _active_rest_id = int()  # Not used yet
+    _active_rest_id = int()
     _active_account_id = int()
     _active_restaurant_list = list()
     _menu_info = list()
@@ -111,6 +111,10 @@ class Controller:
 
     @staticmethod
     def _rest_dict_to_str(restaurant: dict):
+        """
+        Returns a restaurant records in string
+        format. 
+        """
         rest_str = ""
         rest_str += restaurant["name"].lower()
         rest_str += restaurant["address"].lower()
@@ -122,6 +126,10 @@ class Controller:
 
     @staticmethod
     def _user_rest_format_list(restaurants: list):
+        """
+        Formats a restaurant record to be viewed
+        in the general display window.
+        """
         restaurant_list = []
         for restaurant in restaurants:
             format = (
@@ -151,6 +159,11 @@ class Controller:
             self.model.delete_menu(menu["key"])
 
     def _get_password(self, account_type: str, name: str):
+        """
+        Returns a list of account username and
+        passwords that meet the given searchable
+        user name
+        """
         if account_type == "admin":
             return self.model.admin_select_search_name(name)
         elif account_type == "owner":
@@ -159,6 +172,10 @@ class Controller:
             return self.model.user_select_search_name(name)
 
     def _get_list_box_selection(self, list_box) -> str:
+        """
+        Returns a string of the selected item
+        in the specified list box.
+        """
         rest_info = None
         index = list_box.curselection()
         if len(index) != 0:
@@ -167,6 +184,10 @@ class Controller:
 
     # Need to change mehtod name
     def _populate_admin_details_table(self, restaurant: dict) -> None:
+        """
+        Popultats all the entry fields with
+        the given restaurant record.
+        """
         # self.view.lbl_rest_ID["text"] = restaurant["id"]
         # self.view.entry_rest_name.insert(0, restaurant["name"])
         # self.view.entry_rest_address.insert(0, restaurant["address"])
@@ -559,7 +580,8 @@ class Controller:
 
     def get_owner_rest_list(self):
         """
-        Tony
+        Returns a list of restaurant ids for
+        the from the active account id.
         """
         restaurant_owner = self.model.owner_select_by_key(
             self._active_account_id
@@ -569,7 +591,9 @@ class Controller:
 
     def display_owner_restaurant_list(self):
         """
-        Tony
+        Inserts the list of restaurants into
+        the general display for the active account
+        id. 
         """
         self._active_restaurant_list.clear()
         restaurant_id_list = self.get_owner_rest_list()
@@ -582,6 +606,12 @@ class Controller:
             self.view.view2_list_box.insert(index, rest)
 
     def rest_search(self, *args):
+        """
+        Pulls a list of key words from the
+        restaurant search field and prints the
+        list of restaurants that contain the
+        key words.
+        """
         search_field = self.view.user_search_field.get().lower()
         search_items = search_field.split(" ")
         results = []
@@ -603,9 +633,14 @@ class Controller:
         self.user_window_print_list(rest_list)
 
     def user_clear_search(self):
+        """Clears the restaurant search entry field"""
         self.view.user_search_field.delete(0, "end")
 
     def user_window_print_list(self, item_list: list):
+        """
+        Prints the provided list of strings to
+        the general display window list box.
+        """
         self.view.view3_list_box.delete(0, "end")
         for index, item in enumerate(item_list):
             self.view.view3_list_box.insert(index, item)
@@ -804,6 +839,12 @@ class Controller:
     #     self.import_menu(rest_id, import_file)
 
     def delete_menu_file(self, rest_id: int, file_path: Path):
+        """
+        Deletes a menu file from the saved menus
+        directory, updates the database, and prompts
+        the user that file has been deleted or that
+        the file was not found.
+        """
         abs_file_path = Path(
             self._working_directory / self.MENU_DIRECTORY / file_path
         )
@@ -843,7 +884,6 @@ class Controller:
             return False
 
     def display_owner_id(self) -> list:
-
         restaurant_list = self.model.restaurants_select_all()
         owner_id_list = []
 
