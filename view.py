@@ -8,6 +8,7 @@ class View:
     def __init__(self, root, controller):
         self.window = root
         self.controller = controller
+        self.window.resizable(0, 0)
 
     def begin(self) -> None:
         self.init_welcome_window()
@@ -448,8 +449,8 @@ class View:
         btn_close_menu.grid(row=5, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        self.veggie_var = IntVar(value=0)
         # With Check button, value = 0 means unchosen, 1 means chosen
+        self.veggie_var = IntVar(value=0)
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)
         lbl_title = Label(
@@ -656,15 +657,15 @@ class View:
         )
         btn_create_rest = Button(
             self.window,
-            text="Create new restaurant",
+            text="Create New Restaurant",
             font="none 12",
             bg="light grey",
             height=1,
             width=18,
             command=self.controller.display_new_rest_window,
         )
-        
-        #btn_change_username = Button(
+
+        # btn_change_username = Button(
         #    self.window,
         #    text="Change username",
         #    font="none 12",
@@ -672,8 +673,8 @@ class View:
         #    height=1,
         #    width=18,
         #    command=self.controller.change_username_press,
-        #)
-        #btn_change_password = Button(
+        # )
+        # btn_change_password = Button(
         #    self.window,
         #    text="Change password",
         #    font="none 12",
@@ -681,7 +682,7 @@ class View:
         #    height=1,
         #    width=18,
         #    command=self.controller.change_password_press,
-        #)
+        # )
 
         table_frame = Frame(self.window, relief="groove")
         text_scrollbar = Scrollbar(table_frame)
@@ -727,10 +728,11 @@ class View:
         )
 
         lbl_title.grid(row=0, columnspan=4, pady=10)
-        btn_create_rest.grid(row=1, column=0, columnspan=3, padx=(20, 5), 
-                             pady=10)
-        #btn_change_username.grid(row=1, column=1, padx=5, pady=10)
-        #btn_change_password.grid(row=1, column=2, padx=5, pady=10)
+        btn_create_rest.grid(
+            row=1, column=0, columnspan=3, padx=(20, 5), pady=10
+        )
+        # btn_change_username.grid(row=1, column=1, padx=5, pady=10)
+        # btn_change_password.grid(row=1, column=2, padx=5, pady=10)
         table_frame.grid(
             row=2,
             column=0,
@@ -745,14 +747,61 @@ class View:
             row=3, column=3, columnspan=3, sticky="n",
         )
         btn_exit.grid(row=4, column=3, pady=10)
-    
-    def _new_rest_place_widget(self):
+
+    def _new_rest_place_widget(self, add_menu: bool):
+        # -------------Tony Code--------
+
+        dietary_options_frame = LabelFrame(
+            self.window, text="Dietary Options", bg="#0080c0"
+        )
+
+        self.veggie_edit_var = IntVar(value=0)
+        self.vegan_edit_var = IntVar(value=0)
+        self.gluten_edit_var = IntVar(value=0)
+
+        self.veggie_edit_check_btn = Checkbutton(
+            dietary_options_frame,
+            text="Vegetarian",
+            font="none 12",
+            bg="#0080c0",
+            activebackground="#0080c0",
+            height=1,
+            width=12,
+            variable=self.veggie_edit_var,
+        )
+        self.vegan_edit_check_btn = Checkbutton(
+            dietary_options_frame,
+            text="Vegan",
+            font="none 12",
+            bg="#0080c0",
+            activebackground="#0080c0",
+            height=1,
+            width=12,
+            variable=self.vegan_edit_var,
+        )
+        self.gluten_edit_check_btn = Checkbutton(
+            dietary_options_frame,
+            text="Gluten-free",
+            font="none 12",
+            bg="#0080c0",
+            activebackground="#0080c0",
+            height=1,
+            width=12,
+            variable=self.gluten_edit_var,
+        )
+
+        self.rest_edit_button_frame = Frame(self.window, background="#0080c0")
+
+        # -------------Tony Code--------
 
         lbl_prompt_rest_ID = Label(
             text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
         )
-        self.lbl_rest_ID = Label(
-            text="", font="None 11", bg="light gray", width=50
+        # self.lbl_rest_ID = Label(
+        #     text="", font="None 11", bg="light gray", width=50
+        # )
+        self.lbl_rest_ID = Entry(
+            font="None 11", bg="white", width=57, state="readonly"
         )
         lbl_rest_name = Label(
             text="Restaurant name:", font="None 11", bg="#0080c0", height=2
@@ -778,45 +827,11 @@ class View:
             text="Zip code:", font="None 11", bg="#0080c0", height=2
         )
         self.entry_rest_zip = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_veg = Label(
-            text="Vegetarian:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_veg = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_vegan = Label(
-            text="Vegan:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_vegan = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_gluten = Label(
-            text="Gluten:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_gluten = Entry(font="None 11", bg="white", width=57)
-        lbl_rest_hours = Label(
-            text="Hours:", font="None 11", bg="#0080c0", height=2
-        )
-        self.entry_rest_hours = Entry(font="None 11", bg="white", width=57)
         lbl_rest_description = Label(
             text="Description:", font="None 11", bg="#0080c0", height=2
         )
         self.entry_rest_description = Entry(
             font="None 11", bg="white", width=57
-        )
-        btn_add_menu = Button(
-            text="Add menu",
-            font="None 11",
-            bg="light gray",
-            command=self.controller.add_menu_press,
-        )
-        btn_save_new_rest = Button(
-            text="Save",
-            font="None 11",
-            bg="light gray",
-            command=self.controller.save_new_rest_press,
-        )
-        btn_new_rest_close = Button(
-            text="Close",
-            font="None 11",
-            bg="light gray",
-            command=self.controller.back_to_owner_view,
         )
 
         lbl_prompt_rest_ID.grid(
@@ -837,78 +852,141 @@ class View:
         self.entry_rest_state.grid(row=4, column=1, sticky="w")
         lbl_rest_zip.grid(row=5, column=0, padx=10, sticky="w")
         self.entry_rest_zip.grid(row=5, column=1, sticky="w")
-        lbl_rest_veg.grid(row=6, column=0, padx=10, sticky="w")
-        self.entry_rest_veg.grid(row=6, column=1, sticky="w")
-        lbl_rest_vegan.grid(row=7, column=0, padx=10, sticky="w")
-        self.entry_rest_vegan.grid(row=7, column=1, sticky="w")
-        lbl_rest_gluten.grid(row=8, column=0, padx=10, sticky="w")
-        self.entry_rest_gluten.grid(row=8, column=1, sticky="w")
-        lbl_rest_hours.grid(row=9, column=0, padx=10, sticky="w")
-        self.entry_rest_hours.grid(row=9, column=1, sticky="w")
-        lbl_rest_description.grid(row=10, column=0, padx=10, sticky="w")
-        self.entry_rest_description.grid(row=10, column=1, sticky="w")
-        btn_add_menu.grid(row=11, column=0, columnspan=2, pady=10)
-        btn_save_new_rest.grid(row=12, column=0, columnspan=2, pady=10)
-        btn_new_rest_close.grid(row=13, column=0, columnspan=2, pady=10)
+        lbl_rest_description.grid(row=6, column=0, padx=10, sticky="w")
+        self.entry_rest_description.grid(row=6, column=1, sticky="w")
+
+        # -------------Tony Code--------
+        if add_menu:
+            lbl_rest_menu = Label(
+                text="Menu:", font="None 11", bg="#0080c0", height=2
+            )
+            self.entry_rest_menu = Entry(
+                font="None 11", bg="white", width=57, state="readonly",
+            )
+            self.entry_rest_menu["state"] = "normal"
+            self.entry_rest_menu.insert(0, "temp text")
+            self.entry_rest_menu["state"] = "readonly"
+
+            lbl_rest_menu.grid(row=7, column=0, padx=10, sticky="w")
+            self.entry_rest_menu.grid(row=7, column=1, sticky="w")
+
+        dietary_options_frame.grid(
+            row=8, column=0, columnspan=2, pady=10, padx=10, sticky="we"
+        )
+
+        self.rest_edit_button_frame.grid(
+            row=9, column=0, columnspan=2, pady=10, padx=10, sticky="we"
+        )
+
+        dietary_options_frame.columnconfigure(0, weight=1)
+        dietary_options_frame.columnconfigure(1, weight=1)
+        dietary_options_frame.columnconfigure(2, weight=1)
+
+        self.veggie_edit_check_btn.grid(row=0, column=0, pady=10)
+        self.vegan_edit_check_btn.grid(row=0, column=1, pady=0)
+        self.gluten_edit_check_btn.grid(row=0, column=2, pady=10)
+
+        # -------------Tony Code--------
 
     def init_welcome_window(self):
+        """
+        Welcome Window
+        """
         self.window.title("Where Should We Eat Tonight?")
         self.window.configure(background="light gray")
         self.window.geometry("500x500")
-        self.window.resizable(0, 0)
         self._welcome_place_widget()
 
     def login_window(self):
+        """
+        Login Window
+        """
         self.window.title("Log in")
         self.window.configure(background="#0080c0")
         self.window.geometry("340x200")
-        # self.window.resizable(0, 0)
         self._login_place_widget()
 
     def admin_window(self):
+        """
+        Main Admin Window
+        """
         self.window.title("Admin View")
         self.window.configure(background="#0080c0")
         self.window.geometry("600x500")
-        # self.window.resizable(0, 0)
         self._admin_place_widget()
 
     def restaurant_info_window(self):
         self.window.title("Restaurant Information")
         self.window.configure(background="#0080c0")
         self.window.geometry("630x650")
-        # self.window.resizable(0, 0)
         self._rest_info_place_widget()
 
     def menu_window(self):
+        """
+        From Admin Win.
+        Window to upload a menu
+        Can be used within Rest owner add info
+        """
         self.window.title("Menu Update")
         self.window.configure(background="#0080c0")
         self.window.geometry("400x290")
-        # self.window.resizable(0, 0)
         self._menu_place_widget()
 
     def user_window(self):
+        """
+        Main User Window
+        """
         self.window.title("Customer View")
         self.window.configure(background="#0080c0")
         self.window.geometry("600x500")
-        # self.window.resizable(0, 0)
         self._user_place_widget()
 
     def rest_detail_Window(self):
+        """
+        From user window
+        restaurant details with reviews
+        """
         self.window.title("Restaurant Information")
         self.window.geometry("590x600")
         self.window.configure(background="#0080c0")
-        # self.window.resizable(0, 0)
         self._rest_detail_place_widget()
 
     def owner_window(self):
+        """
+        Main Owner window
+        """
         self.window.title("Bussiness Owner View")
         self.window.configure(background="#0080c0")
         self.window.geometry("650x450")
-        self.window.resizable(0, 0)
         self._owner_place_widget()
 
     def new_rest_window(self):
+        """
+        From Owner window
+        Window to create new restaurants
+        """
         self.window.title("New Restaurant")
         self.window.configure(background="#0080c0")
-        self.window.geometry("630x650")
-        self._new_rest_place_widget()
+        self.window.geometry("630x500")
+        self._new_rest_place_widget(False)
+
+        btn_save_new_rest = Button(
+            self.rest_edit_button_frame,
+            text="Save",
+            font="None 11",
+            bg="light gray",
+            width=8,
+            command=self.controller.save_new_rest_press,
+        )
+        btn_new_rest_close = Button(
+            self.rest_edit_button_frame,
+            text="Close",
+            font="None 11",
+            bg="light gray",
+            width=8,
+            command=self.controller.back_to_owner_view,
+        )
+        self.rest_edit_button_frame.columnconfigure(0, weight=1)
+        self.rest_edit_button_frame.columnconfigure(1, weight=1)
+        btn_save_new_rest.grid(row=0, column=0, pady=10)
+        btn_new_rest_close.grid(row=0, column=1, pady=10)
