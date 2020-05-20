@@ -24,16 +24,6 @@ class Controller:
         """Returns a path to the working directory"""
         return Path(__file__).parent.absolute()
 
-    # @staticmethod
-    # def _get_user_file_open_path() -> Path:
-    #     """
-    #     Opens a filedialog window to the
-    #     user to select a file to open/import.
-    #     Returns a Path to the selected file.
-    #     Returns an empty string if user cancles.
-    #     """
-    #     return Path(filedialog.askopenfilename())
-
     @staticmethod
     def _verify_pdf(file_path: Path) -> bool:
         """
@@ -52,28 +42,6 @@ class Controller:
         <rest id>_<original file name>.pdf
         """
         return str(key) + "_" + menu_path.stem + ".pdf"
-
-    # This method need to be placed in the View
-    # once it is merged into the master branch
-    # @staticmethod
-    # def display_error_message(message: str) -> None:
-    #     """
-    #     Displays an error message to the user
-    #     with the given message.
-    #     """
-    #     messagebox.showinfo(
-    #         message=message, icon="error", title="Error",
-    #     )
-
-    # # This method need to be placed in the View
-    # # once it is merged into the master branch
-    # @staticmethod
-    # def display_message_window(message: str) -> None:
-    #     """
-    #     Displays an info window to the
-    #     user with the given message
-    #     """
-    #     messagebox.showinfo(message=message)
 
     @staticmethod
     def import_file(import_file_path: Path, save_file_path: Path) -> None:
@@ -189,20 +157,6 @@ class Controller:
         Popultats all the entry fields with
         the given restaurant record.
         """
-        # self.view.lbl_rest_ID["text"] = restaurant["id"]
-        # self.view.entry_rest_name.insert(0, restaurant["name"])
-        # self.view.entry_rest_address.insert(0, restaurant["address"])
-        # self.view.entry_rest_city.insert(0, restaurant["city"])
-        # self.view.entry_rest_state.insert(0, restaurant["state"])
-        # self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
-        # self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
-        # self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
-        # self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
-        # self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
-        # self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
-        # self.view.entry_rest_description.insert(
-        #     0, str(restaurant["description"])
-        # )
         self.view.entry_rest_ID["state"] = "normal"
         self.view.entry_rest_menu["state"] = "normal"
 
@@ -371,34 +325,6 @@ class Controller:
                     self.display_owner_restaurant_list()
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
-
-    def save_new_user(self):
-        """
-        this method retrieves the texts from entry_user_name and
-        entry_password, write these new information to account db
-        """
-        pass
-
-    def create_rest_press(self):
-        """
-        calls new_rest_window() to open a new window with multiple entries
-        for owner to input
-        """
-        pass
-
-    # def change_username_press(self):
-    #    """
-    #    open a simpledialog, ask owner to enter new username, the new value
-    #    will be replaced in data table
-    #    """
-    #    pass
-    #
-    # def change_password_press(self):
-    #    """
-    #    open a simpledialog, ask owner to enter new password, the new value
-    #    will be replaced in data table
-    #    """
-    #    pass
 
     def owner_edit_info_press(self):
         """
@@ -703,7 +629,6 @@ class Controller:
         today = date.today()
         today = today.strftime("%m/%d/%Y")
 
-
         print(today)
         if len(name) != 0 and len(review) != 0 and rating != 0:
             message = "Are you sure you would like to submit this review"
@@ -724,7 +649,6 @@ class Controller:
         else:
             message = "Please enter in all information"
             self.view.display_error_message(message)
-
 
     def rest_info_edit_menu_press(self):
         """
@@ -859,17 +783,6 @@ class Controller:
         the given id number
         """
         self._update_restaurant_menu(rest_id, None)
-
-    # def import_rest_menu(self, rest_id: int) -> None:
-    #     """
-    #     Imports a pdf restaurant menu for the
-    #     given restaurant id number. The user
-    #     is prompted with a dialog window to select
-    #     the file to import. The file is then copied
-    #     to the SavedMenus directory.
-    #     """
-    #     import_file = self._get_user_file_open_path()
-    #     self.import_menu(rest_id, import_file)
 
     def delete_menu_file(self, rest_id: int, file_path: Path):
         """
