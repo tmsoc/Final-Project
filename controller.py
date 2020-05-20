@@ -371,34 +371,6 @@ class Controller:
         if invalid_entry:
             self.view.lbl_login_fail["text"] = "Invalid username or password"
 
-    def save_new_user(self):
-        """
-        this method retrieves the texts from entry_user_name and
-        entry_password, write these new information to account db
-        """
-        pass
-
-    def create_rest_press(self):
-        """
-        calls new_rest_window() to open a new window with multiple entries 
-        for owner to input
-        """
-        pass
-
-    # def change_username_press(self):
-    #    """
-    #    open a simpledialog, ask owner to enter new username, the new value
-    #    will be replaced in data table
-    #    """
-    #    pass
-    #
-    # def change_password_press(self):
-    #    """
-    #    open a simpledialog, ask owner to enter new password, the new value
-    #    will be replaced in data table
-    #    """
-    #    pass
-
     def owner_edit_info_press(self):
         """
         calls restaurant_info_window() to open a new window, entries filled with 
