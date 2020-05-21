@@ -242,16 +242,7 @@ class View:
             value="menus",
             command=self.controller.btn_list_press,
         )
-        # btn_list = Button(
-        #     self.window,
-        #     text="Show List",
-        #     font="none 12",
-        #     bg="light grey",
-        #     height=1,
-        #     width=10,
-        #     command=self.controller.btn_list_press,
-        #     state="disabled",
-        # )
+
         lbl_prompt = Label(bg=self.DEFAULT_BG, font="none 12", text="List: ")
 
         table_frame = Frame(self.window, relief="groove")
@@ -305,9 +296,7 @@ class View:
         radiobtn_id.grid(row=1, column=0, padx=(50, 10), pady=10)
         radiobtn_info.grid(row=1, column=1, padx=10, pady=10)
         radiobtn_menu.grid(row=1, column=2, padx=10, pady=10)
-        # btn_list.grid(
-        #     row=1, column=3, padx=(10, 50), pady=10,
-        # )
+
         btn_info.grid(row=2, column=3, padx=(10, 50))
         btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
