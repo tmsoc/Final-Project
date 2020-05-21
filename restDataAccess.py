@@ -234,7 +234,7 @@ class Model:
         Verifies that the given key exists in
         the given table.
         """
-        # queries a all keys from the specified table
+        # queries all keys from the specified table
         with self.connection:
             self.cur.execute(f"SELECT key FROM {table}")
         query = self._sql_to_dict(self.cur.fetchall())
