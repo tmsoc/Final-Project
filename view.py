@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter.scrolledtext import ScrolledText
+from tkinter import ttk
 from pathlib import Path
 
 
@@ -71,6 +73,7 @@ class View:
         return Path(filedialog.askopenfilename())
 
     def _welcome_place_widget(self):
+
         top_frame = Frame(
             master=self.window,
             width=495,
@@ -149,6 +152,7 @@ class View:
         btn_next.place(x=210, y=320)
 
     def _login_place_widget(self):
+
         lbl_user_name = Label(
             self.window, text="Username:", font="None 11", bg="#0080c0",
         )
@@ -175,20 +179,6 @@ class View:
             font="none 11",
             command=self.controller.back_to_welcome,
         )
-        #         lbl_signup_prompt = Label(
-        #             self.window,
-        #             text="Haven't got an account? \n \
-        # Enter your username, password and click Sign up",
-        #             font="None 11",
-        #             bg="#0080c0",
-        #             height=2,
-        #         )
-        #         btn_signup = Button(
-        #             self.window,
-        #             text="Sign up",
-        #             font="none 11",
-        #             command=self.controller.save_new_user,
-        #         )
         self.lbl_login_fail = Label(
             self.window, bg="#0080c0", font="None 11", fg="red",
         )
@@ -200,7 +190,6 @@ class View:
         self.entry_password.grid(
             row=1, column=1, sticky="we", padx=(0, 50), pady=(10, 30)
         )
-        # btn_login.grid(row=2, column=0, columnspan=2)
         btn_login.grid(row=0, column=0, padx=70)
         """
         lbl_signup_prompt.grid(
@@ -209,11 +198,10 @@ class View:
         btn_signup.grid(row=4, column=0, columnspan=2, pady=5)
         """
         self.lbl_login_fail.grid(row=5, column=0, columnspan=2, pady=10)
-        # self.lbl_login_fail.grid(row=8, column=0, columnspan=2)
         btn_cancel.grid(row=0, column=1, padx=10, sticky=E)
-        # btn_cancel.grid(row=9, column=0, columnspan=2, pady=5)
 
     def _admin_place_widget(self):
+
         lbl_title = Label(
             bg="#0080c0", text="Administrative Function", font=self.font1
         )
@@ -266,8 +254,6 @@ class View:
         )
         lbl_prompt = Label(bg="#0080c0", font="none 12", text="List: ")
 
-        # -----------------start of tony code---------------------
-
         table_frame = Frame(self.window, relief="groove")
         table_frame.grid(
             row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we",
@@ -287,10 +273,6 @@ class View:
         self.view1_list_box.grid(row=0, column=0, sticky=(N, S, W, E))
         text_scrollbar.grid(row=0, column=1, sticky=(N, S, E))
 
-        # -------------------end of tony code----------------------
-        # self.view1_list_box = Listbox(
-        #     self.window, font="none 12", height=12, selectmode="SINGLE"
-        # )
         btn_info = Button(
             self.window,
             text="More info",
@@ -326,119 +308,12 @@ class View:
         btn_list.grid(
             row=1, column=3, padx=(10, 50), pady=10,
         )
-        # self.view1_list_box.grid(
-        #     row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we"
-        # )
         btn_info.grid(row=2, column=3, padx=(10, 50))
         btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
         btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
 
-    # NO LONGER USED!!!!!!
-    # def _rest_info_place_widget(self):
-
-    #     lbl_prompt_rest_ID = Label(
-    #         text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.lbl_rest_ID = Label(
-    #         text="", font="None 11", bg="light gray", width=50
-    #     )
-    #     lbl_rest_name = Label(
-    #         text="Restaurant name:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_name = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_address = Label(
-    #         text="Address:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_address = Label(
-    #         text="Address:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_address = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_city = Label(
-    #         text="City:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_city = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_state = Label(
-    #         text="State:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_state = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_zip = Label(
-    #         text="Zip code:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_zip = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_veg = Label(
-    #         text="Vegetarian:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_veg = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_vegan = Label(
-    #         text="Vegan:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_vegan = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_gluten = Label(
-    #         text="Gluten:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_gluten = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_menu = Label(
-    #         text="Menu:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_menu = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_hours = Label(
-    #         text="Hours:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_hours = Entry(font="None 11", bg="white", width=57)
-    #     lbl_rest_description = Label(
-    #         text="Description:", font="None 11", bg="#0080c0", height=2
-    #     )
-    #     self.entry_rest_description = Entry(
-    #         font="None 11", bg="white", width=57
-    #     )
-    #     btn_save_rest = Button(
-    #         text="Save",
-    #         font="None 11",
-    #         bg="light gray",
-    #         command=self.controller.save_rest_press,
-    #     )
-    #     btn_admin_close = Button(
-    #         text="Close",
-    #         font="None 11",
-    #         bg="light gray",
-    #         command=self.controller.back_to_admin_view,
-    #     )
-
-    #     lbl_prompt_rest_ID.grid(
-    #         row=0, column=0, padx=10, pady=(20, 0), sticky="w"
-    #     )
-    #     self.lbl_rest_ID.grid(
-    #         row=0, column=1, padx=(0, 20), pady=(20, 0), sticky="w"
-    #     )
-    #     lbl_rest_name.grid(row=1, column=0, padx=10, sticky="w")
-    #     self.entry_rest_name.grid(row=1, column=1, padx=(0, 20), sticky="w")
-    #     lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
-    #     self.entry_rest_address.grid(row=2, column=1, sticky="w")
-    #     lbl_rest_address.grid(row=2, column=0, padx=10, sticky="w")
-    #     self.entry_rest_address.grid(row=2, column=1, sticky="w")
-    #     lbl_rest_city.grid(row=3, column=0, padx=10, sticky="w")
-    #     self.entry_rest_city.grid(row=3, column=1, sticky="w")
-    #     lbl_rest_state.grid(row=4, column=0, padx=10, sticky="w")
-    #     self.entry_rest_state.grid(row=4, column=1, sticky="w")
-    #     lbl_rest_zip.grid(row=5, column=0, padx=10, sticky="w")
-    #     self.entry_rest_zip.grid(row=5, column=1, sticky="w")
-    #     lbl_rest_veg.grid(row=6, column=0, padx=10, sticky="w")
-    #     self.entry_rest_veg.grid(row=6, column=1, sticky="w")
-    #     lbl_rest_vegan.grid(row=7, column=0, padx=10, sticky="w")
-    #     self.entry_rest_vegan.grid(row=7, column=1, sticky="w")
-    #     lbl_rest_gluten.grid(row=8, column=0, padx=10, sticky="w")
-    #     self.entry_rest_gluten.grid(row=8, column=1, sticky="w")
-    #     lbl_rest_menu.grid(row=9, column=0, padx=10, sticky="w")
-    #     self.entry_rest_menu.grid(row=9, column=1, sticky="w")
-    #     lbl_rest_hours.grid(row=10, column=0, padx=10, sticky="w")
-    #     self.entry_rest_hours.grid(row=10, column=1, sticky="w")
-    #     lbl_rest_description.grid(row=11, column=0, padx=10, sticky="w")
-    #     self.entry_rest_description.grid(row=11, column=1, sticky="w")
-    #     btn_save_rest.grid(row=12, column=0, columnspan=2, pady=20)
-    #     btn_admin_close.grid(row=13, column=0, columnspan=2, pady=10)
-
     def _menu_place_widget(self):
+
         lbl_prompt_name = Label(
             text="Restaurant name:", font="None 11", bg="#0080c0", height=2
         )
@@ -493,7 +368,7 @@ class View:
         btn_close_menu.grid(row=5, column=0, columnspan=2, pady=10)
 
     def _user_place_widget(self):
-        # With Check button, value = 0 means unchosen, 1 means chosen
+
         self.veggie_var = IntVar(value=0)
         self.vegan_var = IntVar(value=0)
         self.gluten_free_var = IntVar(value=0)
@@ -503,7 +378,6 @@ class View:
         lbl_search_prompt = Label(
             bg="#0080c0", text="Restaurant Search:", font="None 11", height=2
         )
-        # self.entry_rest_name = Entry(font="None 11", bg="white", width=25)
         self.search_variable = StringVar()
         self.search_variable.trace_add("write", self.controller.rest_search)
         self.user_search_field = Entry(
@@ -514,7 +388,6 @@ class View:
         )
         btn_search = Button(
             self.window,
-            # text="Search",
             text="Clear",
             font="none 12",
             bg="light grey",
@@ -575,16 +448,6 @@ class View:
             variable=self.gluten_free_var,
             command=self.controller.rest_dietary_filter,
         )
-        # btn_filter = Button(
-        #     self.window,
-        #     text="Filter",
-        #     font="none 12",
-        #     bg="light grey",
-        #     height=1,
-        #     width=10,
-        #     command=self.controller.rest_filter,
-        #     state="disabled",
-        # )
         btn_exit = Button(
             self.window,
             text="Exit",
@@ -610,10 +473,10 @@ class View:
         checkbtn_veggie.grid(row=3, column=0, padx=10, pady=10)
         checkbtn_vegan.grid(row=3, column=1, padx=10, pady=10)
         checkbtn_gluten_free.grid(row=3, column=2, padx=10, pady=10)
-        # btn_filter.grid(row=3, column=3, padx=10, pady=10)
         btn_exit.grid(row=3, column=3, padx=10, pady=10)
 
     def _rest_detail_place_widget(self):
+
         TEXT_WIDTH = 56
         button_frame = Frame(self.window, background="#0080c0")
         reviews_frame = Frame(self.window, background="#0080c0")
@@ -658,8 +521,7 @@ class View:
             font="none 12",
             background="light grey",
             width=9,
-            state="disabled",
-            command=self.controller.user_add_review_button_press,
+            command=self.controller.display_add_review_window,
         )
 
         review_scrollbar.grid(row=0, column=1, sticky=(N, S, E, W))
@@ -695,7 +557,221 @@ class View:
             "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
         )
 
+    def _review_widget(self):
+        # self.idFrame = Frame(
+        #     master=self.window,
+        #     width=400,
+        #     height=2,
+        #     bg="#0080c0",
+        #     relief="flat",
+        #     borderwidth="2",
+        # )
+        # self.idFrame.grid(
+        #     row=0,
+        #     column=1,
+        #     rowspan=6,
+        #     columnspan=7,
+        #     padx=5,
+        #     pady=5,
+        #     sticky="NSEW",
+        # )
+        # rest_id = self.controller._active_rest_id
+        # lbl_rest = Label(
+        #     text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
+        # )
+        # lbl_rest_ID = Label(
+        #     self.idFrame,
+        #     text=rest_id,
+        #     font="None 11",
+        #     bg="light gray",
+        #     width=10,
+        # )
+        # self.entry_username = Entry(font="None 11", bg="white", width=58)
+        # lbl_user_name = Label(
+        #     text="Your Name:", font="None 11", bg="#0080c0", height=2
+        # )
+        # self.entry_user_review = ScrolledText(
+        #     font="None 11", bg="white", width=57
+        # )
+        # lbl_review = Label(
+        #     text="Review:", font="None 11", bg="#0080c0", height=2
+        # )
+        # lbl_rating = Label(
+        #     text="Rating:", font="None 11", bg="#0080c0", height=2
+        # )
+        # self.ratingFrame = Frame(
+        #     master=self.window,
+        #     width=300,
+        #     height=2,
+        #     bg="#0080c0",
+        #     relief="sunken",
+        #     borderwidth="2",
+        # )
+        # self.ratingFrame.grid(
+        #     row=60,
+        #     column=1,
+        #     rowspan=6,
+        #     columnspan=6,
+        #     padx=5,
+        #     pady=5,
+        #     sticky="NSEW",
+        # )
+        # self.user_rating_var = IntVar(value=0)
+        # radiobtn_1star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="1 Star",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=1,
+        # )
+        # radiobtn_2star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="2 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=2,
+        # )
+        # radiobtn_3star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="3 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=3,
+        # )
+        # radiobtn_4star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="4 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=4,
+        # )
+        # radiobtn_5star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="5 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=5,
+        # )
+        # btn_save_review = Button(
+        #     self.window,
+        #     text="Save",
+        #     font="None 11",
+        #     bg="light gray",
+        #     command=self.controller.user_add_review_button_press,
+        # )
+        # btn_cancel_review = Button(
+        #     text="Cancel",
+        #     font="None 11",
+        #     bg="light gray",
+        #     command=self.controller.display_user_window,
+        # )
+        # # lbl_rest_ID.grid(row=0, column=10, sticky="w")
+        # # lbl_rest.grid(row=0, column=0, sticky="w")
+        # lbl_user_name.grid(row=1, column=0, padx=10, sticky="w")
+        # self.entry_username.grid(row=1, column=1, padx=(0, 20), sticky="w")
+        # lbl_review.grid(row=2, column=0, padx=10, sticky="nw")
+        # self.entry_user_review.grid(row=2, column=1, sticky="w")
+        # lbl_rating.grid(row=60, column=0, padx=10, sticky="w")
+        # radiobtn_1star.grid(row=60, column=1, sticky="w")
+        # radiobtn_2star.grid(row=60, column=2, sticky="w")
+        # radiobtn_3star.grid(row=60, column=5, sticky="w")
+        # radiobtn_4star.grid(row=60, column=7, sticky="w")
+        # radiobtn_5star.grid(row=60, column=9, sticky="w")
+        # btn_save_review.grid(row=80, column=0, columnspan=2, pady=10)
+        # btn_cancel_review.grid(row=90, column=0, columnspan=2, pady=10)
+        # Frames
+        top_frame = Frame(self.window, background="#0080c0")
+        button_frame = Frame(self.window, background="#0080c0")
+
+        # Name
+        lbl_user_name = Label(
+            self.window,
+            text="Your Name:",
+            font="None 11",
+            bg="#0080c0",
+            height=2,
+        )
+        self.entry_username = Entry(
+            top_frame, font="None 11", bg="white", width=40
+        )
+
+        # Stars
+        lbl_rating = Label(
+            top_frame, text="Rating:", font="None 11", bg="#0080c0", height=2,
+        )
+        self.rating_variable = IntVar()
+        rating_drop_down = ttk.Combobox(
+            top_frame,
+            font="Helvetica  12",
+            textvariable=self.rating_variable,
+            width=3,
+            state="readonly",
+        )
+        rating_drop_down["values"] = (5, 4, 3, 2, 1)
+
+        # Review
+        lbl_review = Label(
+            text="Review:", font="None 11", bg="#0080c0", height=2
+        )
+        self.entry_user_review = ScrolledText(
+            font="Helvetica  12", wrap=WORD, bg="white", width=49
+        )
+
+        # buttons
+        btn_save_review = Button(
+            button_frame,
+            text="Save",
+            font="None 11",
+            bg="light gray",
+            width=9,
+            command=self.controller.btn_save_review_press,
+        )
+        btn_cancel_review = Button(
+            button_frame,
+            text="Cancel",
+            font="None 11",
+            bg="light gray",
+            width=9,
+            command=self.controller.btn_cancel_review_press,
+        )
+
+        # Placement
+        lbl_user_name.grid(row=0, column=0, padx=10, pady=(20, 0))
+        top_frame.grid(row=0, column=1, pady=(20, 0), sticky="we")
+
+        self.entry_username.grid(row=0, column=0, sticky="e")
+        lbl_rating.grid(row=0, column=1, padx=(35, 0), sticky="e")
+        rating_drop_down.grid(row=0, column=2, sticky="e")
+
+        lbl_review.grid(row=1, column=0, padx=10, pady=20, sticky="nw")
+        self.entry_user_review.grid(row=1, column=1, pady=20)
+
+        button_frame.grid(row=2, column=1)
+        btn_save_review.grid(row=0, column=0, padx=30, pady=10)
+        btn_cancel_review.grid(row=0, column=1, padx=30, pady=10)
+
     def _owner_place_widget(self):
+
         lbl_title = Label(
             bg="#0080c0", text="Bussiness Owner Function", font=self.font1
         )
@@ -708,25 +784,6 @@ class View:
             width=18,
             command=self.controller.display_new_rest_window,
         )
-
-        # btn_change_username = Button(
-        #    self.window,
-        #    text="Change username",
-        #    font="none 12",
-        #    bg="light grey",
-        #    height=1,
-        #    width=18,
-        #    command=self.controller.change_username_press,
-        # )
-        # btn_change_password = Button(
-        #    self.window,
-        #    text="Change password",
-        #    font="none 12",
-        #    bg="light grey",
-        #    height=1,
-        #    width=18,
-        #    command=self.controller.change_password_press,
-        # )
 
         table_frame = Frame(self.window, relief="groove")
         text_scrollbar = Scrollbar(table_frame)
@@ -775,8 +832,7 @@ class View:
         btn_create_rest.grid(
             row=1, column=0, columnspan=3, padx=(20, 5), pady=10
         )
-        # btn_change_username.grid(row=1, column=1, padx=5, pady=10)
-        # btn_change_password.grid(row=1, column=2, padx=5, pady=10)
+
         table_frame.grid(
             row=2,
             column=0,
@@ -793,7 +849,6 @@ class View:
         btn_exit.grid(row=4, column=3, pady=10)
 
     def _new_rest_place_widget(self, new_restaurant: bool):
-        # -------------Tony Code--------
 
         dietary_options_frame = LabelFrame(
             self.window, text="Dietary Options", bg="#0080c0"
@@ -836,7 +891,6 @@ class View:
 
         self.rest_edit_button_frame = Frame(self.window, background="#0080c0")
 
-        # -------------Tony Code--------
         if not new_restaurant:
             lbl_prompt_rest_ID = Label(
                 text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
@@ -901,7 +955,6 @@ class View:
         lbl_rest_description.grid(row=6, column=0, padx=10, sticky="w")
         self.entry_rest_description.grid(row=6, column=1, sticky="w")
 
-        # -------------Tony Code--------
         if not new_restaurant:
             lbl_prompt_rest_ID.grid(
                 row=0, column=0, padx=10, pady=(20, 0), sticky="w"
@@ -934,8 +987,6 @@ class View:
         self.veggie_edit_check_btn.grid(row=0, column=0, pady=10)
         self.vegan_edit_check_btn.grid(row=0, column=1, pady=0)
         self.gluten_edit_check_btn.grid(row=0, column=2, pady=10)
-
-        # -------------Tony Code--------
 
     def init_welcome_window(self):
         """
@@ -993,6 +1044,16 @@ class View:
         self.window.geometry("590x600")
         self.window.configure(background="#0080c0")
         self._rest_detail_place_widget()
+
+    def review_window(self):
+        """
+        Window for user to type in
+        reviews for restaurants
+        """
+        self.window.title("Insert Review")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("650x600")
+        self._review_widget()
 
     def owner_window(self):
         """
