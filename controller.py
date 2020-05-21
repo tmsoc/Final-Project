@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 import subprocess
 
@@ -23,16 +24,6 @@ class Controller:
         """Returns a path to the working directory"""
         return Path(__file__).parent.absolute()
 
-    # @staticmethod
-    # def _get_user_file_open_path() -> Path:
-    #     """
-    #     Opens a filedialog window to the
-    #     user to select a file to open/import.
-    #     Returns a Path to the selected file.
-    #     Returns an empty string if user cancles.
-    #     """
-    #     return Path(filedialog.askopenfilename())
-
     @staticmethod
     def _verify_pdf(file_path: Path) -> bool:
         """
@@ -51,28 +42,6 @@ class Controller:
         <rest id>_<original file name>.pdf
         """
         return str(key) + "_" + menu_path.stem + ".pdf"
-
-    # This method need to be placed in the View
-    # once it is merged into the master branch
-    # @staticmethod
-    # def display_error_message(message: str) -> None:
-    #     """
-    #     Displays an error message to the user
-    #     with the given message.
-    #     """
-    #     messagebox.showinfo(
-    #         message=message, icon="error", title="Error",
-    #     )
-
-    # # This method need to be placed in the View
-    # # once it is merged into the master branch
-    # @staticmethod
-    # def display_message_window(message: str) -> None:
-    #     """
-    #     Displays an info window to the
-    #     user with the given message
-    #     """
-    #     messagebox.showinfo(message=message)
 
     @staticmethod
     def import_file(import_file_path: Path, save_file_path: Path) -> None:
@@ -113,7 +82,7 @@ class Controller:
     def _rest_dict_to_str(restaurant: dict):
         """
         Returns a restaurant records in string
-        format. 
+        format.
         """
         rest_str = ""
         rest_str += restaurant["name"].lower()
@@ -188,20 +157,6 @@ class Controller:
         Popultats all the entry fields with
         the given restaurant record.
         """
-        # self.view.lbl_rest_ID["text"] = restaurant["id"]
-        # self.view.entry_rest_name.insert(0, restaurant["name"])
-        # self.view.entry_rest_address.insert(0, restaurant["address"])
-        # self.view.entry_rest_city.insert(0, restaurant["city"])
-        # self.view.entry_rest_state.insert(0, restaurant["state"])
-        # self.view.entry_rest_zip.insert(0, restaurant["zip_code"])
-        # self.view.entry_rest_veg.insert(0, str(restaurant["vegetarian"]))
-        # self.view.entry_rest_vegan.insert(0, str(restaurant["vegan"]))
-        # self.view.entry_rest_gluten.insert(0, str(restaurant["gluten"]))
-        # self.view.entry_rest_menu.insert(0, str(restaurant["menu"]))
-        # self.view.entry_rest_hours.insert(0, str(restaurant["hours"]))
-        # self.view.entry_rest_description.insert(
-        #     0, str(restaurant["description"])
-        # )
         self.view.entry_rest_ID["state"] = "normal"
         self.view.entry_rest_menu["state"] = "normal"
 
@@ -315,7 +270,6 @@ class Controller:
         self.view.clear_frame()
         self.view.user_window()
         self.rest_dietary_filter()
-        # self.rest_search()
 
     def display_login_window(self):
         self.view.clear_frame()
@@ -373,7 +327,7 @@ class Controller:
 
     def owner_edit_info_press(self):
         """
-        calls restaurant_info_window() to open a new window, entries filled with 
+        calls restaurant_info_window() to open a new window, entries filled with
         information of the restaurant selected in the listbox
         """
         list_box = self.view.view2_list_box
@@ -388,8 +342,8 @@ class Controller:
 
     def delete_rest_press(self):
         """
-        open a messagebox to confirm that owner really wants to delete the 
-        restaurant selected in the listbox. If yes, call a function in model 
+        open a messagebox to confirm that owner really wants to delete the
+        restaurant selected in the listbox. If yes, call a function in model
         to delete the restaurant from dataset
         """
         pass
@@ -565,7 +519,7 @@ class Controller:
         """
         Inserts the list of restaurants into
         the general display for the active account
-        id. 
+        id.
         """
         self._active_restaurant_list.clear()
         restaurant_id_list = self.get_owner_rest_list()
@@ -663,17 +617,55 @@ class Controller:
         )
         self._open_local_file(abs_menu_path)
 
-    def user_add_review_button_press(self):
+    def btn_save_review_press(self):
         """
-        Add review to the user screen
+        Save review to reviews table
         """
-        pass
+        review = self.view.entry_user_review.get("1.0", "end-1c")
+        rating = self.view.rating_variable.get()
+        name = self.view.entry_username.get()
+        rest_id = self._active_rest_id
+        today = date.today()
+        today = today.strftime("%m/%d/%Y")
+
+        # print(today)
+        if len(name) != 0 and len(review) != 0 and rating != 0:
+            message = "Are you sure you would like to submit this review"
+            title = "Review submit"
+            confirmation = self.view.display_confirm_action(message, title)
+            if confirmation:
+                param_dict = {
+                    "id": rest_id,
+                    "user": name,
+                    "review": review,
+                    "rating": rating,
+                    "date_time": today,
+                }
+                self.model.review_insert(param_dict)
+                # message = "Your review has been saved"
+                # self.view.display_message_window(message)
+                # self.display_user_window()
+                rest_info = self.model.rest_select_by_id(self._active_rest_id)
+                self.display_rest_detail_window()
+                self._insert_rest_info(rest_info)
+        else:
+            message = "Please enter in all information"
+            self.view.display_error_message(message)
+
+    def btn_cancel_review_press(self):
+        """
+        Returns the reviews page back to the
+        user restaurant information page.
+        """
+        rest_info = self.model.rest_select_by_id(self._active_rest_id)
+        self.display_rest_detail_window()
+        self._insert_rest_info(rest_info)
 
     def rest_info_edit_menu_press(self):
         """
         Imports or deletes an menu for the active
-        restaurant. 
-        
+        restaurant.
+
         If no menu is on file, method
         imports a pdf restaurant menu for the
         active restaurant id number. The user
@@ -749,7 +741,7 @@ class Controller:
 
     def save_new_rest_press(self):
         """
-        get all information of the new restaurant from entries in the window 
+        get all information of the new restaurant from entries in the window
         to dataset
         """
         rest_info = self._read_rest_edit_window()
@@ -790,6 +782,10 @@ class Controller:
         self.display_owner_window()
         self.display_owner_restaurant_list()
 
+    def display_add_review_window(self):
+        self.view.clear_frame()
+        self.view.review_window()
+
     # ---------------- END OF VIEW CONTROLS ---------------------
 
     def delete_rest_menu(self, rest_id: int) -> None:
@@ -798,17 +794,6 @@ class Controller:
         the given id number
         """
         self._update_restaurant_menu(rest_id, None)
-
-    # def import_rest_menu(self, rest_id: int) -> None:
-    #     """
-    #     Imports a pdf restaurant menu for the
-    #     given restaurant id number. The user
-    #     is prompted with a dialog window to select
-    #     the file to import. The file is then copied
-    #     to the SavedMenus directory.
-    #     """
-    #     import_file = self._get_user_file_open_path()
-    #     self.import_menu(rest_id, import_file)
 
     def delete_menu_file(self, rest_id: int, file_path: Path):
         """

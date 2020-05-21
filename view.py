@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter.scrolledtext import ScrolledText
+from tkinter import ttk
 from pathlib import Path
 
 
@@ -519,8 +521,7 @@ class View:
             font="none 12",
             background="light grey",
             width=9,
-            state="disabled",
-            command=self.controller.user_add_review_button_press,
+            command=self.controller.display_add_review_window,
         )
 
         review_scrollbar.grid(row=0, column=1, sticky=(N, S, E, W))
@@ -555,6 +556,219 @@ class View:
         self.rest_reviews_display.tag_configure(
             "INFO_BOLD", justify="left", font=("Helvetica  12 bold")
         )
+
+    def _review_widget(self):
+        # self.idFrame = Frame(
+        #     master=self.window,
+        #     width=400,
+        #     height=2,
+        #     bg="#0080c0",
+        #     relief="flat",
+        #     borderwidth="2",
+        # )
+        # self.idFrame.grid(
+        #     row=0,
+        #     column=1,
+        #     rowspan=6,
+        #     columnspan=7,
+        #     padx=5,
+        #     pady=5,
+        #     sticky="NSEW",
+        # )
+        # rest_id = self.controller._active_rest_id
+        # lbl_rest = Label(
+        #     text="Restaurant ID:", font="None 11", bg="#0080c0", height=2
+        # )
+        # lbl_rest_ID = Label(
+        #     self.idFrame,
+        #     text=rest_id,
+        #     font="None 11",
+        #     bg="light gray",
+        #     width=10,
+        # )
+        # self.entry_username = Entry(font="None 11", bg="white", width=58)
+        # lbl_user_name = Label(
+        #     text="Your Name:", font="None 11", bg="#0080c0", height=2
+        # )
+        # self.entry_user_review = ScrolledText(
+        #     font="None 11", bg="white", width=57
+        # )
+        # lbl_review = Label(
+        #     text="Review:", font="None 11", bg="#0080c0", height=2
+        # )
+        # lbl_rating = Label(
+        #     text="Rating:", font="None 11", bg="#0080c0", height=2
+        # )
+        # self.ratingFrame = Frame(
+        #     master=self.window,
+        #     width=300,
+        #     height=2,
+        #     bg="#0080c0",
+        #     relief="sunken",
+        #     borderwidth="2",
+        # )
+        # self.ratingFrame.grid(
+        #     row=60,
+        #     column=1,
+        #     rowspan=6,
+        #     columnspan=6,
+        #     padx=5,
+        #     pady=5,
+        #     sticky="NSEW",
+        # )
+        # self.user_rating_var = IntVar(value=0)
+        # radiobtn_1star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="1 Star",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=1,
+        # )
+        # radiobtn_2star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="2 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=2,
+        # )
+        # radiobtn_3star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="3 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=3,
+        # )
+        # radiobtn_4star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="4 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=4,
+        # )
+        # radiobtn_5star = Radiobutton(
+        #     self.ratingFrame,
+        #     text="5 Stars",
+        #     font="none 12",
+        #     bg="#0080c0",
+        #     activebackground="#0080c0",
+        #     height=2,
+        #     width=11,
+        #     variable=self.user_rating_var,
+        #     value=5,
+        # )
+        # btn_save_review = Button(
+        #     self.window,
+        #     text="Save",
+        #     font="None 11",
+        #     bg="light gray",
+        #     command=self.controller.user_add_review_button_press,
+        # )
+        # btn_cancel_review = Button(
+        #     text="Cancel",
+        #     font="None 11",
+        #     bg="light gray",
+        #     command=self.controller.display_user_window,
+        # )
+        # # lbl_rest_ID.grid(row=0, column=10, sticky="w")
+        # # lbl_rest.grid(row=0, column=0, sticky="w")
+        # lbl_user_name.grid(row=1, column=0, padx=10, sticky="w")
+        # self.entry_username.grid(row=1, column=1, padx=(0, 20), sticky="w")
+        # lbl_review.grid(row=2, column=0, padx=10, sticky="nw")
+        # self.entry_user_review.grid(row=2, column=1, sticky="w")
+        # lbl_rating.grid(row=60, column=0, padx=10, sticky="w")
+        # radiobtn_1star.grid(row=60, column=1, sticky="w")
+        # radiobtn_2star.grid(row=60, column=2, sticky="w")
+        # radiobtn_3star.grid(row=60, column=5, sticky="w")
+        # radiobtn_4star.grid(row=60, column=7, sticky="w")
+        # radiobtn_5star.grid(row=60, column=9, sticky="w")
+        # btn_save_review.grid(row=80, column=0, columnspan=2, pady=10)
+        # btn_cancel_review.grid(row=90, column=0, columnspan=2, pady=10)
+        # Frames
+        top_frame = Frame(self.window, background="#0080c0")
+        button_frame = Frame(self.window, background="#0080c0")
+
+        # Name
+        lbl_user_name = Label(
+            self.window,
+            text="Your Name:",
+            font="None 11",
+            bg="#0080c0",
+            height=2,
+        )
+        self.entry_username = Entry(
+            top_frame, font="None 11", bg="white", width=40
+        )
+
+        # Stars
+        lbl_rating = Label(
+            top_frame, text="Rating:", font="None 11", bg="#0080c0", height=2,
+        )
+        self.rating_variable = IntVar()
+        rating_drop_down = ttk.Combobox(
+            top_frame,
+            font="Helvetica  12",
+            textvariable=self.rating_variable,
+            width=3,
+            state="readonly",
+        )
+        rating_drop_down["values"] = (5, 4, 3, 2, 1)
+
+        # Review
+        lbl_review = Label(
+            text="Review:", font="None 11", bg="#0080c0", height=2
+        )
+        self.entry_user_review = ScrolledText(
+            font="Helvetica  12", wrap=WORD, bg="white", width=49
+        )
+
+        # buttons
+        btn_save_review = Button(
+            button_frame,
+            text="Save",
+            font="None 11",
+            bg="light gray",
+            width=9,
+            command=self.controller.btn_save_review_press,
+        )
+        btn_cancel_review = Button(
+            button_frame,
+            text="Cancel",
+            font="None 11",
+            bg="light gray",
+            width=9,
+            command=self.controller.btn_cancel_review_press,
+        )
+
+        # Placement
+        lbl_user_name.grid(row=0, column=0, padx=10, pady=(20, 0))
+        top_frame.grid(row=0, column=1, pady=(20, 0), sticky="we")
+
+        self.entry_username.grid(row=0, column=0, sticky="e")
+        lbl_rating.grid(row=0, column=1, padx=(35, 0), sticky="e")
+        rating_drop_down.grid(row=0, column=2, sticky="e")
+
+        lbl_review.grid(row=1, column=0, padx=10, pady=20, sticky="nw")
+        self.entry_user_review.grid(row=1, column=1, pady=20)
+
+        button_frame.grid(row=2, column=1)
+        btn_save_review.grid(row=0, column=0, padx=30, pady=10)
+        btn_cancel_review.grid(row=0, column=1, padx=30, pady=10)
 
     def _owner_place_widget(self):
 
@@ -830,6 +1044,16 @@ class View:
         self.window.geometry("590x600")
         self.window.configure(background="#0080c0")
         self._rest_detail_place_widget()
+
+    def review_window(self):
+        """
+        Window for user to type in
+        reviews for restaurants
+        """
+        self.window.title("Insert Review")
+        self.window.configure(background="#0080c0")
+        self.window.geometry("650x600")
+        self._review_widget()
 
     def owner_window(self):
         """
