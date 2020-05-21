@@ -158,6 +158,7 @@ class Controller:
             rest_info == "No Restaurants on File"
             or rest_info == "No search results found"
             or rest_info == "No owners on file"
+            or rest_info == "Sorry no menus available"
         ):
             rest_info = None
         return rest_info
@@ -402,6 +403,18 @@ class Controller:
             owned_rest_str = ",".join(rest_list)
             self.model.update_owner(owner_key, {"restaurants": owned_rest_str})
 
+    def get_owner_from_rest_id(self, rest_id):
+        """
+        Returns the owner key of the owner
+        that owns the given restaurant id.    
+        """
+        owner_list = self.model.owners_select_all()
+        for owner in owner_list:
+            rest_list = owner["restaurants"].split(",")
+            if str(rest_id) in rest_list:
+                return owner["key"]
+        return None
+
     # ----------------- VIEW WINDOW METHODS -----------------------
 
     def display_user_window(self):
@@ -500,10 +513,17 @@ class Controller:
         restaurant selected in the listbox. If yes, call a function in model
         to delete the restaurant from dataset
         """
-        list_box = self.view.view2_list_box
+        user_type = self.view.user_type_var.get()
+        if user_type == "admin":
+            list_box = self.view.view1_list_box
+        elif user_type == "owner":
+            list_box = self.view.view2_list_box
         selected_rest = self._get_list_box_selection(list_box)
         if selected_rest != None:
             self._active_rest_id = int(selected_rest.split(" ")[0])
+            self._active_account_id = self.get_owner_from_rest_id(
+                self._active_rest_id
+            )
             restaurant = self.model.rest_select_by_id(self._active_rest_id)
             rest_name = restaurant["name"]
             title = "Confirm Deletion"
@@ -524,7 +544,10 @@ class Controller:
                 # delete restaurant
                 self.model.delete_restaurant(self._active_rest_id)
                 # update screen
-                self.display_owner_restaurant_list()
+                if user_type == "admin":
+                    self.display_admin_window()
+                elif user_type == "owner":
+                    self.display_owner_restaurant_list()
 
     def btn_list_press(self):
         """

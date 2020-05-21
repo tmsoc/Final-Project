@@ -247,7 +247,13 @@ class View:
 
         table_frame = Frame(self.window, relief="groove")
         table_frame.grid(
-            row=2, column=0, columnspan=3, padx=(50, 10), pady=10, sticky="we",
+            row=2,
+            column=0,
+            columnspan=3,
+            rowspan=2,
+            padx=(50, 10),
+            pady=10,
+            sticky="we",
         )
 
         text_scrollbar = Scrollbar(table_frame)
@@ -272,6 +278,15 @@ class View:
             height=1,
             width=10,
             command=self.controller.admin_view_more_info_press,
+        )
+        btn_delete = Button(
+            self.window,
+            text="Delete",
+            font="none 12",
+            bg="light grey",
+            height=1,
+            width=10,
+            command=self.controller.delete_rest_press,
         )
         btn_menu_update = Button(
             self.window,
@@ -298,8 +313,11 @@ class View:
         radiobtn_menu.grid(row=1, column=2, padx=10, pady=10)
 
         btn_info.grid(row=2, column=3, padx=(10, 50))
-        btn_menu_update.grid(row=3, column=0, columnspan=3, pady=30)
-        btn_exit.grid(row=3, column=3, padx=(10, 50), pady=30)
+        btn_delete.grid(
+            row=3, column=3, sticky="n", padx=(10, 50),
+        )
+        btn_menu_update.grid(row=4, column=0, columnspan=3, pady=30)
+        btn_exit.grid(row=4, column=3, padx=(10, 50), pady=30)
 
     def _menu_place_widget(self):
         lbl_prompt_name = Label(
