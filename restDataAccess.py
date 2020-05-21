@@ -11,7 +11,58 @@ class Model:
 
     ...
 
-    Methods
+    TABLES INFO:
+    * restaurant table - 
+        id - <int> Unique to the restaurant. Auto populated.
+        name - <string>
+        address - <string>
+        city - <string>
+        state - <string>
+        zip_code - <string>
+        vegetarian - <bool>
+        vegan - <bool>
+        gluten - <bool>
+        menu - <bool>
+        hours - <string>
+        description - <string>
+
+    * reviews table - 
+        id - <int>
+        user - <string>
+        review - <string>
+        rating - <int>
+        date_time - <string>
+        key - <int> Unique to the review. Auto populated.
+
+    * menus table - 
+        id - <int>
+        menu_path - <string>
+        key - <int> Unique to the menu. Auto populated.
+
+    * user table -
+        name - <string>
+        password - <string>
+        search_name - <string>
+        birth_date - <string>
+        zip_code - <string>
+        key - <int> Unique to the user. Auto populated.
+
+    * owner table -
+        name - <string>
+        password - <string>
+        search_name - <string>
+        restaurants - <string>
+        key - <int> Unique to the owner. Auto populated.
+
+
+    * admin table - 
+        name - <string>
+        password - <string>
+        search_name - <string>
+        key - <int> Unique to the admin. Auto populated.
+    ...
+
+    METHODS
     -------
     restaurant_insert(param: dict)
         Inserts a new restaurant into the restaurant table
