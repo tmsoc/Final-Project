@@ -154,6 +154,12 @@ class Controller:
         index = list_box.curselection()
         if len(index) != 0:
             rest_info = list_box.get(index[0])
+        if (
+            rest_info == "No Restaurants on File"
+            or rest_info == "No search results found"
+            or rest_info == "No owners on file"
+        ):
+            rest_info = None
         return rest_info
 
     def _populate_rest_details_window(self, restaurant: dict) -> None:
@@ -373,6 +379,29 @@ class Controller:
             self.view.display_error_message("Menu File Not Found")
             return False
 
+    def _delete_all_rest_reviews(self, rest_id: int):
+        """
+        Deletes all reviews for the restaurant
+        with the given restaurant id.
+        """
+        reviews_list = self.model.review_select_by_id(rest_id)
+        if reviews_list != None:
+            for review in reviews_list:
+                self.model.delete_review(review["key"])
+
+    def _delete_rest_from_owner(self, owner_key: int, rest_id: int):
+        """
+        Removes a restaurant id from an
+        owners restaurant id list.
+        """
+        owner = self.model.owner_select_by_key(owner_key)
+        owned_rest_str = owner["restaurants"]
+        if len(owned_rest_str) != 0:
+            rest_list = owned_rest_str.split(",")
+            rest_list.remove(str(rest_id))
+            owned_rest_str = ",".join(rest_list)
+            self.model.update_owner(owner_key, {"restaurants": owned_rest_str})
+
     # ----------------- VIEW WINDOW METHODS -----------------------
 
     def display_user_window(self):
@@ -471,7 +500,31 @@ class Controller:
         restaurant selected in the listbox. If yes, call a function in model
         to delete the restaurant from dataset
         """
-        pass
+        list_box = self.view.view2_list_box
+        selected_rest = self._get_list_box_selection(list_box)
+        if selected_rest != None:
+            self._active_rest_id = int(selected_rest.split(" ")[0])
+            restaurant = self.model.rest_select_by_id(self._active_rest_id)
+            rest_name = restaurant["name"]
+            title = "Confirm Deletion"
+            message = (
+                f"Are you sure you wish to delete\nall records for {rest_name}"
+            )
+            confirmed = self.view.display_confirm_action(message, title)
+            if confirmed:
+                # delete menu
+                if restaurant["menu"]:
+                    self.delete_rest_menu(self._active_rest_id)
+                # Delete reviews
+                self._delete_all_rest_reviews(self._active_rest_id)
+                # delete from owner
+                self._delete_rest_from_owner(
+                    self._active_account_id, self._active_rest_id
+                )
+                # delete restaurant
+                self.model.delete_restaurant(self._active_rest_id)
+                # update screen
+                self.display_owner_restaurant_list()
 
     def btn_list_press(self):
         """
@@ -479,10 +532,10 @@ class Controller:
         output the information in the listbox
         if user clicks on radio button ID -> admin_view_var = "id"
            -> show in the list box:
-           (line1) owner ID 1 - rest name 1 - rest address 1
-           (line2) owner ID 1 - rest name 1 - rest address 2
-           (line3) owner ID 1 - rest name 2 - rest address 1
-           (line4) owner ID 2 - rest name 1 - rest address 1
+           (line1) owner ID 1 - rest name 1
+           (line2) owner ID 1 - rest name 1
+           (line3) owner ID 1 - rest name 2
+           (line4) owner ID 2 - rest name 1
            ...
         if user clicks on radio button Restaurant info
         -> admin_view_var = "rest info"
@@ -501,9 +554,6 @@ class Controller:
         choice = self.view.admin_view_var.get()
 
         if choice == "id":
-            # for restaurant in restaurant_names:
-            #     rest_str = str(restaurant["id"]) + " - " + restaurant["name"]
-            #     output_display_list.append(rest_str)
             owner_list = self.display_owner_id()
             if owner_list != None:
                 output_display_list = owner_list.copy()
@@ -739,6 +789,8 @@ class Controller:
             self._active_account_id
         )
         restaurant_list_str = restaurant_owner["restaurants"]
+        if restaurant_list_str == "":
+            return None
         return restaurant_list_str.split(",")
 
     def display_owner_restaurant_list(self):
@@ -748,11 +800,17 @@ class Controller:
         id.
         """
         self._active_restaurant_list.clear()
+        self.view.view2_list_box.delete(0, "end")
         restaurant_id_list = self.get_owner_rest_list()
-        for id in restaurant_id_list:
-            restaurant = self.model.rest_select_by_id(id)
-            self._active_restaurant_list.append(restaurant)
-        rest_list = self._rest_gen_format_list(self._active_restaurant_list)
+        if restaurant_id_list != None:
+            for id in restaurant_id_list:
+                restaurant = self.model.rest_select_by_id(id)
+                self._active_restaurant_list.append(restaurant)
+            rest_list = self._rest_gen_format_list(
+                self._active_restaurant_list
+            )
+        else:
+            rest_list = ["No Restaurants on File"]
         for index, rest in enumerate(rest_list):
             self.view.view2_list_box.insert(index, rest)
 
