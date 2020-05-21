@@ -534,6 +534,13 @@ class Controller:
             if confirmed:
                 # delete menu
                 if restaurant["menu"]:
+                    menu = self.model.menu_select(self._active_rest_id)
+                    abs_menu_path = Path(
+                        self._working_directory
+                        / self.MENU_DIRECTORY
+                        / menu["menu_path"]
+                    )
+                    abs_menu_path.unlink()
                     self.delete_rest_menu(self._active_rest_id)
                 # Delete reviews
                 self._delete_all_rest_reviews(self._active_rest_id)
@@ -949,16 +956,6 @@ class Controller:
                 "Invalid file type. Must be a .pdf"
             )
             return False
-
-    # def display_owner_id(self) -> list:
-    #     restaurant_list = self.model.restaurants_select_all()
-    #     owner_id_list = []
-
-    #     for restaurant in restaurant_list:
-    #         owner_id_str = restaurant["id"] + " - " + restaurant["name"]
-    #         owner_id_list.append(owner_id_str)
-
-    #     return owner_id_list
 
     def display_owner_id(self) -> list:
         owner_list = []
